@@ -9,3 +9,5 @@ Environment setup
 ------------
 Windows 7 Ultimate, Windows 7 Pro, or Windows 8
 Visual Studio 2012
+Enable NuGet package restore on your computer
+http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages

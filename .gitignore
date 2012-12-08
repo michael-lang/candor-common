@@ -42,8 +42,8 @@ local.properties
 *.sln.docstates
 
 # Build results
-[Dd]ebug/
-[Rr]elease/
+**/[Dd]ebug/
+**/[Rr]elease/
 *_i.c
 *_p.c
 *.ilk
@@ -61,10 +61,15 @@ local.properties
 *.tmp
 *.vspscc
 .builds
-*.dotCover
+**/*.dotCover
 
 ## TODO: If you have NuGet Package Restore enabled, uncomment this
-#packages/
+**/packages/ 
+packages/
+
+**/AppLogs/ 
+AppLogs/
+
 
 # Visual C++ cache files
 ipch/
