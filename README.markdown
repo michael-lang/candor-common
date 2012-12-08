@@ -5,7 +5,6 @@ console apps, or windows services that I work on.  It may be useful in other sce
 
 You will find much of this code mentioned on the blog at http://candordeveloper.com/
 
-
 Environment setup
 ------------
 Windows 7 Ultimate, Windows 7 Pro, or Windows 8
