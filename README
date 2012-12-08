@@ -1,0 +1,12 @@
+Purpose
+------------
+Candor is a collection of shared libraries I find useful for web applications,
+console apps, or windows services that I work on.  It may be useful in other scenarios as well.
+
+You will find much of this code mentioned on the blog at http://candordeveloper.com/
+
+
+Environment setup
+------------
+Windows 7 Ultimate, Windows 7 Pro, or Windows 8
+Visual Studio 2012
