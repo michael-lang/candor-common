@@ -1,4 +1,13 @@
 #################
+## Solution Specific
+#################
+/NuGetRelease
+/Utilities
+release.log
+/Release/testerrors.log
+/Release/testresults.xml
+
+#################
 ## Eclipse
 #################
 
