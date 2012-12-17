@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>Candor.Core</id>
+    <version>$version$</version>
+    <authors>$author$</authors>
+    <owners>Nexul Software LLC, $author$</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <tags>Candor Reflection Provider Paging</tags>
+  </metadata>
+</package>

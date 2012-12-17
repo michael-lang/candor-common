@@ -11,7 +11,18 @@ namespace Candor.Security
 	/// The base contract that must be fullfilled by any User provider.
 	/// </summary>
 	public abstract class UserProvider : ProviderBase
-	{
+    {
+        /// <summary>
+        /// The minimal number of hash iterations of a password.
+        /// </summary>
+        /// <remarks>
+        /// This should not change after going live in a database, unless 
+        /// deployment coordinated with updating hashgroup of all existing 
+        /// users at the same time.  However, the preferred option would be
+        /// to change the <see cref="HashGroupMinimum"/> and <see cref="HashGroupMaximum"/>
+        /// to change future new hashes to be of a higher mimimum security.
+        /// </remarks>
+        public const Int32 BaseHashIterations = 5000;
 		private string _hashProviderName = string.Empty;
 		private Regex _emailRegex;
 		private string _emailRegexExpression;
@@ -79,7 +90,17 @@ namespace Candor.Security
 		/// <summary>
 		/// An error message shown when the password does not match the required format.
 		/// </summary>
-		public virtual string PasswordErrorMessage { get; set; }
+        public virtual string PasswordErrorMessage { get; set; }
+        /// <summary>
+        /// Gets the minimum hash group to be set when users authenticate by password or register a new account.
+        /// </summary>
+        /// <remarks>This can change as often as desired without affecting storage of existing user password hashes.</remarks>
+        public Int32 HashGroupMinimum { get; set; }
+        /// <summary>
+        /// Gets the maximum hash group to be set when users authenticate by password or register a new account.
+        /// </summary>
+        /// <remarks>This can change as often as desired without affecting storage of existing user password hashes.</remarks>
+        public Int32 HasGroupMaximum { get; set; }
 		/// <summary>
 		/// Gets or sets the amount of time a remembered session (on a private computer) should be.
 		/// </summary>
@@ -149,7 +170,10 @@ namespace Candor.Security
 			                                                  "^([0-9a-zA-Z]+[-\\._+&]*)*[0-9a-zA-Z]+@([-0-9a-zA-Z]+[.])+[a-zA-Z]{2,6}$");
 			PasswordRegexExpression = configValue.GetStringValue("passwordRegexExpression", "^([a-zA-Z0-9@*#]{6,128})$");
 			PasswordErrorMessage = configValue.GetStringValue("passwordErrorMessage",
-			                                                  "The password must be between 6 and 32 characters long; and can only contain letters, numbers, and these special symbols(@, *, #)");
+                                                              "The password must be between 6 and 32 characters long; and can only contain letters, numbers, and these special symbols(@, *, #)");
+            HashGroupMinimum = configValue.GetIntValue("hashGroupMinimum", 1);
+            HasGroupMaximum = configValue.GetIntValue("hasGroupMaximum", 1000);
+
 			ExtendedSessionDuration = configValue.GetIntValue("extendedSessionDuration", 20160); //20160=2weeks
 			PublicSessionDuration = configValue.GetIntValue("publicSessionDuration", 20); //20 minutes default.
 			_hashProviderName = configValue.GetStringValue("hashProviderName", String.Empty);
@@ -216,6 +240,18 @@ namespace Candor.Security
 			}
 			return true;
 		}
+        /// <summary>
+        /// Gets a user by identity.
+        /// </summary>
+        /// <param name="name">The unique identity.</param>
+        /// <returns></returns>
+        public abstract User GetUserByID(Guid userID);
+        /// <summary>
+        /// Gets a user by name.
+        /// </summary>
+        /// <param name="name">The unique sign in name.</param>
+        /// <returns></returns>
+        public abstract User GetUserByName(string name);
 		/// <summary>
 		/// Authenticates against the data store and returns a UserIdentity given 
 		/// a user name, and password.

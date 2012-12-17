@@ -146,6 +146,24 @@ namespace Candor.Security
 		{
 			return Provider.ValidateName(name, result);
 		}
+        /// <summary>
+        /// Gets a user by identity.
+        /// </summary>
+        /// <param name="name">The unique identity.</param>
+        /// <returns></returns>
+        public static User GetUserByID(Guid userID)
+        {
+            return Provider.GetUserByID(userID);
+        }
+        /// <summary>
+        /// Gets a user by name.
+        /// </summary>
+        /// <param name="name">The unique sign in name.</param>
+        /// <returns></returns>
+        public static User GetUserByName(string name)
+        {
+            return Provider.GetUserByName(name);
+        }
 		/// <summary>
 		/// Authenticates against the data store and returns a UserIdentity given 
 		/// a user name, and password.

@@ -1,13 +1,14 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Candor.Security")]
-[assembly: AssemblyDescription("Custom Identities and the related authentication API")]
+[assembly: AssemblyTitle("PrepareSharedLibrariesForRelease")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("Candor.Security")]
+[assembly: AssemblyProduct("PrepareSharedLibrariesForRelease")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -16,4 +17,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1b8a84ef-843f-4761-bf69-ac1f2ed60969")]
+[assembly: Guid("D786CC14-8685-4E66-BE8D-205B9DCB639C")]

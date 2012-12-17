@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>Candor.Security</id>
+    <version>$version$</version>
+    <authors>$author$</authors>
+    <owners>Nexul Software LLC, $author$</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2012</copyright>
+    <tags>Candor Security Authentication Hash</tags>
+    <dependencies>
+      <dependency id="Candor.Core" version="0.1.0.21216" />
+    </dependencies>
+  </metadata>
+</package>

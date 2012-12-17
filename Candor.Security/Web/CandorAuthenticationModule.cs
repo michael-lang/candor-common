@@ -47,8 +47,7 @@ namespace Candor.Security.Web
 			var extension = System.IO.Path.GetExtension(context.Request.Url.LocalPath);
 			if (extension != null)
 			{
-				var ext = extension.ToLower();
-				if (IgnoreAuthExtensions.Contains(ext))
+				if (IgnoreAuthExtensions.Contains(extension.ToLower()))
 					return false;
 			}
 			return true;
@@ -102,13 +101,12 @@ namespace Candor.Security.Web
 				HttpCookie impersonatedUserCookie = context.Request.Cookies[ImpersonationKey];
 				if (impersonatedUserCookie != null && !string.IsNullOrEmpty(impersonatedUserCookie.Value))
 				{
-#warning impersonation not implemented - due to lack of GetUserByName method.
-					//User impersonatedUser = UserManager.GetUserByName(impersonatedUserCookie.Value, new ExecutionResults());
-					//if (impersonatedUser != null)
-					//{
-					//	principal = new UserPrincipal(new UserIdentity(impersonatedUser.UserID, impersonatedUser.Name, identity));
-					//	SecurityContextManager.CurrentUser = principal;
-					//}
+                    User impersonatedUser = UserManager.GetUserByName(impersonatedUserCookie.Value);
+                    if (impersonatedUser != null)
+                    {
+                        principal = new UserPrincipal(new UserIdentity(impersonatedUser.UserID, impersonatedUser.Name, identity));
+                        SecurityContextManager.CurrentUser = principal;
+                    }
 				}
 			}
 		}

@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Candor")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Common classes used by other Candor libraries.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("Candor")]
 [assembly: AssemblyCulture("")]
