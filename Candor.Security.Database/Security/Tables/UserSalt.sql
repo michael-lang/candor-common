@@ -6,6 +6,7 @@
 	[ResetCode] VARCHAR(34) NULL, 
     [ResetCodeExpiration] DATETIME NULL, 
     [HashGroup] INT NOT NULL CONSTRAINT [DF_Security_UserSalt_HashGroup] DEFAULT (0), 
+	[HashName] VARCHAR(10) NULL,
     /*Any other user salts or keys go here*/
     CONSTRAINT [PK_Security_UserSalt] PRIMARY KEY NONCLUSTERED ([UserID]), 
     CONSTRAINT [AK_Security_UserSalt_RecordID] UNIQUE CLUSTERED ([RecordID]), 

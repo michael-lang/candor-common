@@ -21,8 +21,8 @@ namespace Candor.Configuration.Provider
 		/// <returns>If the setting is not specified, then the default
 		/// is returned.  If the setting can not be cast to a boolean
 		/// then an exception is thrown.</returns>
-		public static bool GetBooleanValue( this NameValueCollection config,
-			string name, bool defaultValue )
+		public static Boolean GetBooleanValue( this NameValueCollection config,
+			string name, Boolean defaultValue )
 		{
 			if (config == null)
 				return defaultValue;
@@ -35,7 +35,7 @@ namespace Candor.Configuration.Provider
 
 			try
 			{
-				return bool.Parse(val);
+				return Boolean.Parse(val);
 			}
 			catch (Exception)
 			{
@@ -54,8 +54,8 @@ namespace Candor.Configuration.Provider
 		/// <returns>If the setting is not specified, then the default
 		/// is returned.  If the setting can not be cast to a boolean
 		/// then an exception is thrown.</returns>
-		public static bool GetBooleanValue( this XmlAttributeCollection config,
-			string name, bool defaultValue )
+		public static Boolean GetBooleanValue( this XmlAttributeCollection config,
+			string name, Boolean defaultValue )
 		{
 			if (config == null)
 				return defaultValue;
@@ -72,7 +72,7 @@ namespace Candor.Configuration.Provider
 
 			try
 			{
-				return bool.Parse(val);
+				return Boolean.Parse(val);
 			}
 			catch (Exception)
 			{
@@ -81,7 +81,7 @@ namespace Candor.Configuration.Provider
 			}
 		}
 		/// <summary>
-		/// A helper method to get a long integer value from a configuration
+		/// A helper method to get a Int64 integer value from a configuration
 		/// setting value.
 		/// </summary>
 		/// <param name="config">The available configuation values.</param>
@@ -89,10 +89,10 @@ namespace Candor.Configuration.Provider
 		/// <param name="defaultValue">The default in case the named
 		/// value does not exist.</param>
 		/// <returns>If the setting is not specified, then the default
-		/// is returned.  If the setting can not be cast to a long integer
+		/// is returned.  If the setting can not be cast to a Int64 integer
 		/// then an exception is thrown.</returns>
-		public static long GetLongValue( this NameValueCollection config,
-			string name, long defaultValue )
+		public static Int64 GetInt64Value( this NameValueCollection config,
+			string name, Int64 defaultValue )
 		{
 			if (config == null)
 				return defaultValue;
@@ -105,7 +105,7 @@ namespace Candor.Configuration.Provider
 
 			try
 			{
-				return long.Parse(val);
+				return Int64.Parse(val);
 			}
 			catch (Exception)
 			{
@@ -114,7 +114,7 @@ namespace Candor.Configuration.Provider
 			}
 		}
 		/// <summary>
-		/// A helper method to get a long integer value from a configuration
+		/// A helper method to get a Int64 integer value from a configuration
 		/// setting value.
 		/// </summary>
 		/// <param name="config">The available configuation values.</param>
@@ -122,10 +122,10 @@ namespace Candor.Configuration.Provider
 		/// <param name="defaultValue">The default in case the named
 		/// value does not exist.</param>
 		/// <returns>If the setting is not specified, then the default
-		/// is returned.  If the setting can not be cast to a long integer
+		/// is returned.  If the setting can not be cast to a Int64 integer
 		/// then an exception is thrown.</returns>
-		public static long GetLongValue( this XmlAttributeCollection config,
-			string name, long defaultValue )
+		public static Int64 GetInt64Value( this XmlAttributeCollection config,
+			string name, Int64 defaultValue )
 		{
 			if (config == null)
 				return defaultValue;
@@ -142,7 +142,7 @@ namespace Candor.Configuration.Provider
 
 			try
 			{
-				return long.Parse(val);
+				return Int64.Parse(val);
 			}
 			catch (Exception)
 			{
@@ -161,8 +161,8 @@ namespace Candor.Configuration.Provider
 		/// <returns>If the setting is not specified, then the default
 		/// is returned.  If the setting can not be cast to an integer
 		/// then an exception is thrown.</returns>
-		public static int GetIntValue( this NameValueCollection config,
-			string name, int defaultValue )
+		public static Int32 GetInt32Value( this NameValueCollection config,
+			string name, Int32 defaultValue )
 		{
 			if (config == null)
 				return defaultValue;
@@ -175,7 +175,7 @@ namespace Candor.Configuration.Provider
 
 			try
 			{
-				return int.Parse(val);
+				return Int32.Parse(val);
 			}
 			catch (Exception)
 			{
@@ -194,8 +194,8 @@ namespace Candor.Configuration.Provider
 		/// <returns>If the setting is not specified, then the default
 		/// is returned.  If the setting can not be cast to an integer
 		/// then an exception is thrown.</returns>
-		public static int GetIntValue( this XmlAttributeCollection config,
-			string name, int defaultValue )
+		public static Int32 GetInt32Value( this XmlAttributeCollection config,
+			string name, Int32 defaultValue )
 		{
 			if (config == null)
 				return defaultValue;
@@ -212,7 +212,7 @@ namespace Candor.Configuration.Provider
 
 			try
 			{
-				return int.Parse(val);
+				return Int32.Parse(val);
 			}
 			catch (Exception)
 			{
@@ -232,7 +232,7 @@ namespace Candor.Configuration.Provider
 		/// is returned.  If the setting can not be cast to a double
 		/// then an exception is thrown.</returns>
 		public static double GetDoubleValue( this NameValueCollection config,
-			string name, double defaultValue )
+			string name, Double defaultValue )
 		{
 			if (config == null)
 				return defaultValue;
@@ -245,7 +245,7 @@ namespace Candor.Configuration.Provider
 
 			try
 			{
-				return double.Parse(val);
+				return Double.Parse(val);
 			}
 			catch (Exception)
 			{
@@ -265,7 +265,7 @@ namespace Candor.Configuration.Provider
 		/// is returned.  If the setting can not be cast to a double
 		/// then an exception is thrown.</returns>
 		public static double GetDoubleValue( this XmlAttributeCollection config,
-			string name, double defaultValue )
+			string name, Double defaultValue )
 		{
 			if (config == null)
 				return defaultValue;
@@ -282,7 +282,7 @@ namespace Candor.Configuration.Provider
 
 			try
 			{
-				return double.Parse(val);
+				return Double.Parse(val);
 			}
 			catch (Exception)
 			{
@@ -301,7 +301,7 @@ namespace Candor.Configuration.Provider
 		/// <returns>If the setting is not specified, then the default
 		/// is returned.</returns>
 		public static string GetStringValue( this NameValueCollection config,
-			string name, string defaultValue )
+			string name, String defaultValue )
 		{
 			if (config == null)
 				return defaultValue;
@@ -324,7 +324,7 @@ namespace Candor.Configuration.Provider
 		/// <returns>If the setting is not specified, then the default
 		/// is returned.</returns>
 		public static string GetStringValue( this XmlAttributeCollection config,
-			string name, string defaultValue )
+			string name, String defaultValue )
 		{
 			if (config == null)
 				return defaultValue;

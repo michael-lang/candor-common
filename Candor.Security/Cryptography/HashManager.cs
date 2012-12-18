@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using prov = Candor.Configuration.Provider;
 
 namespace Candor.Security.Cryptography
 {
 	public class HashManager
 	{
-		#region Fields
 		private static prov.ProviderCollection<HashProvider> _providers;
-		#endregion Fields
+        private static List<HashProvider> _currentProviders;
 
-		#region Properties
 		/// <summary>
 		/// Gets the default provider instance.
 		/// </summary>
@@ -29,9 +29,25 @@ namespace Candor.Security.Cryptography
 				return _providers;
 			}
 		}
-		#endregion Properties
 
-		#region Methods
+        /// <summary>
+        /// Gets a provider to use for creating a new hash (not hashing to match an existing hash)
+        /// </summary>
+        /// <returns>A pseudo-random hashprovider of the available non-obsolete providers.</returns>
+        public static HashProvider SelectProvider()
+        {
+            if (_currentProviders == null)
+            {
+                _currentProviders = new List<HashProvider>();
+                foreach (HashProvider provider in Providers)
+                    if (!provider.IsObsolete)
+                        _currentProviders.Add(provider);
+            }
+            if (_currentProviders.Count == 0)
+                return Provider; //use current obsolete one as fallback
+            int index = new Random(DateTime.Now.Second).Next(0, _currentProviders.Count - 1);
+            return _currentProviders[index];
+        }
 
 		/// <summary>
 		/// Creates a true random salt with a default length of 256.
@@ -62,6 +78,5 @@ namespace Candor.Security.Cryptography
 		{
 			return Provider.Hash(salt, originalValue, iterations);
 		}
-		#endregion Methods
 	}
 }

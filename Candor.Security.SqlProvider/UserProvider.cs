@@ -128,7 +128,7 @@ namespace Candor.Security.SqlProvider
                 {
                     cmd.Connection = cn;
                     cmd.CommandType = System.Data.CommandType.Text;
-                    cmd.CommandText = @"Select RecordID, UserID, Name, PasswordHash, PasswordHashUpdatedDate, PasswordUpdatedDate, IsDeleted, CreatedDate, CreatedByUserID, UpdatedDate, UpdatedByUserID
+                    cmd.CommandText = @"Select RecordID, UserID, Name, Password`, PasswordHashUpdatedDate, PasswordUpdatedDate, IsDeleted, CreatedDate, CreatedByUserID, UpdatedDate, UpdatedByUserID
  from Security.User
  where UserID = @UserID";
                     cmd.Parameters.AddWithValue("UserID", userID);
@@ -207,15 +207,15 @@ namespace Candor.Security.SqlProvider
         /// IsAuthenticated flag will be true.
         /// </returns>
         public override UserIdentity AuthenticateUser(
-            string name, string password, UserSessionDurationType duration, 
+            string name, string password, UserSessionDurationType duration,
             string ipAddress, ExecutionResults result)
         {
-            return AuthenticateUser(name: name, password: password, duration: duration, 
+            return AuthenticateUser(name: name, password: password, duration: duration,
                 ipAddress: ipAddress, checkHistory: true, allowUpdateHash: true, result: result);
         }
 
-        private cs.UserIdentity AuthenticateUser(string name, string password, 
-            UserSessionDurationType duration, string ipAddress, bool checkHistory, 
+        private cs.UserIdentity AuthenticateUser(string name, string password,
+            UserSessionDurationType duration, string ipAddress, bool checkHistory,
             bool allowUpdateHash, ExecutionResults result)
         {
             if (checkHistory)
@@ -238,7 +238,11 @@ namespace Candor.Security.SqlProvider
             UserSalt salt = GetUserSalt(user.UserID);
             if (salt == null)
                 return FailAuthenticateUser(name, ipAddress, result);
-            var passwordHash = HashManager.Hash(salt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
+
+            //this should get a named hashProvider used to originally hash the password... 
+            //  fallback to 'default' provider in legacy case when we didn't store the name.
+            HashProvider hasher = !string.IsNullOrEmpty(salt.HashName) ? HashManager.Providers[salt.HashName] : HashManager.Provider;
+            var passwordHash = hasher.Hash(salt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
             if (user.PasswordHash != passwordHash)
                 return FailAuthenticateUser(name, ipAddress, result);
             var session = new UserSession
@@ -256,14 +260,22 @@ namespace Candor.Security.SqlProvider
                 UserName = name,
                 UserSession = session
             };
-            if (allowUpdateHash && user.PasswordHashUpdatedDate < DateTime.UtcNow.AddMonths(-1))
+            if (allowUpdateHash && (hasher.IsObsolete || user.PasswordHashUpdatedDate < DateTime.UtcNow.AddMonths(-1)))
             {
-                //update hashes on regular basis, keeps the iterations in latest range for current users.
+                //update hashes on regular basis, keeps the iterations in latest range for current users, and with a 'current' hash provider.
+                hasher = HashManager.SelectProvider();
+                salt.PasswordSalt = hasher.GetSalt();
                 salt.HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HasGroupMaximum);
-                user.PasswordHash = HashManager.Hash(user.UserSalt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
+                salt.HashName = hasher.Name;
+                user.PasswordHash = hasher.Hash(user.UserSalt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
                 user.PasswordHashUpdatedDate = DateTime.UtcNow;
-                SaveUserSalt(salt);
-                SaveUser(user);
+                using (var scope = new System.Transactions.TransactionScope())
+                {
+                    //starts as a lightweight transaction
+                    SaveUser(user);
+                    //enlists in a full distributed transaction if users and salts have different connection strings
+                    SaveUserSalt(salt);
+                }
             }
             InsertUserHistory(history);
             return new cs.UserIdentity(history, this.Name);
@@ -376,11 +388,12 @@ namespace Candor.Security.SqlProvider
                     if (salt.RecordID == 0)
                     {
                         cmd.CommandText = @"insert into Security.UserSalt 
- (UserID, PasswordSalt, HashGroup)
- Values (@UserID, @PasswordSalt, @HashGroup)";
+ (UserID, PasswordSalt, HashGroup, HashName)
+ Values (@UserID, @PasswordSalt, @HashGroup, @HashName)";
                         cmd.Parameters.AddWithValue("UserID", salt.UserID);
                         cmd.Parameters.AddWithValue("PasswordSalt", salt.PasswordSalt);
                         cmd.Parameters.AddWithValue("HashGroup", salt.HashGroup);
+                        cmd.Parameters.AddWithValue("HashName", salt.HashName);
                     }
                     else
                     {
@@ -388,12 +401,14 @@ namespace Candor.Security.SqlProvider
  set PasswordSalt = @PasswordSalt,
  ResetCode = @ResetCode,
  ResetCodeExpiration = @ResetCodeExpiration,
- HashGroup = @HashGroup
+ HashGroup = @HashGroup,
+ HashName = @HashName
  where UserID = @UserID";
                         cmd.Parameters.AddWithValue("PasswordSalt", salt.PasswordSalt);
                         cmd.Parameters.AddWithValue("ResetCode", salt.ResetCode);
                         cmd.Parameters.AddWithValue("ResetCodeExpiration", salt.ResetCodeExpiration);
                         cmd.Parameters.AddWithValue("HashGroup", salt.HashGroup);
+                        cmd.Parameters.AddWithValue("HashName", salt.HashName);
                         cmd.Parameters.AddWithValue("UserID", salt.UserID);
                     }
                     cmd.ExecuteNonQuery();
@@ -410,7 +425,7 @@ namespace Candor.Security.SqlProvider
                 {
                     cmd.Connection = cn;
                     cmd.CommandType = System.Data.CommandType.Text;
-                    cmd.CommandText = @"Select RecordID, UserID, PasswordSalt, ResetCode, ResetCodeExpiration, HashGroup
+                    cmd.CommandText = @"Select RecordID, UserID, PasswordSalt, ResetCode, ResetCodeExpiration, HashGroup, HashName
  from Security.UserSalt
  where UserID = @UserID";
                     cmd.Parameters.AddWithValue("UserID", userID);
@@ -425,7 +440,8 @@ namespace Candor.Security.SqlProvider
                                 PasswordSalt = reader.GetString("PasswordSalt", null),
                                 ResetCode = reader.GetString("ResetCode", null),
                                 ResetCodeExpiration = reader.GetUTCDateTime("ResetCodeExpiration", DateTime.MinValue),
-                                HashGroup = reader.GetInt32("HashGroup", 0)
+                                HashGroup = reader.GetInt32("HashGroup", 0),
+                                HashName = reader.GetString("HashName", null)
                             };
                         }
                     }
@@ -636,16 +652,23 @@ namespace Candor.Security.SqlProvider
             if (user.UserID.Equals(Guid.Empty))
                 user.UserID = Guid.NewGuid();
 
+            HashProvider hasher = HashManager.SelectProvider();
             var salt = new UserSalt
             {
-                PasswordSalt = HashManager.GetSalt(),
+                PasswordSalt = hasher.GetSalt(),
                 UserID = user.UserID,
-                HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HasGroupMaximum)
+                HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HasGroupMaximum),
+                HashName = hasher.Name
             };
-            user.PasswordHash = HashManager.Hash(salt.PasswordSalt, password,
+            user.PasswordHash = hasher.Hash(salt.PasswordSalt, password,
                                                    salt.HashGroup + BaseHashIterations);
-            SaveUser(user);
-            SaveUserSalt(salt);
+            using (var scope = new System.Transactions.TransactionScope())
+            {
+                //starts as a lightweight transaction
+                SaveUser(user);
+                //enlists in a full distributed transaction if users and salts have different connection strings
+                SaveUserSalt(salt);
+            }
             return AuthenticateUser(name: user.Name, password: password, duration: duration,
                                     ipAddress: ipAddress, checkHistory: false, allowUpdateHash: false, result: result);
         }
@@ -706,8 +729,12 @@ namespace Candor.Security.SqlProvider
             if (!String.IsNullOrEmpty(item.PasswordHash))
             {
                 var password = item.PasswordHash;
+                //update hashes on regular basis, keeps the iterations in latest range for current users, and with a 'current' hash provider.
+                HashProvider hasher = HashManager.SelectProvider();
+                salt.PasswordSalt = hasher.GetSalt();
                 salt.HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HasGroupMaximum);
-                user.PasswordHash = HashManager.Hash(salt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
+                salt.HashName = hasher.Name;
+                user.PasswordHash = hasher.Hash(salt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
                 user.PasswordUpdatedDate = DateTime.UtcNow;
             }
             using (var scope = new System.Transactions.TransactionScope())

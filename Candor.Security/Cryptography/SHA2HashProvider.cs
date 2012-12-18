@@ -29,11 +29,11 @@ namespace Candor.Security.Cryptography
 		public override string Hash(string salt, string originalValue, int iterations)
 		{
 			if (iterations < 500)
-				throw new ArgumentOutOfRangeException("iterations", "must be greater or equal than 500");
+				throw new ArgumentOutOfRangeException("iterations", "hash iterations must be equal to or greater than 500");
 			String passwordHashed = originalValue;
 			for (Int32 i = 1; i <= iterations; i++)
 			{
-				passwordHashed = Sha256Hex(salt + passwordHashed);
+				passwordHashed = Sha256Hex(salt + passwordHashed + SaltModifier ?? "");
 			}
 			return passwordHashed;
 		}

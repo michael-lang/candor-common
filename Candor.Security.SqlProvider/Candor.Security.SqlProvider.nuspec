@@ -7,12 +7,12 @@
     <owners>Nexul Software LLC, $author$</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>This code is open source and can be found at http://github.com/michael-lang/candor-common.  The required Sql scripts are available within the project on github.</releaseNotes>
     <copyright>Copyright 2012</copyright>
     <tags>Candor Security SqlClient</tags>
     <dependencies>
-      <dependency id="Candor.Security" version="0.1.0.21216" />
-      <dependency id="Candor.Core" version="0.1.0.21216" />
+      <dependency id="Candor.Security" version="0.2.0.21218" />
+      <dependency id="Candor.Core" version="0.2.0.21218" />
     </dependencies>
   </metadata>
 </package>

@@ -171,11 +171,11 @@ namespace Candor.Security
 			PasswordRegexExpression = configValue.GetStringValue("passwordRegexExpression", "^([a-zA-Z0-9@*#]{6,128})$");
 			PasswordErrorMessage = configValue.GetStringValue("passwordErrorMessage",
                                                               "The password must be between 6 and 32 characters long; and can only contain letters, numbers, and these special symbols(@, *, #)");
-            HashGroupMinimum = configValue.GetIntValue("hashGroupMinimum", 1);
-            HasGroupMaximum = configValue.GetIntValue("hasGroupMaximum", 1000);
+            HashGroupMinimum = configValue.GetInt32Value("hashGroupMinimum", 1);
+            HasGroupMaximum = configValue.GetInt32Value("hasGroupMaximum", 1000);
 
-			ExtendedSessionDuration = configValue.GetIntValue("extendedSessionDuration", 20160); //20160=2weeks
-			PublicSessionDuration = configValue.GetIntValue("publicSessionDuration", 20); //20 minutes default.
+			ExtendedSessionDuration = configValue.GetInt32Value("extendedSessionDuration", 20160); //20160=2weeks
+			PublicSessionDuration = configValue.GetInt32Value("publicSessionDuration", 20); //20 minutes default.
 			_hashProviderName = configValue.GetStringValue("hashProviderName", String.Empty);
 			if (!string.IsNullOrEmpty(_hashProviderName))
             {
@@ -185,7 +185,7 @@ namespace Candor.Security
                                                           "The specified HashProviderName does not exist.");
                 // ReSharper restore NotResolvedInText
 			}
-			PasswordExpiration = configValue.GetIntValue("passwordExpiration", PasswordExpiration);
+			PasswordExpiration = configValue.GetInt32Value("passwordExpiration", PasswordExpiration);
 			LoginExceededFailureMessage = configValue.GetStringValue("loginExceededFailureMessage",
 			                                                         "Too many recent failed attempts have been made for this name.  " +
 			                                                         "Either you entered the wrong password or an account by this name does not exist.  " +
@@ -193,8 +193,8 @@ namespace Candor.Security
 			                                                         "For security do not include your password in any email.");
 			LoginCredentialsFailureMessage = configValue.GetStringValue("loginCredentialsFailureMessage",
 			                                                            "The supplied name or password is incorrect.");
-			FailurePeriodMinutes = configValue.GetIntValue("failurePeriodMinutes", 20);
-			AllowedFailuresPerPeriod = configValue.GetIntValue("allowedFailuresPerPeriod", 5);
+			FailurePeriodMinutes = configValue.GetInt32Value("failurePeriodMinutes", 20);
+			AllowedFailuresPerPeriod = configValue.GetInt32Value("allowedFailuresPerPeriod", 5);
 			String impersonateRoles = configValue.GetStringValue("impersonationAllowedRoles", "Administrator");
 			ImpersonationAllowedRoles = !String.IsNullOrEmpty(impersonateRoles)
 				                            ? impersonateRoles.Split(';', ',')

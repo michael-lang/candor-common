@@ -18,12 +18,14 @@
 
 		<CoreProj>$(SharedRoot)\Candor\Candor.csproj</CoreProj>
 		<SecurityProj>$(SharedRoot)\Candor.Security\Candor.Security.csproj</SecurityProj>
+		<SecuritySqlProj>$(SharedRoot)\Candor.Security.SqlProvider\Candor.Security.SqlProvider.csproj</SecuritySqlProj>
 
 		<UnitTestsProj>$(SharedRoot)\Candor.UnitTests\Candor.UnitTests.csproj</UnitTestsProj>
 		
 		<AllProjects>
 			$(CoreProj);
 			$(SecurityProj);
+			$(SecuritySqlProj);
 			$(UnitTestsProj);
 		</AllProjects>
 	</PropertyGroup>
@@ -131,6 +133,8 @@
 		<Exec Command="&quot;$(NuGetExe)&quot; pack &quot;$(CoreProj)&quot; -o &quot;$(NuGetDropDirectory)&quot; -Build -p Configuration=Release -Symbols"
 			  WorkingDirectory="$(NuGetDropDirectory)" />
 		<Exec Command="&quot;$(NuGetExe)&quot; pack &quot;$(SecurityProj)&quot; -o &quot;$(NuGetDropDirectory)&quot; -Build -p Configuration=Release -Symbols"
+					WorkingDirectory="$(NuGetDropDirectory)" />
+		<Exec Command="&quot;$(NuGetExe)&quot; pack &quot;$(SecuritySqlProj)&quot; -o &quot;$(NuGetDropDirectory)&quot; -Build -p Configuration=Release -Symbols"
 					WorkingDirectory="$(NuGetDropDirectory)" />
 	</Target>
 </Project>
