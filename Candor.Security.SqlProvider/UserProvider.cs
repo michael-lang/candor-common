@@ -220,15 +220,7 @@ namespace Candor.Security.SqlProvider
         {
             if (checkHistory)
             {
-                List<AuthenticationHistory> recentHistory = GetRecentUserNameAuthenticationHistory(name);
-                var recentFailures = 0;
-                foreach (var item in recentHistory)
-                {
-                    if (!item.IsAuthenticated)
-                        recentFailures++;
-                    else
-                        break;
-                }
+                var recentFailures = GetRecentFailedUserNameAuthenticationCount(name);
                 if (recentFailures > AllowedFailuresPerPeriod)
                     return FailAuthenticateUser(name, ipAddress, result);
             }
@@ -255,29 +247,31 @@ namespace Candor.Security.SqlProvider
             var history = new AuthenticationHistory
             {
                 IPAddress = ipAddress,
-                CreatedDate = DateTime.UtcNow,
                 IsAuthenticated = true,
                 UserName = name,
                 UserSession = session
             };
-            if (allowUpdateHash && (hasher.IsObsolete || user.PasswordHashUpdatedDate < DateTime.UtcNow.AddMonths(-1)))
+            using (var scope = new System.Transactions.TransactionScope())
             {
-                //update hashes on regular basis, keeps the iterations in latest range for current users, and with a 'current' hash provider.
-                hasher = HashManager.SelectProvider();
-                salt.PasswordSalt = hasher.GetSalt();
-                salt.HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HasGroupMaximum);
-                salt.HashName = hasher.Name;
-                user.PasswordHash = hasher.Hash(user.UserSalt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
-                user.PasswordHashUpdatedDate = DateTime.UtcNow;
-                using (var scope = new System.Transactions.TransactionScope())
+                if (allowUpdateHash && (hasher.IsObsolete || user.PasswordHashUpdatedDate < DateTime.UtcNow.AddMonths(-1)))
                 {
+                    //update hashes on regular basis, keeps the iterations in latest range for current users, and with a 'current' hash provider.
+                    hasher = HashManager.SelectProvider();
+                    salt.PasswordSalt = hasher.GetSalt();
+                    salt.HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HasGroupMaximum);
+                    salt.HashName = hasher.Name;
+                    user.PasswordHash = hasher.Hash(salt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
+                    user.PasswordHashUpdatedDate = DateTime.UtcNow;
                     //starts as a lightweight transaction
                     SaveUser(user);
                     //enlists in a full distributed transaction if users and salts have different connection strings
                     SaveUserSalt(salt);
                 }
+                //either continues distributed transaction if applicable, 
+                //  or creates a new lightweight transaction for these two commands
+                SaveUserSession(session);
+                InsertUserHistory(history);
             }
-            InsertUserHistory(history);
             return new cs.UserIdentity(history, this.Name);
         }
 
@@ -291,12 +285,11 @@ namespace Candor.Security.SqlProvider
                     cmd.Connection = cn;
                     cmd.CommandType = System.Data.CommandType.Text;
                     cmd.CommandText = @"insert into Security.AuthenticationHistory 
- (UserName, IpAddress, IsAuthenticated, CreatedDate)
- Values (@UserName, @IpAddress, @IsAuthenticated, @CreatedDate)";
+ (UserName, IpAddress, IsAuthenticated)
+ Values (@UserName, @IpAddress, @IsAuthenticated)";
                     cmd.Parameters.AddWithValue("UserName", history.UserName);
                     cmd.Parameters.AddWithValue("IpAddress", history.IPAddress);
                     cmd.Parameters.AddWithValue("IsAuthenticated", history.IsAuthenticated);
-                    cmd.Parameters.AddWithValue("CreatedDate", history.CreatedDate);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -481,9 +474,8 @@ namespace Candor.Security.SqlProvider
             }
             return null;
         }
-        private List<AuthenticationHistory> GetRecentUserNameAuthenticationHistory(string name)
+        private Int32 GetRecentFailedUserNameAuthenticationCount(string name)
         {
-            List<AuthenticationHistory> items = new List<AuthenticationHistory>();
             using (SqlConnection cn = new SqlConnection(ConnectionStringAudit))
             {
                 cn.Open();
@@ -491,31 +483,16 @@ namespace Candor.Security.SqlProvider
                 {
                     cmd.Connection = cn;
                     cmd.CommandType = System.Data.CommandType.Text;
-                    cmd.CommandText = @"Select RecordID, UserName, IpAddress, CreatedDate, IsAuthenticated, SessionID 
+                    cmd.CommandText = @"Select count(RecordID)
  from Security.AuthenticationHistory 
  where UserName = @UserName
  and CreatedDate > @StartDate
  order by CreatedDate desc";
                     cmd.Parameters.AddWithValue("UserName", name);
-                    cmd.Parameters.AddWithValue("StartDate", DateTime.UtcNow.AddMinutes(FailurePeriodMinutes));
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            items.Add(new AuthenticationHistory()
-                            {
-                                RecordID = reader.GetInt64("RecordID", 0),
-                                UserName = reader.GetString("UserName", null),
-                                IPAddress = reader.GetString("IpAddress", null),
-                                CreatedDate = reader.GetUTCDateTime("CreatedDate", DateTime.MinValue),
-                                IsAuthenticated = reader.GetBoolean("IsAuthenticated", false),
-                                SessionID = reader.GetInt64("SessionID", 0)
-                            });
-                        }
-                    }
+                    cmd.Parameters.AddWithValue("StartDate", DateTime.UtcNow.AddMinutes(-FailurePeriodMinutes));
+                    return (Int32)cmd.ExecuteScalar();
                 }
             }
-            return items;
         }
         private AuthenticationHistory GetSessionAuthenticationHistory(UserSession session)
         {
@@ -556,22 +533,12 @@ namespace Candor.Security.SqlProvider
         private cs.UserIdentity FailAuthenticateUser(string name, string ipAddress, ExecutionResults result)
         {
             result.AppendError(LoginCredentialsFailureMessage);
-            using (var cn = new SqlConnection(ConnectionStringAudit))
+            InsertUserHistory(new AuthenticationHistory()
             {
-                cn.Open();
-                using (var cmd = new SqlCommand())
-                {
-                    cmd.Connection = cn;
-                    cmd.CommandType = System.Data.CommandType.Text;
-                    cmd.CommandText = @"insert into Security.AuthenticationHistory 
- (UserName, IpAddress, IsAuthenticated)
- Values (@UserName, @IpAddress, @IsAuthenticated)";
-                    cmd.Parameters.AddWithValue("UserName", name);
-                    cmd.Parameters.AddWithValue("IpAddress", ipAddress);
-                    cmd.Parameters.AddWithValue("IsAuthenticated", false);
-                    cmd.ExecuteNonQuery();
-                }
-            }
+                UserName = name,
+                IPAddress = ipAddress,
+                IsAuthenticated = false
+            });
             return new cs.UserIdentity();
         }
         /// <summary>
@@ -634,18 +601,13 @@ namespace Candor.Security.SqlProvider
         /// <returns>A boolean indicating success (true) or failure (false).</returns>
         public override UserIdentity RegisterUser(User user, UserSessionDurationType duration, String ipAddress, ExecutionResults result)
         {
-            if (!ValidateName(user.Name, result) || !ValidatePassword(user.PasswordHash, result))
-                return new cs.UserIdentity();
-            if (!ValidateName(user.Name, result))
-                return new cs.UserIdentity();
-
             string password = user.PasswordHash;
-            if (!ValidatePassword(password, result))
+            if (!ValidateName(user.Name, result) || !ValidatePassword(password, result))
                 return new cs.UserIdentity();
 
             var existing = GetUserByName(user.Name);
             if (existing != null)
-            {
+            {   //seed user table with deleted users with names you don't want users to have
                 result.AppendError("The name you specified cannot be used.");
                 return new cs.UserIdentity();
             }

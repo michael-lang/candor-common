@@ -3,9 +3,13 @@ Purpose
 Candor is a collection of shared libraries I find useful for web applications,
 console apps, or windows services that I work on.  It may be useful in other scenarios as well.
 
-You will find much of this code mentioned on the blog at http://candordeveloper.com/
+You will find much of this code mentioned on the blog at http://candordeveloper.com/ . The
+article series is not yet published.  These libraries are only partially completed and not
+ready for production use.
 
 Milestone releases are available at http://NuGet.org/profiles/mlang
+
+
 
 Environment setup
 ------------

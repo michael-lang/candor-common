@@ -7,7 +7,7 @@
     [PasswordHashUpdatedDate] DATETIME         NULL,
     [PasswordUpdatedDate] DATETIME         NULL,
     [IsDeleted]           BIT              CONSTRAINT [DF_Security_User_IsDeleted] DEFAULT ((0)) NOT NULL,
-    [CreatedDate]         DATETIME         ,
+    [CreatedDate]         DATETIME         CONSTRAINT [DF_Security_User_CreatedDate] DEFAULT (getutcdate()) NOT NULL,
     [CreatedByUserID]     UNIQUEIDENTIFIER NULL,
     [UpdatedDate]         DATETIME         NULL,
     [UpdatedByUserID]     UNIQUEIDENTIFIER NULL,

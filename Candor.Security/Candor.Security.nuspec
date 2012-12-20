@@ -11,7 +11,7 @@
     <copyright>Copyright 2012</copyright>
     <tags>Candor Security Authentication Hash</tags>
     <dependencies>
-      <dependency id="Candor.Core" version="0.2.0.21218" />
+      <dependency id="Candor.Core" version="0.3.0.21219" />
     </dependencies>
   </metadata>
 </package>

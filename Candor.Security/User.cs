@@ -15,6 +15,5 @@ namespace Candor.Security
 		public Guid CreatedByUserID { get; set; }
 		public DateTime UpdatedDate { get; set; }
 		public Guid UpdatedByUserID { get; set; }
-		public UserSalt UserSalt { get; set; }
 	}
 }
