@@ -31,14 +31,7 @@
 	</PropertyGroup>
 	<Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets"/>
 	<PropertyGroup>
-		<!--
-		Remove this when complete - these should be passed in from 
-		the shell script.
-		
-		<MajorVersion>1</MajorVersion>
-		<MinorVersion>6</MinorVersion>
-		<Build>$([MSBuild]::Add(1, $([MSBuild]::Subtract($([System.DateTime]::Now.Year), $(VersionStartYear)))))$([System.DateTime]::Now.ToString("MMdd"))</Build>
-		-->
+		<!-- MajorVersion, MinorVersion, and Build are passed in from the command line -->
 		<VersionStartYear>2011</VersionStartYear>
 		<Revision>$([MSBuild]::Add(1, $([MSBuild]::Subtract($([System.DateTime]::Now.Year), $(VersionStartYear)))))$([System.DateTime]::Now.ToString("MMdd"))</Revision>
 		<Version>$(MajorVersion).$(MinorVersion).$(Build).$(Revision)</Version>

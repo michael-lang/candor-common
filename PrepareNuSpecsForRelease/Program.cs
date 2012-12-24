@@ -11,7 +11,7 @@ namespace PrepareSharedLibrariesForRelease
 {
 	class Program
 	{
-		private static string SolutionPath;// = Path.GetFullPath(@"..\..\..\CandorCore.sln");
+		private static string SolutionPath;
 		private static  string SolutionFolder; 
 		private static string ReleaseVersion;
 
@@ -35,7 +35,6 @@ namespace PrepareSharedLibrariesForRelease
 					solution.Projects.Where(project => project.RelativePath.EndsWith(".csproj"));
 
 				// First, wipe out any existing dependencies so we're starting from a clean slate
-
 				foreach (SolutionProject project in cSharpProjects)
 				{
 					Log.InfoFormat("Removing any dependencies from project {0}", project.ProjectName);
