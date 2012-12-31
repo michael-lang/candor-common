@@ -9,7 +9,7 @@ namespace Candor.Tasks
     /// <summary>
     /// A worker task that repeats on a specific interval.
     /// </summary>
-    public abstract class RepeatingWorkerRoleTask : WorkerRoleTask
+    public abstract class RepeatingWorkerRoleTask : WorkerRoleTask, IDisposable
     {
         private ILog LogProvider = LogManager.GetLogger(typeof(RepeatingWorkerRoleTask));
         private System.Threading.Timer mainTimer_ = null;
@@ -17,7 +17,7 @@ namespace Candor.Tasks
         private object iterationLock_ = new object();
         private DateTime lastIterationTimestamp_ = DateTime.MinValue;
         private bool iterationRunning_ = false;
-
+        
         public Boolean IsRunning { get; private set; }
         /// <summary>
         /// Gets or sets the amount of time to wait between completing rating
@@ -29,6 +29,10 @@ namespace Candor.Tasks
         {
             IsRunning = false;
             WaitingPeriodSeconds = 0.0;
+        }
+        ~RepeatingWorkerRoleTask()
+        {
+            Dispose(false);
         }
 
         /// <summary>
@@ -48,6 +52,8 @@ namespace Candor.Tasks
         /// </summary>
         public override void OnStart()
         {
+            if (this._disposed)
+                throw new ObjectDisposedException("WorkerRole");
             LogProvider.WarnFormat("'{0}' is starting.", this.Name);
 
             try
@@ -114,6 +120,8 @@ namespace Candor.Tasks
         /// </summary>
         public override void Ping()
         {
+            if (this._disposed)
+                throw new ObjectDisposedException("WorkerRole");
             if (iterationRunning_)
             {
                 LogProvider.DebugFormat("Running iteration for '{1}' now, previous completed was {0:yyyy-MM-dd HH:mm:ss}", lastIterationTimestamp_, this.Name);
@@ -129,6 +137,8 @@ namespace Candor.Tasks
 
         private void PauseTimer()
         {
+            if (this._disposed)
+                throw new ObjectDisposedException("WorkerRole");
             lock (timerLock_)
             {
                 mainTimer_.Change(Timeout.Infinite, Timeout.Infinite);
@@ -136,6 +146,8 @@ namespace Candor.Tasks
         }
         private void ResumeTimer()
         {
+            if (this._disposed)
+                throw new ObjectDisposedException("WorkerRole");
             lock (timerLock_)
             {
                 TimeSpan duration = TimeSpan.FromSeconds(Math.Max(1, WaitingPeriodSeconds));
@@ -165,6 +177,8 @@ namespace Candor.Tasks
         {
             try
             {
+                if (this._disposed)
+                    throw new ObjectDisposedException("WorkerRole");
                 lock (timerLock_)
                 {
                     TimeSpan duration = TimeSpan.FromSeconds(Math.Max(1, WaitingPeriodSeconds));
@@ -194,5 +208,27 @@ namespace Candor.Tasks
         /// This will complete before the waiting period until the next iteration begins.
         /// </remarks>
         public abstract void OnWaitingPeriodElapsed();
+
+        #region IDisposable Members
+        private bool _disposed = false;
+        /// <summary>
+        /// Disposed of resources used by this monitor.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        private void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                LogProvider.DebugFormat("Disposing worker task {0}.", this.Name);
+                ClearTimer();
+                LogProvider.DebugFormat("Disposed worker task {0}.", this.Name);
+            }
+            _disposed = true;
+        }
+        #endregion
     }
 }
