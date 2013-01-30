@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Candor.Tasks.ServiceProcess")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Tasks that can monitor windows services (System.ServiceProcess)")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyProduct("Candor.Tasks.ServiceProcess")]
 [assembly: AssemblyCulture("")]

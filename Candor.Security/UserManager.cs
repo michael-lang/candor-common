@@ -229,6 +229,16 @@ namespace Candor.Security
 		{
 			return Provider.UpdateUser(item, currentPassword, ipAddress, result);
 		}
+        /// <summary>
+        /// Generates a new password reset code for a user and stores that as the current code valid
+        /// for the next hour.
+        /// </summary>
+        /// <param name="name">The user name / email address.</param>
+        /// <returns>If the user exists, then a reset code string; otherwise null.</returns>
+        public static String GenerateUserResetCode(String name)
+        {
+            return Provider.GenerateUserResetCode(name);
+        }
 		#endregion
 	}
 }

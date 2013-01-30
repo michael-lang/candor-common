@@ -122,7 +122,7 @@ namespace Candor.Security
 			get
 			{
 				if (string.IsNullOrEmpty(_hashProviderName))
-					return HashManager.Provider;
+					return HashManager.DefaultProvider;
 				HashProvider hashProvider = HashManager.Providers[_hashProviderName];
 				if (hashProvider == null)
 					// ReSharper disable NotResolvedInText
@@ -306,5 +306,12 @@ namespace Candor.Security
 		/// warning and error messages to.</param>
 		/// <returns>A boolean indicating success (true) or failure (false).</returns>
 		public abstract bool UpdateUser( User item, String currentPassword, String ipAddress, ExecutionResults result );
+        /// <summary>
+        /// Generates a new password reset code for a user and stores that as the current code valid
+        /// for the next hour.
+        /// </summary>
+        /// <param name="name">The user name / email address.</param>
+        /// <returns>If the user exists, then a reset code string; otherwise null.</returns>
+        public abstract String GenerateUserResetCode(String name);
 	}
 }

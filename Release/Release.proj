@@ -20,6 +20,7 @@
 		<SecurityProj>$(SharedRoot)\Candor.Security\Candor.Security.csproj</SecurityProj>
 		<SecuritySqlProj>$(SharedRoot)\Candor.Security.SqlProvider\Candor.Security.SqlProvider.csproj</SecuritySqlProj>
 		<TasksServProc>$(SharedRoot)\Candor.Tasks.ServiceProcess\Candor.Tasks.ServiceProcess.csproj</TasksServProc>
+		<WebMvc>$(SharedRoot)\Candor.Web.Mvc\Candor.Web.Mvc.csproj</WebMvc>
 
 		<UnitTestsProj>$(SharedRoot)\Candor.UnitTests\Candor.UnitTests.csproj</UnitTestsProj>
 		
@@ -28,6 +29,7 @@
 			$(SecurityProj);
 			$(SecuritySqlProj);
 			$(TasksServProc);
+			$(WebMvc);
 			$(UnitTestsProj);
 		</AllProjects>
 	</PropertyGroup>
@@ -132,6 +134,8 @@
 		<Exec Command="&quot;$(NuGetExe)&quot; pack &quot;$(SecuritySqlProj)&quot; -o &quot;$(NuGetDropDirectory)&quot; -Build -p Configuration=Release -Symbols"
 					WorkingDirectory="$(NuGetDropDirectory)" />
 		<Exec Command="&quot;$(NuGetExe)&quot; pack &quot;$(TasksServProc)&quot; -o &quot;$(NuGetDropDirectory)&quot; -Build -p Configuration=Release -Symbols"
+					WorkingDirectory="$(NuGetDropDirectory)" />
+		<Exec Command="&quot;$(NuGetExe)&quot; pack &quot;$(WebMvc)&quot; -o &quot;$(NuGetDropDirectory)&quot; -Build -p Configuration=Release -Symbols"
 					WorkingDirectory="$(NuGetDropDirectory)" />
 	</Target>
 </Project>

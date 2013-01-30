@@ -7,11 +7,12 @@
     <owners>Nexul Software LLC, $author$</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>This code is open source and can be found at http://github.com/michael-lang/candor-common</releaseNotes>
-    <copyright>Copyright 2012</copyright>
+    <releaseNotes>This code is open source and can be found at http://github.com/michael-lang/candor-common.
+	In depth articles can be found at http://candordeveloper.com/</releaseNotes>
+    <copyright>Copyright 2013</copyright>
     <tags>Candor Security Authentication Hash</tags>
     <dependencies>
-      <dependency id="Candor.Core" version="0.5.0.21231" />
+      <dependency id="Candor.Core" version="0.6.0.30129" />
     </dependencies>
   </metadata>
 </package>

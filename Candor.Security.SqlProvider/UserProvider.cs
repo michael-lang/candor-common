@@ -233,7 +233,7 @@ namespace Candor.Security.SqlProvider
 
             //this should get a named hashProvider used to originally hash the password... 
             //  fallback to 'default' provider in legacy case when we didn't store the name.
-            HashProvider hasher = !string.IsNullOrEmpty(salt.HashName) ? HashManager.Providers[salt.HashName] : HashManager.Provider;
+            HashProvider hasher = !string.IsNullOrEmpty(salt.HashName) ? HashManager.Providers[salt.HashName] : HashManager.DefaultProvider;
             var passwordHash = hasher.Hash(salt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
             if (user.PasswordHash != passwordHash)
                 return FailAuthenticateUser(name, ipAddress, result);
@@ -707,6 +707,29 @@ namespace Candor.Security.SqlProvider
                 SaveUserSalt(salt);
             }
             return true;
+        }
+        /// <summary>
+        /// Generates a new password reset code for a user and stores that as the current code valid
+        /// for the next hour.
+        /// </summary>
+        /// <param name="name">The user name / email address.</param>
+        /// <returns>If the user exists, then a reset code string; otherwise null.</returns>
+        public override String GenerateUserResetCode(String name)
+        {
+            var user = GetUserByName(name);
+            if (user == null)
+                return null;
+
+            var salt = GetUserSalt(user.UserID);
+            if (!String.IsNullOrWhiteSpace(salt.ResetCode) && salt.ResetCodeExpiration > DateTime.UtcNow.AddMinutes(5))
+                return salt.ResetCode; //if submits form to request a code multiple times during window, then use the same code unless about to expire.
+
+            HashProvider hasher = !string.IsNullOrEmpty(salt.HashName) ? HashManager.Providers[salt.HashName] : HashManager.DefaultProvider;
+            salt.ResetCode = hasher.GetSalt(16);
+            salt.ResetCodeExpiration = DateTime.UtcNow.AddHours(1);
+            SaveUserSalt(salt);
+            
+            return salt.ResetCode;
         }
     }
 }

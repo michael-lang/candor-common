@@ -19,9 +19,9 @@ namespace Candor.Security.Cryptography
 			return BytesToHex(salt);
 		}
 		/// <summary>
-		/// Creates an unreversible hashed value consistently given the same input.
+		/// Creates a non-reversible hashed value consistently given the same input.
 		/// </summary>
-		/// <param name="salt">Another non-secret value paired with the secret to
+		/// <param name="salt">Another semi-secret value paired with the secret to
 		/// make it more difficult to dictionary attack a collection of hashed values.</param>
 		/// <param name="originalValue">The original value to keep secret.</param>
 		/// <param name="iterations">The iterations to hash the originalValue and salt.</param>

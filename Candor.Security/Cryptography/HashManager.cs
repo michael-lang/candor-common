@@ -13,7 +13,7 @@ namespace Candor.Security.Cryptography
 		/// <summary>
 		/// Gets the default provider instance.
 		/// </summary>
-		public static HashProvider Provider
+		public static HashProvider DefaultProvider
 		{
 			get { return Providers.ActiveProvider; }
 		}
@@ -44,39 +44,9 @@ namespace Candor.Security.Cryptography
                         _currentProviders.Add(provider);
             }
             if (_currentProviders.Count == 0)
-                return Provider; //use current obsolete one as fallback
+                return DefaultProvider; //use current obsolete one as fallback
             int index = new Random(DateTime.Now.Second).Next(0, _currentProviders.Count - 1);
             return _currentProviders[index];
         }
-
-		/// <summary>
-		/// Creates a true random salt with a default length of 256.
-		/// </summary>
-		/// <returns></returns>
-		public static String GetSalt()
-		{
-			return Provider.GetSalt();
-		}
-		/// <summary>
-		/// Creates a true random salt.
-		/// </summary>
-		/// <param name="length"></param>
-		/// <returns></returns>
-		public static String GetSalt(Int32 length)
-		{
-			return Provider.GetSalt(length);
-		}
-		/// <summary>
-		/// Creates an unreversible hashed value consistently given the same input.
-		/// </summary>
-		/// <param name="salt">Another non-secret value paired with the secret to
-		/// make it more difficult to dictionary attack a collection of hashed values.</param>
-		/// <param name="originalValue">The original value to keep secret.</param>
-		/// <param name="iterations">The iterations to hash the originalValue and salt.</param>
-		/// <returns>The hashed value.</returns>
-		public static String Hash(String salt, String originalValue, Int32 iterations)
-		{
-			return Provider.Hash(salt, originalValue, iterations);
-		}
 	}
 }

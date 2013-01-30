@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>Candor.Web.Mvc</id>
+    <version>$version$</version>
+    <authors>$author$</authors>
+    <owners>Nexul Software LLC, $author$</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>This code is open source and can be found at http://github.com/michael-lang/candor-common.
+	In depth articles can be found at http://candordeveloper.com/</releaseNotes>
+    <copyright>Copyright 2013</copyright>
+    <tags>Candor Mvc Checkbox DropDown EnhancedSelectListItem IsJsonRequest RenderPartialViewToString</tags>
+    <dependencies>
+      <dependency id="Candor.Core" version="0.6.0.30129" />
+    </dependencies>
+  </metadata>
+</package>
