@@ -13,8 +13,8 @@ Candor.Configuration
  * http://candordeveloper.com/2012/07/05/provider-model-layered-architecture/
 
 Candor.Security
- * http://candordeveloper.com/2012/12/19/securing-user-passwords/
- * usage documentation from an MVC web application is in progress.
+ * Backend code: http://candordeveloper.com/2012/12/19/securing-user-passwords/
+ * Use In MVC4: http://candordeveloper.com/2013/02/02/securing-user-passwords-with-candor-security/
 
 Candor.Tasks
  * http://candordeveloper.com/2012/12/31/automated-monitoring-for-windows-services/
@@ -24,7 +24,7 @@ Candor.Web.Mvc
  * http://candordeveloper.com/2012/07/19/asyncui-mvc-with-progressive-enhancement/
 
 Candor.Web.Mvc.Bootstrap (Mvc Template)
- * documentation in progress
+ * http://candordeveloper.com/2013/02/02/securing-user-passwords-with-candor-security/
  
 Environment setup
 ------------
