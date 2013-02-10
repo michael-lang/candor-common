@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Candor.Web.Mvc.Security</id>
+    <version>0.6.0.30129</version>
+    <authors>Michael Lang</authors>
+    <owners>Michael Lang</owners>
+    <projectUrl>https://github.com/michael-lang/candor-common</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An MVC AccountController with corresponding view models, and views.  When installed the added files will adopt your project's root namespace.</description>
+    <tags>candor mvc security</tags>
+    <dependencies>
+      <dependency id="Candor.Security" version="0.6.0.30129" />
+      <dependency id="Candor.Web.Mvc" version="0.6.0.30129" />
+    </dependencies>
+  </metadata>
+</package>

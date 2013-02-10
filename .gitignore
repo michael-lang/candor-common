@@ -6,6 +6,7 @@
 release.log
 /Release/testerrors.log
 /Release/testresults.xml
+/Candor.Web.Mvc.Bootstrap.Security/Content
 
 #################
 ## Eclipse
