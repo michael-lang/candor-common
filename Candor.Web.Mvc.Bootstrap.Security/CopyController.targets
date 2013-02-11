@@ -14,13 +14,22 @@
   Namespaces="&lt;Namespace Prefix='msb' Uri='http://schemas.microsoft.com/developer/msbuild/2003'/&gt;"
   XmlInputPath="$(ProjectPath)"
   Query="/msb:Project/msb:ItemGroup/msb:Compile[@Include='Controllers\$(ControllerBaseName)Controller.cs']/@Include">
-    <Output TaskParameter="Result" ItemName="Peeked" />
+    <Output TaskParameter="Result" ItemName="ControllerPeeked" />
  </XmlPeek>
  
  <!-- Copy the controller -->
  <Copy
- SourceFiles="@(Peeked->'$(ProjectDir)%(RelativeDir)%(Filename)%(Extension)')"
- DestinationFiles="@(Peeked->'$(TargetDir)%(RelativeDir)%(Filename)%(Extension)')"/>
+  SourceFiles="@(ControllerPeeked->'$(ProjectDir)%(RelativeDir)%(Filename)%(Extension)')"
+  DestinationFiles="@(ControllerPeeked->'$(TargetDir)%(RelativeDir)%(Filename)%(Extension).pp')">
+     <Output
+      TaskParameter="CopiedFiles"
+      ItemName="ControllerFilesToUpdate" />
+ </Copy>
+
+ <!-- Replace the namespace with the $rootnamespace$ project property -->
+ <FileUpdate Files="@(ControllerFilesToUpdate)"
+  Regex="$(RootNamespaceToReplace)"
+  ReplacementText="$rootnamespace$" />
 </Target>
 
 <Target Name="CopyModelFiles">
@@ -29,13 +38,22 @@
   Namespaces="&lt;Namespace Prefix='msb' Uri='http://schemas.microsoft.com/developer/msbuild/2003'/&gt;"
   XmlInputPath="$(ProjectPath)"
   Query="/msb:Project/msb:ItemGroup/msb:Compile[starts-with(@Include, 'Models\$(ControllerBaseName)\')]/@Include">
-    <Output TaskParameter="Result" ItemName="Peeked" />
+    <Output TaskParameter="Result" ItemName="ModelPeeked" />
  </XmlPeek>
  
  <!-- Copy the models -->
  <Copy
- SourceFiles="@(Peeked->'$(ProjectDir)%(RelativeDir)%(Filename)%(Extension)')"
- DestinationFiles="@(Peeked->'$(TargetDir)%(RelativeDir)%(Filename)%(Extension)')"/>
+ SourceFiles="@(ModelPeeked->'$(ProjectDir)%(RelativeDir)%(Filename)%(Extension)')"
+ DestinationFiles="@(ModelPeeked->'$(TargetDir)%(RelativeDir)%(Filename)%(Extension).pp')">
+     <Output
+      TaskParameter="CopiedFiles"
+      ItemName="ModelFilesToUpdate" />
+ </Copy>
+
+ <!-- Replace the namespace with the $rootnamespace$ project property -->
+ <FileUpdate Files="@(ModelFilesToUpdate)"
+  Regex="$(RootNamespaceToReplace)"
+  ReplacementText="$rootnamespace$" />
 </Target>
 
 <Target Name="CopyViewFiles">
@@ -44,13 +62,22 @@
   Namespaces="&lt;Namespace Prefix='msb' Uri='http://schemas.microsoft.com/developer/msbuild/2003'/&gt;"
   XmlInputPath="$(ProjectPath)"
   Query="/msb:Project/msb:ItemGroup/msb:Content[starts-with(@Include, 'Views\$(ControllerBaseName)\')]/@Include">
-    <Output TaskParameter="Result" ItemName="Peeked" />
+    <Output TaskParameter="Result" ItemName="ViewPeeked" />
  </XmlPeek>
  
  <!-- Copy the views -->
  <Copy
- SourceFiles="@(Peeked->'$(ProjectDir)%(RelativeDir)%(Filename)%(Extension)')"
- DestinationFiles="@(Peeked->'$(TargetDir)%(RelativeDir)%(Filename)%(Extension)')"/>
+ SourceFiles="@(ViewPeeked->'$(ProjectDir)%(RelativeDir)%(Filename)%(Extension)')"
+ DestinationFiles="@(ViewPeeked->'$(TargetDir)%(RelativeDir)%(Filename)%(Extension).pp')">
+     <Output
+      TaskParameter="CopiedFiles"
+      ItemName="ViewFilesToUpdate" />
+ </Copy>
+
+ <!-- Replace the namespace with the $rootnamespace$ project property -->
+ <FileUpdate Files="@(ViewFilesToUpdate)"
+  Regex="$(RootNamespaceToReplace)"
+  ReplacementText="$rootnamespace$" />
 </Target>
 
 <Target Name="LogParams">
@@ -59,5 +86,7 @@
  <Message Text="The ProjectPath is '$(ProjectPath)'"/>
  <Message Text="The TargetDir is '$(TargetDir)'"/>
 </Target>
+ 
+	<Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets"/>
  
 </Project>

@@ -11,6 +11,7 @@
  <TargetDir>Content\</TargetDir>
  <ControllerBaseName>Account</ControllerBaseName>
  <RootNamespaceToReplace>CandorMvcApplication</RootNamespaceToReplace>
+ <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\Build\OpenSource\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
 </PropertyGroup>
 
 <Import Project="CopyController.targets"/>
