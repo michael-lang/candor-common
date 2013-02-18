@@ -1,0 +1,7 @@
+<configuration>
+  <system.web>
+    <customErrors mode="On" defaultRedirect="Error">
+      <error statusCode="404" redirect="~/Error/NotFound" />
+    </customErrors>
+  </system.web>
+</configuration>
