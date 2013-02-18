@@ -12,6 +12,8 @@
     <dependencies>
       <dependency id="Candor.Security" version="0.6.0.30129" />
       <dependency id="Candor.Web.Mvc" version="0.6.0.30129" />
+      <dependency id="T4MVC" version="3.4.0" />
+      <dependency id="T4MVCExtensions" version="3.4.0" />
     </dependencies>
   </metadata>
 </package>
