@@ -1,0 +1,44 @@
+<configuration>
+  <configSections>
+    <sectionGroup name="Candor.Security">
+      <section name="UserManager" type="Candor.Configuration.Provider.ProviderConfigurationSection, Candor" />
+      <section name="SecurityContextManager" type="Candor.Configuration.Provider.ProviderConfigurationSection, Candor" />
+    </sectionGroup>
+    <sectionGroup name="Candor.Security.Cryptography">
+      <section name="HashManager" type="Candor.Configuration.Provider.ProviderConfigurationSection, Candor" />
+    </sectionGroup>
+  </configSections>
+  <Candor.Security>
+    <UserManager defaultProvider="sql">
+      <providers>
+        <add name="sql" type="Candor.Security.SqlProvider.UserProvider, Candor.Security.SqlProvider" connectionNameUser="DefaultConnection" connectionNameUserSalt="DefaultConnection" connectionNameAudit="DefaultConnection" />
+        <!--TODO: recommended: use a different connection name with different login access to each, preferably each to separate database. -->
+      </providers>
+    </UserManager>
+    <SecurityContextManager defaultProvider="Web">
+      <providers>
+        <add name="Web" type="Candor.Security.Web.WebSecurityContextProvider, Candor.Security" />
+      </providers>
+    </SecurityContextManager>
+  </Candor.Security>
+  <Candor.Security.Cryptography>
+    <HashManager defaultProvider="sha2">
+      <providers>
+        <add name="sha2" type="Candor.Security.Cryptography.SHA2HashProvider, Candor.Security" SaltModifier="" IsObsolete="false" />
+        <!--Optional: Add SaltModifier varied per database environment via config transform-->
+      </providers>
+    </HashManager>
+  </Candor.Security.Cryptography>
+  <system.web>
+    <authentication mode="None" />
+    <roleManager enabled="true" defaultProvider="CandorAuthorizationRoleProvider">
+      <providers>
+        <clear />
+        <add name="CandorAuthorizationRoleProvider" type="Candor.Security.CandorAuthorizationRoleProvider, Candor.Security" useAuthorizationManager="true" />
+      </providers>
+    </roleManager>
+    <httpModules>
+      <add name="CandorAuthenticationModule" type="Candor.Security.Web.CandorAuthenticationModule, Candor.Security" />
+    </httpModules>
+  </system.web>
+</configuration>
