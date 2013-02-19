@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project
+ ToolsVersion="4.0"
+ DefaultTargets="CopyControllerFile;CopyExtraFiles"
+ xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+<PropertyGroup>
+ <ProjectDir>..\Candor.Web.Mvc.Bootstrap\</ProjectDir>
+ <ProjectName>Candor.Web.Mvc.Bootstrap.csproj</ProjectName>
+ <ProjectPath>$(ProjectDir)$(ProjectName)</ProjectPath>
+ <TargetDir>Content\</TargetDir>
+ <ControllerBaseName>Error</ControllerBaseName>
+ <RootNamespaceToReplace>CandorMvcApplication</RootNamespaceToReplace>
+ <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\Build\OpenSource\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
+</PropertyGroup>
+
+<Target Name="CopyExtraFiles"> 
+ <!-- Get the extra files -->
+ <XmlPeek
+  Namespaces="&lt;Namespace Prefix='msb' Uri='http://schemas.microsoft.com/developer/msbuild/2003'/&gt;"
+  XmlInputPath="$(ProjectPath)"
+  Query="/msb:Project/msb:ItemGroup/msb:Compile[@Include='App_Start\AppStart_RegisterErrorRouteAndFilter.cs']/@Include|/msb:Project/msb:ItemGroup/msb:Content[@Include='Views\Shared\_ErrorLayout.cshtml']/@Include|/msb:Project/msb:ItemGroup/msb:Content[@Include='Views\Shared\Error.cshtml']/@Include|/msb:Project/msb:ItemGroup/msb:Content[@Include='Views\Shared\NotFound.cshtml']/@Include">
+    <Output TaskParameter="Result" ItemName="ExtraFilesPeeked" />
+ </XmlPeek>
+ 
+ <!-- Copy the extra files -->
+ <Copy
+  SourceFiles="@(ExtraFilesPeeked->'$(ProjectDir)%(RelativeDir)%(Filename)%(Extension)')"
+  DestinationFiles="@(ExtraFilesPeeked->'$(TargetDir)%(RelativeDir)%(Filename)%(Extension).pp')">
+     <Output
+      TaskParameter="CopiedFiles"
+      ItemName="ExtraFilesToUpdate" />
+ </Copy>
+
+ <!-- Replace the namespace with the $rootnamespace$ project property -->
+ <FileUpdate Files="@(ExtraFilesToUpdate)"
+  Regex="$(RootNamespaceToReplace)"
+  ReplacementText="$rootnamespace$" />
+</Target>
+
+<Import Project="..\Build\CopyController.targets"/>
+
+</Project>
+
+<!-- 
+
+TODO: need to copy '$(ProjectDir)App_Start\AppStart_RegisterErrorRouteAndFilter.cs'  - set pp extension and replace root namespace
+
+TODO: need to copy Views\Shared\_ErrorLayout.cshtml, Error.cshtml, NotFound.cshtml
+
+-->

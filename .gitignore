@@ -1,5 +1,5 @@
 #################
-## Solution Specific
+## Solution Specific generated files
 #################
 /NuGetRelease
 /Utilities
@@ -9,6 +9,9 @@ release.log
 /Candor.Web.Mvc.Bootstrap.Security/Content/Controllers/*.*
 /Candor.Web.Mvc.Bootstrap.Security/Content/Models/Account/*.*
 /Candor.Web.Mvc.Bootstrap.Security/Content/Views/Account/*.*
+/Candor.Web.Mvc.Bootstrap.ErrorHandler/Content/Controllers/*.*
+/Candor.Web.Mvc.Bootstrap.ErrorHandler/Content/Views/Shared/*.*
+/Candor.Web.Mvc.Bootstrap.ErrorHandler/Content/App_Start/*.*
 
 #################
 ## Eclipse

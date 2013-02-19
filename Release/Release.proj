@@ -21,17 +21,27 @@
 		<SecuritySqlProj>$(SharedRoot)\Candor.Security.SqlProvider\Candor.Security.SqlProvider.csproj</SecuritySqlProj>
 		<TasksServProc>$(SharedRoot)\Candor.Tasks.ServiceProcess\Candor.Tasks.ServiceProcess.csproj</TasksServProc>
 		<WebMvc>$(SharedRoot)\Candor.Web.Mvc\Candor.Web.Mvc.csproj</WebMvc>
+		
+		<BootstrapSecurity>$(SharedRoot)\Candor.Web.Mvc.Bootstrap.Security\Candor.Web.Mvc.Security.proj</BootstrapSecurity>
+		<BootstrapSecurityNuSpec>$(SharedRoot)\Candor.Web.Mvc.Bootstrap.Security\Candor.Web.Mvc.Security.nuspec</BootstrapSecurityNuSpec>
+		
+		<BootstrapErrorHandler>$(SharedRoot)\Candor.Web.Mvc.Bootstrap.ErrorHandler\Candor.Web.Mvc.ErrorHandler.proj</BootstrapErrorHandler>		
+		<BootstrapErrorHandlerNuSpec>$(SharedRoot)\Candor.Web.Mvc.Bootstrap.ErrorHandler\Candor.Web.Mvc.ErrorHandler.nuspec</BootstrapErrorHandlerNuSpec>
 
 		<UnitTestsProj>$(SharedRoot)\Candor.UnitTests\Candor.UnitTests.csproj</UnitTestsProj>
 		
-		<AllProjects>
+		<BuildProjects>
 			$(CoreProj);
 			$(SecurityProj);
 			$(SecuritySqlProj);
 			$(TasksServProc);
 			$(WebMvc);
 			$(UnitTestsProj);
-		</AllProjects>
+		</BuildProjects>
+		<NonBuildProjects>
+			$(BootstrapSecurity);
+			$(BootstrapErrorHandler);
+		</NonBuildProjects>
 	</PropertyGroup>
 	<Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets"/>
 	<PropertyGroup>
@@ -79,7 +89,7 @@
 	</Target>
 	
 	<Target Name="Build">
-		<MSBuild Projects="$(AllProjects)"
+		<MSBuild Projects="$(BuildProjects)"
 				 Targets="Build"
 				 Properties="EnableCodeAnalysis=true;OutDir=$(BuildDropDirectory)\"
 				 >
@@ -88,6 +98,7 @@
 		</MSBuild>
 		<Copy SourceFiles="@(BuildOutput)"
 			  DestinationFolder="$(BuildDropDirectory)" />
+		<MSBuild Projects="$(NonBuildProjects)" />
 	</Target>
 	
 	<Target Name="RunTests">
@@ -136,6 +147,11 @@
 		<Exec Command="&quot;$(NuGetExe)&quot; pack &quot;$(TasksServProc)&quot; -o &quot;$(NuGetDropDirectory)&quot; -Build -p Configuration=Release -Symbols"
 					WorkingDirectory="$(NuGetDropDirectory)" />
 		<Exec Command="&quot;$(NuGetExe)&quot; pack &quot;$(WebMvc)&quot; -o &quot;$(NuGetDropDirectory)&quot; -Build -p Configuration=Release -Symbols"
+					WorkingDirectory="$(NuGetDropDirectory)" />
+					
+		<Exec Command="&quot;$(NuGetExe)&quot; pack &quot;$(BootstrapSecurityNuSpec)&quot; -o &quot;$(NuGetDropDirectory)&quot;"
+					WorkingDirectory="$(NuGetDropDirectory)" />
+		<Exec Command="&quot;$(NuGetExe)&quot; pack &quot;$(BootstrapErrorHandlerNuSpec)&quot; -o &quot;$(NuGetDropDirectory)&quot;"
 					WorkingDirectory="$(NuGetDropDirectory)" />
 	</Target>
 </Project>
