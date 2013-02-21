@@ -42,6 +42,10 @@
 			$(BootstrapSecurity);
 			$(BootstrapErrorHandler);
 		</NonBuildProjects>
+		<TransformNuSpecs>
+			$(BootstrapSecurityNuSpec);
+			$(BootstrapErrorHandlerNuSpec);
+		</TransformNuSpecs>
 	</PropertyGroup>
 	<Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets"/>
 	<PropertyGroup>
@@ -54,6 +58,14 @@
 		<RegexTransform Include="$(SharedRoot)\SolutionInfo.cs">
 			<Find>\d\.\d+\.\d+\.\d+</Find>
 			<ReplaceWith>$(Version)</ReplaceWith>
+		</RegexTransform>
+		<RegexTransform Include="$(TransformNuSpecs)">
+			<Find>(%3Cversion)%3E\s*(\d\.\d+\.\d+\.\d+)\s*(%3C%2Fversion%3E)</Find>
+			<ReplaceWith>$1%3E$(Version)$3</ReplaceWith>
+		</RegexTransform>
+		<RegexTransform Include="$(TransformNuSpecs)">
+			<Find>(dependency\s*id="Candor[^"]+"*\s*version=)"(\d\.\d+\.\d+\.\d+)"\s*(\s*/%3E)</Find>
+			<ReplaceWith>$1"$(Version)"$3</ReplaceWith>
 		</RegexTransform>
 	</ItemGroup>
 	<Target Name="Go"
