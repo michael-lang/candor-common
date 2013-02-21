@@ -4,10 +4,15 @@
     <id>Candor.Web.Mvc.Security</id>
     <version>0.6.0.30129</version>
     <authors>Michael Lang</authors>
-    <owners>Michael Lang</owners>
+    <owners>Nexul Software LLC, Michael Lang</owners>
+    <copyright>Copyright 2013 Michael Lang</copyright>
     <projectUrl>https://github.com/michael-lang/candor-common</projectUrl>
+    <licenseUrl>https://github.com/michael-lang/candor-common/blob/master/MIT-LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An MVC AccountController with corresponding view models, and views.  When installed the added files will adopt your project's root namespace.</description>
+    <releaseNotes>This code is open source and can be found at http://github.com/michael-lang/candor-common.
+	In depth articles can be found at http://candordeveloper.com/
+	</releaseNotes>
     <tags>candor mvc security</tags>
     <dependencies>
       <dependency id="Candor.Security" version="0.6.0.30129" />
