@@ -7,6 +7,9 @@ You will find much of this code mentioned on the blog at http://candordeveloper.
 
 Articles by namespace
 ------------
+Solution
+ * http://candordeveloper.com/2012/12/12/nuget-package-build-a-solution-of-projects/
+ 
 Candor.Configuration
  * http://candordeveloper.com/2012/06/24/provider-model-enhanced/
  * http://candordeveloper.com/2012/06/26/provider-model-is-a-solid-pattern/
@@ -24,7 +27,9 @@ Candor.Web.Mvc
  * http://candordeveloper.com/2012/07/19/asyncui-mvc-with-progressive-enhancement/
 
 Candor.Web.Mvc.Bootstrap (Mvc Template)
- * http://candordeveloper.com/2013/02/02/securing-user-passwords-with-candor-security/
+ * http://candordeveloper.com/2013/02/08/candor-security-mvc4-bootstrap/
+ * http://candordeveloper.com/2013/02/11/nuget-package-mvc-controller-from-live-application/
+ * http://candordeveloper.com/2013/02/20/msbuild-regex-transform-versions/
  
 Environment setup
 ------------
