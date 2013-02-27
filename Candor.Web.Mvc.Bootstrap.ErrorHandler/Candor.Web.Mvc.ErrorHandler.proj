@@ -41,11 +41,3 @@
 <Import Project="..\Build\CopyController.targets"/>
 
 </Project>
-
-<!-- 
-
-TODO: need to copy '$(ProjectDir)App_Start\AppStart_RegisterErrorRouteAndFilter.cs'  - set pp extension and replace root namespace
-
-TODO: need to copy Views\Shared\_ErrorLayout.cshtml, Error.cshtml, NotFound.cshtml
-
--->
