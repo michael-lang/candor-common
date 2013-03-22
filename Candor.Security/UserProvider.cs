@@ -19,6 +19,14 @@ namespace Candor.Security
 		private string _nameRegexExpression;
 		private Regex _passwordRegex;
 		private string _passwordRegexExpression;
+
+	    protected UserProvider(){}
+
+	    protected UserProvider(string name)
+        {
+            InitializeInternal(name, new NameValueCollection());
+        }
+
 		/// <summary>
 		/// A regular expression to validate names.
 		/// </summary>
@@ -100,7 +108,7 @@ namespace Candor.Security
         /// Gets the maximum hash group to be set when users authenticate by password or register a new account.
         /// </summary>
         /// <remarks>This can change as often as desired without affecting storage of existing user password hashes.</remarks>
-        public Int32 HasGroupMaximum { get; set; }
+        public Int32 HashGroupMaximum { get; set; }
 		/// <summary>
 		/// Gets or sets the amount of time a remembered session (on a private computer) should be.
 		/// </summary>
@@ -164,6 +172,10 @@ namespace Candor.Security
 		/// <param name="configValue">Provider specific attributes.</param>
 		public override void Initialize(string name, NameValueCollection configValue)
 		{
+		    InitializeInternal(name, configValue);
+		}
+		private void InitializeInternal(string name, NameValueCollection configValue)
+		{
 			base.Initialize(name, configValue);
 			NameRegexExpression = configValue.GetStringValue("nameRegexExpression", "^([a-zA-Z0-9\\-_\\s])*$");
 			EmailRegexExpression = configValue.GetStringValue("emailRegexExpression",
@@ -173,7 +185,7 @@ namespace Candor.Security
                                                               "The password must be between 6 and 32 characters long; and can only contain letters, numbers, and these special symbols(@, *, #)");
             BaseHashIterations = configValue.GetInt32Value("baseHashIterations", 5000);
             HashGroupMinimum = configValue.GetInt32Value("hashGroupMinimum", 1);
-            HasGroupMaximum = configValue.GetInt32Value("hasGroupMaximum", 1000);
+            HashGroupMaximum = configValue.GetInt32Value("hashGroupMaximum", 1000);
 
 			ExtendedSessionDuration = configValue.GetInt32Value("extendedSessionDuration", 20160); //20160=2weeks
 			PublicSessionDuration = configValue.GetInt32Value("publicSessionDuration", 20); //20 minutes default.
@@ -244,7 +256,7 @@ namespace Candor.Security
         /// <summary>
         /// Gets a user by identity.
         /// </summary>
-        /// <param name="name">The unique identity.</param>
+        /// <param name="userID">The unique identity.</param>
         /// <returns></returns>
         public abstract User GetUserByID(Guid userID);
         /// <summary>

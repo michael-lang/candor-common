@@ -68,7 +68,4 @@
     <Build Include="Security\Tables\UserSalt.sql" />
     <Build Include="Security\Tables\UserSession.sql" />
   </ItemGroup>
-  <ItemGroup>
-    <RefactorLog Include="Candor.Security.Database.refactorlog" />
-  </ItemGroup>
 </Project>

@@ -33,6 +33,13 @@ namespace Candor.Security.SqlProvider
         private string connectionNameUser_ = string.Empty;
         private string connectionNameUserSalt_ = string.Empty;
         private string connectionNameAudit_ = string.Empty;
+
+        public UserProvider() { }
+
+        public UserProvider(string name) :base(name)
+        {
+        }
+
         /// <summary>
         /// Gets the connection name to the SQL database.
         /// </summary>
@@ -108,6 +115,10 @@ namespace Candor.Security.SqlProvider
         /// <param name="config">The configuration values.</param>
         public override void Initialize(string name, NameValueCollection config)
         {
+            InitializeInternal(name, config);
+        }
+        private void InitializeInternal(string name, NameValueCollection config)
+        {
             base.Initialize(name, config);
             ConnectionName = config.GetStringValue("connectionName", null);
             ConnectionNameUser = config.GetStringValue("connectionNameUser", null);
@@ -117,7 +128,7 @@ namespace Candor.Security.SqlProvider
         /// <summary>
         /// Gets a user by identity.
         /// </summary>
-        /// <param name="name">The unique identity.</param>
+        /// <param name="userID">The unique identity.</param>
         /// <returns></returns>
         public override User GetUserByID(Guid userID)
         {
@@ -258,7 +269,7 @@ namespace Candor.Security.SqlProvider
                     //update hashes on regular basis, keeps the iterations in latest range for current users, and with a 'current' hash provider.
                     hasher = HashManager.SelectProvider();
                     salt.PasswordSalt = hasher.GetSalt();
-                    salt.HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HasGroupMaximum);
+                    salt.HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HashGroupMaximum);
                     salt.HashName = hasher.Name;
                     user.PasswordHash = hasher.Hash(salt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
                     user.PasswordHashUpdatedDate = DateTime.UtcNow;
@@ -619,7 +630,7 @@ namespace Candor.Security.SqlProvider
             {
                 PasswordSalt = hasher.GetSalt(),
                 UserID = user.UserID,
-                HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HasGroupMaximum),
+                HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HashGroupMaximum),
                 HashName = hasher.Name
             };
             user.PasswordHash = hasher.Hash(salt.PasswordSalt, password,
@@ -694,7 +705,7 @@ namespace Candor.Security.SqlProvider
                 //update hashes on regular basis, keeps the iterations in latest range for current users, and with a 'current' hash provider.
                 HashProvider hasher = HashManager.SelectProvider();
                 salt.PasswordSalt = hasher.GetSalt();
-                salt.HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HasGroupMaximum);
+                salt.HashGroup = new Random(DateTime.Now.Second).Next(HashGroupMinimum, HashGroupMaximum);
                 salt.HashName = hasher.Name;
                 user.PasswordHash = hasher.Hash(salt.PasswordSalt, password, salt.HashGroup + BaseHashIterations);
                 user.PasswordUpdatedDate = DateTime.UtcNow;

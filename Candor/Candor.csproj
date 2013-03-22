@@ -54,7 +54,9 @@
     </Compile>
     <Compile Include="Configuration\Provider\ProviderCollection.cs" />
     <Compile Include="Configuration\Provider\ProviderConfigurationSection.cs" />
+    <Compile Include="Configuration\Provider\ProviderResolver.cs" />
     <Compile Include="Configuration\Provider\ProviderHelperExtensions.cs" />
+    <Compile Include="Configuration\Provider\ProviderResolverDictionary.cs" />
     <Compile Include="Data\DataRecordExtensions.cs" />
     <Compile Include="ExecutionResults.cs" />
     <Compile Include="ExecutionStep.cs" />

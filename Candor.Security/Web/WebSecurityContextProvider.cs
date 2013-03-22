@@ -8,7 +8,15 @@ namespace Candor.Security.Web
 	/// </summary>
 	public class WebSecurityContextProvider : SecurityContextProvider
 	{
-		/// <summary>
+	    public WebSecurityContextProvider()
+	    {
+	    }
+
+	    public WebSecurityContextProvider(string name) : base(name)
+	    {
+	    }
+
+	    /// <summary>
 		/// Gets or sets the current user.
 		/// </summary>
 		public override UserPrincipal CurrentUser

@@ -128,6 +128,14 @@ namespace CandorMvcApplication.Controllers
         {
             public readonly string model = "model";
         }
+        static readonly ActionParamsClass_ForgotPassword s_params_ForgotPassword = new ActionParamsClass_ForgotPassword();
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public ActionParamsClass_ForgotPassword ForgotPasswordParams { get { return s_params_ForgotPassword; } }
+        [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
+        public class ActionParamsClass_ForgotPassword
+        {
+            public readonly string model = "model";
+        }
         static readonly ViewsClass s_views = new ViewsClass();
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public ViewsClass Views { get { return s_views; } }
@@ -251,6 +259,16 @@ namespace CandorMvcApplication.Controllers
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ForgotPassword);
             ForgotPasswordOverride(callInfo);
+            return callInfo;
+        }
+
+        partial void ForgotPasswordOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, CandorMvcApplication.Models.Account.ForgotPasswordViewModel model);
+
+        public override System.Web.Mvc.ActionResult ForgotPassword(CandorMvcApplication.Models.Account.ForgotPasswordViewModel model)
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.ForgotPassword);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "model", model);
+            ForgotPasswordOverride(callInfo, model);
             return callInfo;
         }
 
