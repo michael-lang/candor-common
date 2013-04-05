@@ -9,6 +9,7 @@ namespace Candor.Configuration.Provider
     public class ProviderResolverTests
     {
         [Test]
+        //[Ignore("Release script thinks this test fails, but it works run in Visual Studio / Resharper")]
         public void TestCodeConfig()
         {
             ProviderResolver<SecurityContextProvider>.Configure()
@@ -18,6 +19,7 @@ namespace Candor.Configuration.Provider
         }
 
         [Test]
+        //[Ignore("Release script thinks this test fails, but it works run in Visual Studio / Resharper")]
         public void TestCodeConfig2()
         {
             ProviderResolver<UserProvider>.Configure()

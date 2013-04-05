@@ -14,8 +14,8 @@
 	In depth articles can be found at http://candordeveloper.com/</releaseNotes>
     <tags>Candor Security SqlClient</tags>
     <dependencies>
-      <dependency id="Candor.Security" version="0.6.1.30221" />
-      <dependency id="Candor.Core" version="0.6.1.30221" />
+      <dependency id="Candor.Security" version="0.7.0.30405" />
+      <dependency id="Candor.Core" version="0.7.0.30405" />
     </dependencies>
   </metadata>
 </package>
