@@ -9,7 +9,7 @@ namespace Candor.Configuration.Provider
         {
             this.Initialize("mock", new NameValueCollection());
         }
-        public override Security.User GetUserByID(Guid userID)
+        public override Security.User GetUserByID(Guid userId)
         {
             throw new NotImplementedException();
         }
@@ -19,27 +19,42 @@ namespace Candor.Configuration.Provider
             throw new NotImplementedException();
         }
 
-        public override Security.UserIdentity AuthenticateUser(string name, string password, Security.UserSessionDurationType duration, string ipAddress, ExecutionResults result)
+        protected override void InsertUserHistory(Security.AuthenticationHistory history)
         {
             throw new NotImplementedException();
         }
 
-        public override Security.UserIdentity AuthenticateUser(string token, Security.UserSessionDurationType duration, string ipAddress, ExecutionResults result)
+        protected override void SaveUserSession(Security.UserSession session)
         {
             throw new NotImplementedException();
         }
 
-        public override Security.UserIdentity RegisterUser(Security.User user, Security.UserSessionDurationType duration, string ipAddress, ExecutionResults result)
+        protected override void SaveUser(Security.User user)
         {
             throw new NotImplementedException();
         }
 
-        public override bool UpdateUser(Security.User item, string currentPassword, string ipAddress, ExecutionResults result)
+        protected override void SaveUserSalt(Security.UserSalt salt)
         {
             throw new NotImplementedException();
         }
 
-        public override string GenerateUserResetCode(string name)
+        protected override Security.UserSalt GetUserSalt(Guid userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Security.UserSession GetUserSession(Guid renewalToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override int GetRecentFailedUserNameAuthenticationCount(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Security.AuthenticationHistory GetSessionAuthenticationHistory(Security.UserSession session)
         {
             throw new NotImplementedException();
         }
