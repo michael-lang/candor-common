@@ -58,9 +58,15 @@
     <Compile Include="Configuration\Provider\ProviderHelperExtensions.cs" />
     <Compile Include="Configuration\Provider\ProviderResolverDictionary.cs" />
     <Compile Include="Data\DataRecordExtensions.cs" />
+    <Compile Include="Data\IOptimisticSyncStore.cs" />
+    <Compile Include="Data\ISequenceIdOptimisticSyncStore.cs" />
+    <Compile Include="Data\SequenceIdGenerator.cs" />
+    <Compile Include="Data\SequenceIdSchema.cs" />
+    <Compile Include="Data\SequenceIdStore.cs" />
     <Compile Include="ExecutionResults.cs" />
     <Compile Include="ExecutionStep.cs" />
     <Compile Include="ExecutionStepType.cs" />
+    <Compile Include="LexicalCharacterSet.cs" />
     <Compile Include="PagingAndSortOptions.cs" />
     <Compile Include="PagingOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

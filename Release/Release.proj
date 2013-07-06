@@ -69,7 +69,7 @@
 		</RegexTransform>
 	</ItemGroup>
 	<Target Name="Go"
-			DependsOnTargets="CheckFxCop; UpdateVersion; EnsureNuSpecPreparationToolBuilt; PrepareNuSpecs; CreateDropDirectories; Build; ReportFxCopResults; RunTests;  BuildPackages">
+			DependsOnTargets="CheckFxCop; UpdateVersion; EnsureNuSpecPreparationToolBuilt; PrepareNuSpecs; CreateDropDirectories; Build; ReportFxCopResults;  BuildPackages; RunTests">
 	</Target>
 	
 	<Target Name="CheckFxCop">

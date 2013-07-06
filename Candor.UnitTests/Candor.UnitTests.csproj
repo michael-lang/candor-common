@@ -50,10 +50,14 @@
     </Compile>
     <Compile Include="Configuration\Provider\MockUserProvider.cs" />
     <Compile Include="Configuration\Provider\ProviderResolverTests.cs" />
+    <Compile Include="LexicalIncrementAsciiAlphaNumericTests.cs" />
+    <Compile Include="LexicalIncrementNumericTests.cs" />
+    <Compile Include="LexicalIncrementAsciiAlphaTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\MockAccount.cs" />
     <Compile Include="Reflection\AccountType.cs" />
     <Compile Include="Reflection\ReflectionExtensionsTests.cs" />
+    <Compile Include="LexicalIncrementAsciiAutoTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Candor.Security.SqlProvider\Candor.Security.SqlProvider.csproj">

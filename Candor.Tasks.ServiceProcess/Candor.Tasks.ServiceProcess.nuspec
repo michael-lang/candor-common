@@ -14,7 +14,7 @@
 	In depth articles can be found at http://candordeveloper.com/</releaseNotes>
     <tags>Candor ServiceProcess monitoring</tags>
     <dependencies>
-      <dependency id="Candor.Core" version="0.7.0.30405" />
+      <dependency id="Candor.Core" version="0.9.0.30702" />
     </dependencies>
   </metadata>
 </package>

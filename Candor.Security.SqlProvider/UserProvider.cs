@@ -420,6 +420,7 @@ namespace Candor.Security.SqlProvider
  where UserName = @UserName
  and CreatedDate > @StartDate
  order by CreatedDate desc";
+ #warning This should only check for attempts where IsAuthenticated == 0
                     cmd.Parameters.AddWithValue("UserName", name);
                     cmd.Parameters.AddWithValue("StartDate", DateTime.UtcNow.AddMinutes(-FailurePeriodMinutes));
                     return (Int32)cmd.ExecuteScalar();
