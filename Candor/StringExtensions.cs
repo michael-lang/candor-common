@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -30,16 +29,6 @@ namespace Candor
             return newText.ToString();
         }
 
-        //TODO: Create a separate character set class holding the characters, # of characters, and # of case insensitive unique characters.
-        //  - for incrementing by large numbers, and do base X math, and with or without case sensitivity
-        private static readonly char[] NumericCharacterSet = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-        private static readonly char[] AsciiAlphaLowerCharacterSet = new[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-        private static readonly char[] AsciiAlphaUpperCharacterSet = new[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-        private static readonly char[] AsciiAlphaCharacterSet = new[] { 'A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g', 'H', 'h', 'I', 'i', 'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p', 'Q', 'q', 'R', 'r', 'S', 's', 'T', 't', 'U', 'u', 'V', 'v', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z' };
-        private static readonly char[] AsciiAlphaNumericLowerCharacterSet = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-        private static readonly char[] AsciiAlphaNumericUpperCharacterSet = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-        private static readonly char[] AsciiAlphaNumericCharacterSet = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'a', 'B', 'b', 'C', 'c', 'D', 'd', 'E', 'e', 'F', 'f', 'G', 'g', 'H', 'h', 'I', 'i', 'J', 'j', 'K', 'k', 'L', 'l', 'M', 'm', 'N', 'n', 'O', 'o', 'P', 'p', 'Q', 'q', 'R', 'r', 'S', 's', 'T', 't', 'U', 'u', 'V', 'v', 'W', 'w', 'X', 'x', 'Y', 'y', 'Z', 'z' };
-
         public static String LexicalAdd(this String source, LexicalCharacterSet charSet, Boolean ignoreCase, Int32 count)
         {
             //TODO: improve performance...
@@ -63,102 +52,26 @@ namespace Candor
         /// </remarks>
         public static String LexicalIncrement(this String source, LexicalCharacterSet charSet, Boolean ignoreCase)
         {
-            var setCharsHasCase = false;
             var chars = source.ToCharArray().ToList();
-            List<char> setChars;
-            if (charSet == LexicalCharacterSet.Numeric)
-            {
-                if (chars.All(value => NumericCharacterSet.Contains(value) || char.IsWhiteSpace(value)))
-                    setChars = NumericCharacterSet.ToList();
-                else
-                    throw new ArgumentException(
-                        "The source string contains characters not available in the specified lexical increment character set.");
-            }
-            else if (charSet == LexicalCharacterSet.AsciiAlpha)
-            {
-                if (ignoreCase && chars.All(value => char.IsLower(value) || char.IsWhiteSpace(value)))
-                    setChars = AsciiAlphaLowerCharacterSet.ToList();
-                else if (ignoreCase && chars.All(value => char.IsUpper(value) || char.IsWhiteSpace(value)))
-                    setChars = AsciiAlphaUpperCharacterSet.ToList();
-                else if (chars.All(value => AsciiAlphaCharacterSet.Contains(value) || char.IsWhiteSpace(value)))
-                {
-                    setChars = AsciiAlphaCharacterSet.ToList();
-                    setCharsHasCase = true;
-                }
-                else
-                    throw new ArgumentException(
-                        "The source string contains characters not available in the specified lexical increment character set.");
-            }
-            else if (charSet == LexicalCharacterSet.AsciiAlphaNumeric)
-            {
-                if (ignoreCase &&
-                    chars.All(value => char.IsLower(value) || char.IsDigit(value) || char.IsWhiteSpace(value)))
-                    setChars = AsciiAlphaNumericLowerCharacterSet.ToList();
-                else if (ignoreCase &&
-                         chars.All(value => char.IsUpper(value) || char.IsNumber(value) || char.IsWhiteSpace(value)))
-                    setChars = AsciiAlphaNumericUpperCharacterSet.ToList();
-                else if (chars.All(value => AsciiAlphaNumericCharacterSet.Contains(value) || char.IsWhiteSpace(value)))
-                {
-                    setChars = AsciiAlphaNumericCharacterSet.ToList();
-                    setCharsHasCase = true;
-                }
-                else
-                    throw new ArgumentException(
-                        "The source string contains characters not available in the specified lexical increment character set.");
-            }
-            else //if (charSet == CharacterSet.AsciiAuto)
-            {
-                if (chars.All(value => NumericCharacterSet.Contains(value) || char.IsWhiteSpace(value)))
-                    setChars = NumericCharacterSet.ToList();
-                else if (ignoreCase &&
-                         chars.All(value => AsciiAlphaLowerCharacterSet.Contains(value) || char.IsWhiteSpace(value)))
-                    setChars = AsciiAlphaLowerCharacterSet.ToList();
-                else if (ignoreCase &&
-                         chars.All(value => AsciiAlphaUpperCharacterSet.Contains(value) || char.IsWhiteSpace(value)))
-                    setChars = AsciiAlphaUpperCharacterSet.ToList();
-                else if (chars.All(value => AsciiAlphaCharacterSet.Contains(value) || char.IsWhiteSpace(value)))
-                {
-                    setChars = AsciiAlphaCharacterSet.ToList();
-                    setCharsHasCase = true;
-                }
-                else if (ignoreCase &&
-                         chars.All(
-                             value =>
-                             AsciiAlphaNumericLowerCharacterSet.Contains(value) || char.IsWhiteSpace(value)))
-                    setChars = AsciiAlphaNumericLowerCharacterSet.ToList();
-                else if (ignoreCase &&
-                         chars.All(
-                             value =>
-                             AsciiAlphaNumericUpperCharacterSet.Contains(value) || char.IsWhiteSpace(value)))
-                    setChars = AsciiAlphaNumericUpperCharacterSet.ToList();
-                else if (
-                    chars.All(
-                        value =>
-                        AsciiAlphaNumericCharacterSet.Contains(value) || char.IsWhiteSpace(value)))
-                {
-                    setChars = AsciiAlphaNumericCharacterSet.ToList();
-                    setCharsHasCase = true;
-                }
-                else
-                    throw new ArgumentException(
-                        "The source string contains characters not available in the specified lexical increment character set.");
-            }
+            if (!chars.All(value => char.IsWhiteSpace(value) || charSet.Characters.Contains(value)))
+                throw new ArgumentException(
+                    "The source string contains characters not available in the specified lexical increment character set.");
 
             //if all character positions are already at the highest character, 
             // then shortcut taking original and adding another lowest position char to end.
-            if (chars.All(value => setChars.IndexOf(value) >= setChars.Count - (ignoreCase && setCharsHasCase ? 2 : 1)))
-                return source + setChars[0];
+            if (chars.All(value => charSet.Characters.IndexOf(value) >= charSet.Characters.Count - (ignoreCase && charSet.IsCaseSensitive ? 2 : 1)))
+                return source + charSet.Characters[0];
 
             for (var c = chars.Count - 1; c >= 0; c--)
             {
                 if (char.IsWhiteSpace(chars[c]))
                 {
-                    chars[c] = setChars[0];
+                    chars[c] = charSet.Characters[0];
                     break;
                 }
-                var index = setChars.IndexOf(chars[c]);
-                var next = chars[c].FindNext(setChars, ignoreCase);
-                var nextIndex = setChars.IndexOf(next);
+                var index = charSet.Characters.IndexOf(chars[c]);
+                var next = charSet.FindNext(chars[c], ignoreCase);
+                var nextIndex = charSet.Characters.IndexOf(next);
                 chars[c] = next;
 
                 if (nextIndex > index)
@@ -166,32 +79,6 @@ namespace Candor
             }
 
             return String.Concat(chars);
-        }
-        public static char FindNext(this char after, List<char> chars, bool ignoreCase)
-        {
-            var index = chars.IndexOf(after);
-            for (var c = index+1; c <= chars.Count-1; c++)
-            {
-                if (!chars[c].ToString()
-                             .Equals(after.ToString(),
-                                     ignoreCase
-                                         ? StringComparison.InvariantCultureIgnoreCase
-                                         : StringComparison.InvariantCulture))
-                    return chars[c];
-            }
-            if (ignoreCase && char.IsLetter(after))
-            {
-                for (var c = 0; c < index; c++)
-                {
-                    if (!char.IsLetter(chars[c]))
-                        return chars[c];
-                    if (char.IsLower(after) && char.IsLower(chars[c]))
-                        return chars[c];
-                    if (char.IsUpper(after) && char.IsUpper(chars[c]))
-                        return chars[c];
-                }
-            }
-            return chars[0];
         }
     }
 }

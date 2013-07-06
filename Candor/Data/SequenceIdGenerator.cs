@@ -61,7 +61,7 @@ namespace Candor.Data
             {
                 if (sequence.LastId == sequence.FinalCachedId || sequence.FinalCachedId == null || sequence.LastId == null)
                     RenewCachedIds(sequence);
-                var nextId = sequence.LastId.LexicalIncrement(sequence.Schema.CharacterSet, false);
+                var nextId = sequence.LastId.LexicalIncrement(sequence.CharacterSet, false);
                 sequence.LastId = nextId;
                 return nextId;
             }
@@ -91,10 +91,10 @@ namespace Candor.Data
             while (retryCount < MaxSyncRetries + 1)
             {
                 var lastStoredId = _store.GetData(sequence.Schema.TableName) ?? " ";
-                var upper = lastStoredId.LexicalAdd(sequence.Schema.CharacterSet, false, sequence.Schema.RangeSize);
+                var upper = lastStoredId.LexicalAdd(sequence.CharacterSet, false, sequence.Schema.RangeSize);
                 if (_store.TryWrite(sequence.Schema.TableName, upper))
                 {
-                    sequence.LastId = lastStoredId.LexicalIncrement(sequence.Schema.CharacterSet, false);
+                    sequence.LastId = lastStoredId.LexicalIncrement(sequence.CharacterSet, false);
                     sequence.FinalCachedId = upper;
                 }
                 retryCount++;

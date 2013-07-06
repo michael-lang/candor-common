@@ -19,6 +19,10 @@ namespace Candor.Data
         /// </summary>
         public SequenceIdSchema Schema { get; set; }
         /// <summary>
+        /// Gets the character set for this sequence.
+        /// </summary>
+        public LexicalCharacterSet CharacterSet { get { return Schema.CharacterSetType.ToCharacterSet(); }}
+        /// <summary>
         /// Gets or sets the last id from which new ids should be incremented from.
         /// </summary>
         public String LastId { get; set; }

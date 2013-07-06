@@ -7,7 +7,7 @@ namespace Candor.Data
 {
     public class SequenceIdSchema
     {
-        private LexicalCharacterSet _characterSet = LexicalCharacterSet.Numeric;
+        private LexicalCharacterSetType _characterSet = LexicalCharacterSetType.Numeric;
         private int _rangeSize = 100;
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace Candor.Data
         /// <summary>
         /// Gets or sets the character set type.
         /// </summary>
-        public LexicalCharacterSet CharacterSet
+        public LexicalCharacterSetType CharacterSetType
         {
             get { return _characterSet; }
             set { _characterSet = value; }

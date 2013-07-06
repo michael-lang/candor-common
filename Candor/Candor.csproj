@@ -67,6 +67,7 @@
     <Compile Include="ExecutionStep.cs" />
     <Compile Include="ExecutionStepType.cs" />
     <Compile Include="LexicalCharacterSet.cs" />
+    <Compile Include="LexicalCharacterSetType.cs" />
     <Compile Include="PagingAndSortOptions.cs" />
     <Compile Include="PagingOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
