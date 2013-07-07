@@ -57,7 +57,7 @@
     <Compile Include="Reflection\MockAccount.cs" />
     <Compile Include="Reflection\AccountType.cs" />
     <Compile Include="Reflection\ReflectionExtensionsTests.cs" />
-    <Compile Include="LexicalIncrementAsciiAutoTests.cs" />
+    <Compile Include="ToCharacterSetAsciiAutoTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Candor.Security.SqlProvider\Candor.Security.SqlProvider.csproj">
