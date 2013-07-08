@@ -31,14 +31,42 @@ namespace Candor
 
         public static String LexicalAdd(this String source, LexicalCharacterSet charSet, Boolean ignoreCase, Int32 count)
         {
-            //TODO: improve performance...
-#warning improve performance of this for large counts.
-            var tmp = source;
-            for (int i = 0; i < count; i++)
+            var chars = source.ToCharArray().ToList();
+            if (!chars.All(value => char.IsWhiteSpace(value) || charSet.Characters.Contains(value)))
+                throw new ArgumentException(
+                    "The source string contains characters not available in the specified lexical increment character set.");
+            if (count < 0)
+                throw new ArgumentOutOfRangeException("count", count, "Only positive numbers can be added lexically at this time.");
+
+            var mathBase = ignoreCase ? charSet.CaseInsensitiveLength : charSet.CaseSensitiveLength;
+            Int32 remain = count, carryOver = 0;
+            //position is counting from the right most character, since we are treating these characters as a number
+            for (var position = 1; remain > 0 || carryOver > 0 ; position++)
             {
-                tmp = tmp.LexicalIncrement(charSet, ignoreCase);
+                var positionBase = position == 1 ? 1 : Math.Pow(mathBase, position - 1);
+                var posCount = ((int)((remain / positionBase) % mathBase)) + carryOver;
+                if (posCount == mathBase)
+                {   //no character change, pass along carry over
+                    remain -= ((posCount - carryOver) * (int)positionBase);
+                    carryOver = 1;
+                }
+                else if (posCount > 0)
+                {
+                    //TODO: increment respecting ignoreCase
+                    var posCharIndex = charSet.Characters.IndexOf(chars[chars.Count - position]);
+                    chars[chars.Count - position] = charSet.Characters[((posCharIndex + posCount) % mathBase)];
+                    carryOver = posCharIndex + posCount < charSet.Characters.Count - 1 ? 0 : 1;
+                    remain -= posCount * (int)positionBase;
+                }
             }
-            return tmp;
+
+            return String.Concat(chars);
+            //var tmp = source;
+            //for (int i = 0; i < count; i++)
+            //{
+            //    tmp = tmp.LexicalIncrement(charSet, ignoreCase);
+            //}
+            //return tmp;
         }
         /// <summary>
         /// Increments a source string to the next logical higher value.  Characters are incremented without altering length first.
