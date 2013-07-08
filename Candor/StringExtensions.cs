@@ -38,6 +38,16 @@ namespace Candor
             if (count < 0)
                 throw new ArgumentOutOfRangeException("count", count, "Only positive numbers can be added lexically at this time.");
 
+            var characters = charSet.Characters;
+            if (ignoreCase && charSet.IsCaseSensitive)
+            {   //change 'characters' to an upper or lower case version
+                var lowerCount = chars.Where(char.IsLower).Count();
+                var upperCount = chars.Where(char.IsUpper).Count();
+                if (lowerCount > upperCount)
+                    characters = charSet.Characters.Where(value => !char.IsLetter(value) || char.IsLower(value)).ToList();
+                else
+                    characters = charSet.Characters.Where(value => !char.IsLetter(value) || char.IsUpper(value)).ToList();
+            }
             var mathBase = ignoreCase ? charSet.CaseInsensitiveLength : charSet.CaseSensitiveLength;
             Int32 remain = count, carryOver = 0;
             //position is counting from the right most character, since we are treating these characters as a number
@@ -52,21 +62,21 @@ namespace Candor
                 }
                 else if (posCount > 0)
                 {
-                    //TODO: increment respecting ignoreCase
-                    var posCharIndex = charSet.Characters.IndexOf(chars[chars.Count - position]);
-                    chars[chars.Count - position] = charSet.Characters[((posCharIndex + posCount) % mathBase)];
-                    carryOver = posCharIndex + posCount < charSet.Characters.Count - 1 ? 0 : 1;
+                    var posChar = chars[chars.Count - position];
+                    var posCharIndex = characters.IndexOf(posChar);
+                    if (ignoreCase && posCharIndex == -1 && char.IsLetter(posChar))
+                    {   //Character removed when changing to an upper or lower case version, so get the equivalent case-insensitive character
+                        posChar = char.IsLower(posChar) ? char.ToUpper(posChar) : char.ToLower(posChar);
+                        posCharIndex = characters.IndexOf(posChar);
+                    }
+
+                    chars[chars.Count - position] = characters[((posCharIndex + posCount) % mathBase)];
+                    carryOver = posCharIndex + posCount < characters.Count - 1 ? 0 : 1;
                     remain -= posCount * (int)positionBase;
                 }
             }
 
             return String.Concat(chars);
-            //var tmp = source;
-            //for (int i = 0; i < count; i++)
-            //{
-            //    tmp = tmp.LexicalIncrement(charSet, ignoreCase);
-            //}
-            //return tmp;
         }
         /// <summary>
         /// Increments a source string to the next logical higher value.  Characters are incremented without altering length first.

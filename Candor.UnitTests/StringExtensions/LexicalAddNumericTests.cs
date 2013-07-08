@@ -44,3 +44,11 @@ namespace Candor
         }
     }
 }
+
+// Use this to get what a value should be for LexicalAdd.
+//var tmp = source;
+//for (int i = 0; i < count; i++)
+//{
+//    tmp = tmp.LexicalIncrement(charSet, ignoreCase);
+//}
+//return tmp;

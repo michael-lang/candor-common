@@ -50,6 +50,8 @@
     </Compile>
     <Compile Include="Configuration\Provider\MockUserProvider.cs" />
     <Compile Include="Configuration\Provider\ProviderResolverTests.cs" />
+    <Compile Include="StringExtensions\LexicalAddAsciiAlphaNumericTests.cs" />
+    <Compile Include="StringExtensions\LexicalAddAsciiAlphaTests.cs" />
     <Compile Include="StringExtensions\LexicalAddNumericTests.cs" />
     <Compile Include="StringExtensions\LexicalIncrementAsciiAlphaNumericTests.cs" />
     <Compile Include="StringExtensions\LexicalIncrementNumericTests.cs" />
