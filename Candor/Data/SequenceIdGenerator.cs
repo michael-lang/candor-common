@@ -12,6 +12,7 @@ namespace Candor.Data
         private readonly ISequenceIdOptimisticSyncStore _store;
         private readonly Dictionary<String, SequenceIdStore> _sequences;
         private int _maxSyncRetries = 5;
+        private Boolean _ignoreCase = false;
 
         /// <summary>
         /// Creates a new generator that loads all sequence schemas from the supplied store.
@@ -50,6 +51,14 @@ namespace Candor.Data
             }
         }
         /// <summary>
+        /// Gets or sets if case will be ignored when getting a series of Ids and the next Id.
+        /// </summary>
+        public Boolean IgnoreCase
+        {
+            get { return _ignoreCase; }
+            set { _ignoreCase = value; }
+        }
+        /// <summary>
         /// Takes the first reserved Id for this node from the sequence.  
         /// If necassary, it will reserve a new block of Ids.
         /// </summary>
@@ -61,7 +70,7 @@ namespace Candor.Data
             {
                 if (sequence.LastId == sequence.FinalCachedId || sequence.FinalCachedId == null || sequence.LastId == null)
                     RenewCachedIds(sequence);
-                var nextId = sequence.LastId.LexicalIncrement(sequence.CharacterSet, false);
+                var nextId = sequence.LastId.LexicalIncrement(sequence.CharacterSet, _ignoreCase);
                 sequence.LastId = nextId;
                 return nextId;
             }
@@ -91,10 +100,10 @@ namespace Candor.Data
             while (retryCount < MaxSyncRetries + 1)
             {
                 var lastStoredId = _store.GetData(sequence.Schema.TableName) ?? " ";
-                var upper = lastStoredId.LexicalAdd(sequence.CharacterSet, false, sequence.Schema.RangeSize);
+                var upper = lastStoredId.LexicalAdd(sequence.CharacterSet, _ignoreCase, sequence.Schema.RangeSize);
                 if (_store.TryWrite(sequence.Schema.TableName, upper))
                 {
-                    sequence.LastId = lastStoredId.LexicalIncrement(sequence.CharacterSet, false);
+                    sequence.LastId = lastStoredId.LexicalIncrement(sequence.CharacterSet, _ignoreCase);
                     sequence.FinalCachedId = upper;
                 }
                 retryCount++;
