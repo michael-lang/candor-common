@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
-namespace Candor
+namespace Candor.StringExtensions
 {
     [TestFixture]
     public class LexicalAddNumericTests
@@ -41,6 +36,22 @@ namespace Candor
             var s2 = s.LexicalAdd(LexicalCharacterSet.Numeric, false, 87);
 
             Assert.AreEqual("00115", s2);
+        }
+        [Test]
+        public void Add_99999_87()
+        {
+            var s = "99999";
+            var s2 = s.LexicalAdd(LexicalCharacterSet.Numeric, false, 87);
+
+            Assert.AreEqual("000086", s2);
+        }
+        [Test]
+        public void Add_099999_87()
+        {
+            var s = "099999";
+            var s2 = s.LexicalAdd(LexicalCharacterSet.Numeric, false, 87);
+
+            Assert.AreEqual("100086", s2);
         }
     }
 }

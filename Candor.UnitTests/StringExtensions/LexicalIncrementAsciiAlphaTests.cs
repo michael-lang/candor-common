@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Candor
+namespace Candor.StringExtensions
 {
     [TestFixture]
     public class LexicalIncrementAsciiAlphaTests
@@ -81,7 +81,7 @@ namespace Candor
             var s = "Shiz";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlpha, true);
 
-            Assert.AreEqual("ShJa", s2);
+            Assert.AreEqual("Shja", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase_ShJz()
@@ -89,7 +89,7 @@ namespace Candor
             var s = "ShJz";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlpha, true);
 
-            Assert.AreEqual("ShKa", s2);
+            Assert.AreEqual("ShKA", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase_Sha()
@@ -97,7 +97,7 @@ namespace Candor
             var s = "Sha";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlpha, true);
 
-            Assert.AreEqual("ShB", s2);
+            Assert.AreEqual("Shb", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase_zzz()
@@ -105,7 +105,7 @@ namespace Candor
             var s = "zzz";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlpha, true);
 
-            Assert.AreEqual("zzzA", s2);
+            Assert.AreEqual("aaaa", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase__zzz()
@@ -113,7 +113,7 @@ namespace Candor
             var s = " zzz";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlpha, true);
 
-            Assert.AreEqual("Aaaa", s2);
+            Assert.AreEqual("aaaa", s2);
         }
         [Test]
         [ExpectedException(typeof(System.ArgumentException))]
@@ -223,7 +223,7 @@ namespace Candor
             var s = "zzz";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlpha, false);
 
-            Assert.AreEqual("zzzA", s2);
+            Assert.AreEqual("AAAA", s2);
         }
         [Test]
         public void LexicalIncrement_YesCase__zzz()

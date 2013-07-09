@@ -29,6 +29,41 @@ namespace Candor
             return newText.ToString();
         }
 
+        /// <summary>
+        /// Performs a lexicographical addition to a string by any amount.  See
+        /// http://wikipedia.org/wiki/Lexicographical_order, and further
+        /// remarks for this member.
+        /// </summary>
+        /// <example>"code" + 2 in Ascii alpha (case insensitive) == "codg"</example>
+        /// <example>"code" + 2 in Ascii alpha (case sensitive) == "codf"</example>
+        /// <param name="source">The string to increment from.</param>
+        /// <param name="charSet">The character set defining the characters and their order.</param>
+        /// <param name="ignoreCase">Specifies if case should be ignored as an incremented value.
+        /// If true, incremented character positions will be the case of the majority of other
+        /// values; which may or may not be the same as the character being replaced.</param>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// <p>
+        /// This may or may not result in a value that sorts in the correct 
+        /// order as if it were a file name in a file explorer.
+        /// </p>
+        /// <p>
+        /// If the string is at the highest character for each position or the 
+        /// number added moves past that position, then a new character position
+        /// is incremented to the left (by adding a character position).  This
+        /// then behaves the same as if the source was left whitespace padded.
+        /// Performance scales based on the number of characters incremented
+        /// in the string.
+        /// </p>
+        /// <p>
+        /// Incrementing the value always starts on the right and moves left
+        /// as with numeric additions.  Right whitespace padded strings will
+        /// increment values in the whitespace before advancing to the characters
+        /// on the left.  If this is not desired behavior then Trim the source
+        /// when passed into this method.
+        /// </p>
+        /// </remarks>
         public static String LexicalAdd(this String source, LexicalCharacterSet charSet, Boolean ignoreCase, Int32 count)
         {
             var chars = source.ToCharArray().ToList();
@@ -53,6 +88,10 @@ namespace Candor
             //position is counting from the right most character, since we are treating these characters as a number
             for (var position = 1; remain > 0 || carryOver > 0 ; position++)
             {
+                if (chars.Count < position)
+                {
+                    chars.Insert(0, ' ');
+                }
                 var positionBase = position == 1 ? 1 : Math.Pow(mathBase, position - 1);
                 var posCount = ((int)((remain / positionBase) % mathBase)) + carryOver;
                 if (posCount == mathBase)
@@ -68,11 +107,11 @@ namespace Candor
                     {   //Character removed when changing to an upper or lower case version, so get the equivalent case-insensitive character
                         posChar = char.IsLower(posChar) ? char.ToUpper(posChar) : char.ToLower(posChar);
                         posCharIndex = characters.IndexOf(posChar);
-                    }
+                    } //if whitespace char, leave posCharIndex at -1
 
                     chars[chars.Count - position] = characters[((posCharIndex + posCount) % mathBase)];
-                    carryOver = posCharIndex + posCount < characters.Count - 1 ? 0 : 1;
-                    remain -= posCount * (int)positionBase;
+                    carryOver = posCharIndex + posCount < characters.Count ? 0 : 1;
+                    remain = Math.Max(0, remain - posCount * (int)positionBase);
                 }
             }
 
@@ -90,33 +129,7 @@ namespace Candor
         /// </remarks>
         public static String LexicalIncrement(this String source, LexicalCharacterSet charSet, Boolean ignoreCase)
         {
-            var chars = source.ToCharArray().ToList();
-            if (!chars.All(value => char.IsWhiteSpace(value) || charSet.Characters.Contains(value)))
-                throw new ArgumentException(
-                    "The source string contains characters not available in the specified lexical increment character set.");
-
-            //if all character positions are already at the highest character, 
-            // then shortcut taking original and adding another lowest position char to end.
-            if (chars.All(value => charSet.Characters.IndexOf(value) >= charSet.Characters.Count - (ignoreCase && charSet.IsCaseSensitive ? 2 : 1)))
-                return source + charSet.Characters[0];
-
-            for (var c = chars.Count - 1; c >= 0; c--)
-            {
-                if (char.IsWhiteSpace(chars[c]))
-                {
-                    chars[c] = charSet.Characters[0];
-                    break;
-                }
-                var index = charSet.Characters.IndexOf(chars[c]);
-                var next = charSet.FindNext(chars[c], ignoreCase);
-                var nextIndex = charSet.Characters.IndexOf(next);
-                chars[c] = next;
-
-                if (nextIndex > index)
-                    break;
-            }
-
-            return String.Concat(chars);
+            return LexicalAdd(source, charSet, ignoreCase, 1);
         }
     }
 }

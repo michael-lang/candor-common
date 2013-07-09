@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Candor
+namespace Candor.StringExtensions
 {
     [TestFixture]
     public class LexicalIncrementAsciiAlphaNumericTests
@@ -59,7 +59,7 @@ namespace Candor
             var s = "99b";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlphaNumeric, true);
 
-            Assert.AreEqual("99C", s2);
+            Assert.AreEqual("99c", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase_99z()
@@ -67,7 +67,7 @@ namespace Candor
             var s = "99z";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlphaNumeric, true);
 
-            Assert.AreEqual("9A0", s2);
+            Assert.AreEqual("9a0", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase_099z()
@@ -75,7 +75,7 @@ namespace Candor
             var s = "099z";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlphaNumeric, true);
 
-            Assert.AreEqual("09A0", s2);
+            Assert.AreEqual("09a0", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase_098z()
@@ -91,7 +91,7 @@ namespace Candor
             var s = "Shiz";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlphaNumeric, true);
 
-            Assert.AreEqual("ShJ0", s2);
+            Assert.AreEqual("Shj0", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase_ShJz()
@@ -107,7 +107,7 @@ namespace Candor
             var s = "Sha";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlphaNumeric, true);
 
-            Assert.AreEqual("ShB", s2);
+            Assert.AreEqual("Shb", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase_zzz()
@@ -115,7 +115,7 @@ namespace Candor
             var s = "zzz";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlphaNumeric, true);
 
-            Assert.AreEqual("zzz0", s2);
+            Assert.AreEqual("0000", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase__zzz()
@@ -243,7 +243,7 @@ namespace Candor
             var s = "zzz";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlphaNumeric, false);
 
-            Assert.AreEqual("zzz0", s2);
+            Assert.AreEqual("0000", s2);
         }
         [Test]
         public void LexicalIncrement_YesCase__zzz()

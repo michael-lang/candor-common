@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Candor
+namespace Candor.StringExtensions
 {
     [TestFixture]
     public class LexicalIncrementNumericTests
@@ -22,6 +22,14 @@ namespace Candor
             Assert.AreEqual("9000000000000000000", s2);
         }
         [Test]
+        public void LexicalIncrement_NoCase_89()
+        {
+            var s = "89";
+            var s2 = s.LexicalIncrement(LexicalCharacterSet.Numeric, true);
+
+            Assert.AreEqual("90", s2);
+        }
+        [Test]
         public void LexicalIncrement_NoCase_10()
         {
             var s = "10";
@@ -35,7 +43,7 @@ namespace Candor
             var s = "99";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.Numeric, true);
 
-            Assert.AreEqual("990", s2);
+            Assert.AreEqual("000", s2);
         }
         [Test]
         public void LexicalIncrement_NoCase_099()
@@ -146,7 +154,7 @@ namespace Candor
             var s = "99";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.Numeric, false);
 
-            Assert.AreEqual("990", s2);
+            Assert.AreEqual("000", s2);
         }
         [Test]
         public void LexicalIncrement_YesCase_099()

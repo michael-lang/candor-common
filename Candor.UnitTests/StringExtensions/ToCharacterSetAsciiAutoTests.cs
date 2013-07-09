@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Candor
+namespace Candor.StringExtensions
 {
     [TestFixture]
     public class ToCharacterSetAsciiAutoTests
