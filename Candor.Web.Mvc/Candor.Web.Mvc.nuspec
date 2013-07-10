@@ -14,7 +14,7 @@
 	In depth articles can be found at http://candordeveloper.com/</releaseNotes>
     <tags>Candor Mvc Checkbox DropDown EnhancedSelectListItem IsJsonRequest RenderPartialViewToString</tags>
     <dependencies>
-      <dependency id="Candor.Core" version="0.10.3.30709" />
+      <dependency id="Candor.Core" version="0.10.5.30710" />
     </dependencies>
   </metadata>
 </package>
