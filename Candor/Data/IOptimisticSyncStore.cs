@@ -14,15 +14,16 @@ namespace Candor.Data
         /// database table, blob, queue, or file.
         /// </summary>
         /// <param name="tableName">The table or container name.</param>
-        /// <returns>The current data value.</returns>
-        String GetData(String tableName);
+        /// <returns>The current data value and syncronization data.</returns>
+        /// <exception cref="ArgumentException">An exception occurs if the table name does not exist.</exception>
+        OptimisticSyncData GetData(String tableName);
         /// <summary>
         /// Attempts to write to the specific container a given data value.
         /// </summary>
-        /// <param name="tableName">The table or container name.</param>
-        /// <param name="data">The new data value.</param>
+        /// <param name="syncData">The new data value and synchronization key.</param>
         /// <returns>True if the update succeeded, meaning no other caller 
         /// attempted to update the value since it was retrieved.</returns>
-        Boolean TryWrite(String tableName, String data);
+        /// <exception cref="ArgumentException">An exception occurs if the table name does not exist.</exception>
+        Boolean TryWrite(OptimisticSyncData syncData);
     }
 }

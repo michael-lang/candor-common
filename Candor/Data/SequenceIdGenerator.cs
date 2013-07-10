@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Common.Logging;
 
 namespace Candor.Data
 {
@@ -13,6 +14,7 @@ namespace Candor.Data
         private readonly Dictionary<String, SequenceIdStore> _sequences;
         private int _maxSyncRetries = 5;
         private Boolean _ignoreCase = false;
+        private ILog _logProvider;
 
         /// <summary>
         /// Creates a new generator that loads all sequence schemas from the supplied store.
@@ -58,6 +60,10 @@ namespace Candor.Data
             get { return _ignoreCase; }
             set { _ignoreCase = value; }
         }
+        private ILog LogProvider
+        {
+            get { return _logProvider ?? (_logProvider = LogManager.GetLogger(typeof (SequenceIdGenerator))); }
+        }
         /// <summary>
         /// Takes the first reserved Id for this node from the sequence.  
         /// If necassary, it will reserve a new block of Ids.
@@ -99,15 +105,31 @@ namespace Candor.Data
             int retryCount = 0;
             while (retryCount < MaxSyncRetries + 1)
             {
-                var lastStoredId = _store.GetData(sequence.Schema.TableName) ?? " ";
-                var upper = lastStoredId.LexicalAdd(sequence.CharacterSet, _ignoreCase, sequence.Schema.RangeSize);
-                if (_store.TryWrite(sequence.Schema.TableName, upper))
+                try
                 {
-                    sequence.LastId = lastStoredId.LexicalIncrement(sequence.CharacterSet, _ignoreCase);
-                    sequence.FinalCachedId = upper;
+                    var syncData = _store.GetData(sequence.Schema.TableName);
+                    var lastStoredId = syncData.Data;
+                    syncData.Data = syncData.Data.LexicalAdd(sequence.CharacterSet, _ignoreCase, sequence.Schema.RangeSize);
+                    if (_store.TryWrite(syncData))
+                    {
+                        sequence.LastId = lastStoredId.LexicalIncrement(sequence.CharacterSet, _ignoreCase);
+                        sequence.FinalCachedId = syncData.Data;
+                        return;
+                    }
+                }
+                catch (Exception aex)
+                {
+                    LogProvider.ErrorFormat("Failed to RenewCachedIds for table '{0}' on attempt {1} of {2}", aex,
+                                            sequence.Schema.TableName, retryCount, MaxSyncRetries);
+                    if (retryCount == 0 && String.IsNullOrWhiteSpace(sequence.LastId))
+                        _store.InsertOrUpdate(sequence.Schema);
+                    if (retryCount == MaxSyncRetries)
+                        throw;
                 }
                 retryCount++;
             }
+            LogProvider.ErrorFormat("Failed to update the OptimisticSyncStore for table '{0}' after {1} attempts.  RangeSize: {2}.",
+                sequence.Schema.TableName, retryCount, sequence.Schema.RangeSize);
             throw new ApplicationException(String.Format(
                 "Failed to update the OptimisticSyncStore for table '{0}' after {1} attempts.  RangeSize: {2}.", 
                 sequence.Schema.TableName, retryCount, sequence.Schema.RangeSize));
