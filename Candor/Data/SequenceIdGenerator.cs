@@ -112,7 +112,7 @@ namespace Candor.Data
                     syncData.Data = syncData.Data.LexicalAdd(sequence.CharacterSet, _ignoreCase, sequence.Schema.RangeSize);
                     if (_store.TryWrite(syncData))
                     {
-                        sequence.LastId = lastStoredId.LexicalIncrement(sequence.CharacterSet, _ignoreCase);
+                        sequence.LastId = lastStoredId; //next id used will increment from here.
                         sequence.FinalCachedId = syncData.Data;
                         return;
                     }
