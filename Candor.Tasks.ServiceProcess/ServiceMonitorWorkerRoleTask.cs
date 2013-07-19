@@ -1,12 +1,8 @@
 ﻿using Common.Logging;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.ServiceProcess;
 using System.Management;
-using System.Text;
-using System.Threading.Tasks;
 using Candor.Configuration.Provider;
 using System.IO;
 
@@ -23,7 +19,15 @@ namespace Candor.Tasks.ServiceProcess
     /// </remarks>
     public class ServiceMonitorWorkerRoleTask : RepeatingWorkerRoleTask
     {
-        private ILog LogProvider = LogManager.GetLogger(typeof(ServiceMonitorWorkerRoleTask));
+        private static ILog _logProvider;
+        /// <summary>
+        /// Gets or sets the log destination for this type.  If not set, it will be automatically loaded when needed.
+        /// </summary>
+        public new static ILog LogProvider
+        {
+            get { return _logProvider ?? (_logProvider = LogManager.GetLogger(typeof(ServiceMonitorWorkerRoleTask))); }
+            set { _logProvider = value; }
+        }
         /// <summary>
         /// Gets or sets the name of the service.
         /// </summary>
@@ -102,7 +106,7 @@ namespace Candor.Tasks.ServiceProcess
         {
             if (string.IsNullOrEmpty(OutputFileNameToWatch)) { return true; }
 
-            FileInfo fileInfo = null;
+            FileInfo fileInfo;
             try
             {
                 fileInfo = new FileInfo(OutputFileNameToWatch);
@@ -112,7 +116,7 @@ namespace Candor.Tasks.ServiceProcess
                 LogProvider.WarnFormat("Could not find file '{0}'.", acquireEx, OutputFileNameToWatch);
                 return false;
             }
-            DateTime lastWrite = DateTime.MinValue;
+            DateTime lastWrite;
             try
             {
                 lastWrite = fileInfo.LastWriteTime;
@@ -134,17 +138,14 @@ namespace Candor.Tasks.ServiceProcess
                 {
                     LogProvider.WarnFormat("'{0}' service has not updated file '{1}' in {2} minutes.  The normal maximum age is {3} minutes old.",
                         Name, OutputFileNameToWatch,
-                        ((TimeSpan)DateTime.Now.Subtract(lastWrite)).TotalMinutes,
+                        DateTime.Now.Subtract(lastWrite).TotalMinutes,
                         GetExpectedAgeMinutes());
                 }
                 return false;
             }
-            else
-            {
-                LogProvider.DebugFormat("'{0}' service has updated file '{1}' {2} minutes ago.",
-                    Name, OutputFileNameToWatch,
-                    ((TimeSpan)DateTime.Now.Subtract(lastWrite)).TotalMinutes);
-            }
+            LogProvider.DebugFormat("'{0}' service has updated file '{1}' {2} minutes ago.",
+                                    Name, OutputFileNameToWatch,
+                                    DateTime.Now.Subtract(lastWrite).TotalMinutes);
             return true;
         }
         /// <summary>
@@ -156,8 +157,7 @@ namespace Candor.Tasks.ServiceProcess
         {
             if (OutputFileExpectedAgeMinutes > 0)
                 return OutputFileExpectedAgeMinutes;
-            else
-                return OutputFileMaxAgeMinutes;
+            return OutputFileMaxAgeMinutes;
         }
 
         protected bool ValidateWindowsService()
@@ -173,21 +173,13 @@ namespace Candor.Tasks.ServiceProcess
                 else
                     serviceController = new ServiceController(ServiceName);
 
-                if (serviceController == null)
-                {
-                    LogProvider.ErrorFormat("Failed to connect to service '{0}'.", Name);
-                    return false;
-                }
                 if (serviceController.Status != ServiceControllerStatus.Running)
                 {
                     LogProvider.WarnFormat("Service '{0}' is not running.", Name);
                     return false;
                 }
-                else
-                {
-                    LogProvider.DebugFormat("Service '{0}' is running.", Name);
-                    return true;
-                }
+                LogProvider.DebugFormat("Service '{0}' is running.", Name);
+                return true;
             }
             catch (Exception ex)
             {
@@ -210,11 +202,6 @@ namespace Candor.Tasks.ServiceProcess
                 else
                     serviceController = new ServiceController(ServiceName);
 
-                if (serviceController == null)
-                {
-                    LogProvider.FatalFormat("Failed to connect to service {0}.", Name);
-                    return false;
-                }
                 if (serviceController.Status != ServiceControllerStatus.Stopped)
                 {
                     serviceController.Stop();
@@ -247,18 +234,18 @@ namespace Candor.Tasks.ServiceProcess
 
                 LogProvider.WarnFormat("Attempting to restart server monitored by '{0}'.", Name);
 
-                ManagementScope server = new ManagementScope();
-                server.Path = new ManagementPath(FormatServerName(ServiceMachineName));
-                server.Options.Impersonation = ImpersonationLevel.Impersonate;
-                server.Options.EnablePrivileges = true;
-
-                ObjectQuery oQuery = new ObjectQuery("select name from Win32_OperatingSystem");
-                using (ManagementObjectSearcher search = new ManagementObjectSearcher(server, oQuery))
-                {
-                    using (ManagementObjectCollection items = search.Get())
+                var server = new ManagementScope
                     {
-                        ManagementBaseObject rebootParams = null;
+                        Path = new ManagementPath(FormatServerName(ServiceMachineName)),
+                        Options = {Impersonation = ImpersonationLevel.Impersonate, EnablePrivileges = true}
+                    };
 
+                var oQuery = new ObjectQuery("select name from Win32_OperatingSystem");
+                using (var search = new ManagementObjectSearcher(server, oQuery))
+                {
+                    using (var items = search.Get())
+                    {
+                        ManagementBaseObject rebootParams;
                         foreach (ManagementObject item in items)
                         {
                             using (rebootParams = item.GetMethodParameters("Win32Shutdown"))

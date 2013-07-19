@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Candor.Web.Mvc.ErrorHandler</id>
-    <version>0.10.7.30719</version>
+    <version>0.10.8.30719</version>
     <authors>Michael Lang</authors>
     <owners>Nexul Software LLC, Michael Lang</owners>
     <copyright>Copyright 2013 Michael Lang</copyright>
@@ -15,7 +15,7 @@
 	</releaseNotes>
     <tags>candor mvc handleerror error</tags>
     <dependencies>
-      <dependency id="Candor.Web.Mvc" version="0.10.7.30719"/>
+      <dependency id="Candor.Web.Mvc" version="0.10.8.30719"/>
       <dependency id="T4MVC" version="3.4.0" />
       <dependency id="T4MVCExtensions" version="3.4.0" />
       <dependency id="WebActivatorEx" version="2.0.1" />
