@@ -16,7 +16,7 @@ namespace Candor.Configuration.Provider
     ///	 &lt;/providers&gt;
     /// &lt;/Company.App.SomethingProvider&gt;
     /// 
-    /// Sample code configuration: 
+    /// Sample equivalent code configuration (also no static Manager class is required): 
     /// ProviderResolver&lt;SomethingProvider&gt;.Configure()
     ///  .Append(new SqlSomethingProvider("sql") { ConnectionName = "DefaultConnection"})
     ///  .AppendActive(new CacheSomethingProvider("cache") { DelegateProviderName = "sql"});

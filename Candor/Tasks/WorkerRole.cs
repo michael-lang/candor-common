@@ -1,4 +1,5 @@
-﻿using Candor.Configuration.Provider;
+﻿using System.Linq;
+using Candor.Configuration.Provider;
 using Common.Logging;
 using System;
 using System.Threading;
@@ -12,14 +13,22 @@ namespace Candor.Tasks
     /// This is designed to be run within a windows service or a Windows Azure
     /// worker role instance.
     /// </remarks>
-    public class WorkerRole: IDisposable
+    public class WorkerRole : IDisposable
     {
-        private ILog LogProvider = LogManager.GetLogger(typeof(WorkerRole));
-        private System.Threading.Timer mainTimer_ = null;
-        private object timerLock_ = new object();
-        private object iterationLock_ = new object();
-        private ProviderCollection<WorkerRoleTask> tasks_ = null;
+        private static ILog _logProvider;
+        private Timer _mainTimer;
+        private readonly object _timerLock = new object();
+        private readonly object _iterationLock = new object();
+        private readonly ProviderCollection<WorkerRoleTask> _tasks;
 
+        /// <summary>
+        /// Gets or sets the log destination for this type.  If not set, it will be automatically loaded when needed.
+        /// </summary>
+        public static ILog LogProvider
+        {
+            get { return _logProvider ?? (_logProvider = LogManager.GetLogger(typeof(WorkerRole))); }
+            set { _logProvider = value; }
+        }
         public Boolean IsRunning { get; private set; }
         /// <summary>
         /// Gets or sets the interval of time between ping to each task to ensure they are alive.
@@ -37,7 +46,7 @@ namespace Candor.Tasks
         public WorkerRole(ProviderCollection<WorkerRoleTask> tasks)
             : this()
         {
-            tasks_ = tasks;
+            _tasks = tasks;
         }
         ~WorkerRole()
         {
@@ -48,16 +57,16 @@ namespace Candor.Tasks
         {
             try
             {
-                if (this._disposed)
+                if (_disposed)
                     throw new ObjectDisposedException("WorkerRole");
-                if (tasks_ == null || tasks_.Count == 0)
+                if (_tasks == null || _tasks.Count == 0)
                 {
                     LogProvider.Warn("WorkerRole has no tasks configured.  Exiting.");
                     OnStop();
                     return;
                 }
 
-                foreach(WorkerRoleTask task in tasks_)
+                foreach (WorkerRoleTask task in _tasks)
                 {
                     LogProvider.InfoFormat("WorkerRole is starting task '{0}'", task.Name);
                     task.OnStart();
@@ -76,13 +85,13 @@ namespace Candor.Tasks
 
         void mainTimer__Elapsed(object sender)
         {
-            lock (iterationLock_)
+            lock (_iterationLock)
             {
                 try
                 {
                     PauseTimer();
                     LogProvider.Debug("WorkerRole is still alive.");
-                    foreach (WorkerRoleTask task in tasks_)
+                    foreach (WorkerRoleTask task in _tasks)
                     {
                         task.Ping();
                     }
@@ -106,36 +115,36 @@ namespace Candor.Tasks
                 }
             }
         }
-        
+
         private void PauseTimer()
         {
-            if (this._disposed)
+            if (_disposed)
                 throw new ObjectDisposedException("WorkerRole");
-            lock (timerLock_)
+            lock (_timerLock)
             {
-                mainTimer_.Change(Timeout.Infinite, Timeout.Infinite);
+                _mainTimer.Change(Timeout.Infinite, Timeout.Infinite);
             }
         }
         private void ResumeTimer()
         {
-            if (this._disposed)
+            if (_disposed)
                 throw new ObjectDisposedException("WorkerRole");
-            lock (timerLock_)
+            lock (_timerLock)
             {
-                mainTimer_.Change(PingInterval, PingInterval);
+                _mainTimer.Change(PingInterval, PingInterval);
             }
         }
         private void ClearTimer()
         {
             try
             {
-                lock (timerLock_)
+                lock (_timerLock)
                 {
-                    if (mainTimer_ != null)
+                    if (_mainTimer != null)
                     {
-                        mainTimer_.Change(Timeout.Infinite, Timeout.Infinite);
-                        mainTimer_.Dispose();
-                        mainTimer_ = null;
+                        _mainTimer.Change(Timeout.Infinite, Timeout.Infinite);
+                        _mainTimer.Dispose();
+                        _mainTimer = null;
                     }
                 }
             }
@@ -148,11 +157,11 @@ namespace Candor.Tasks
         {
             try
             {
-                if (this._disposed)
+                if (_disposed)
                     throw new ObjectDisposedException("WorkerRole");
-                lock (timerLock_)
+                lock (_timerLock)
                 {
-                    mainTimer_ = new System.Threading.Timer(new TimerCallback(this.mainTimer__Elapsed), null, PingInterval, PingInterval);
+                    _mainTimer = new Timer(mainTimer__Elapsed, null, PingInterval, PingInterval);
                 }
             }
             catch (Exception ex)
@@ -162,22 +171,16 @@ namespace Candor.Tasks
         }
         private void ResetTimer()
         {
-            try
-            {
-                ClearTimer();
-                StartTimer();
-            }
-            catch (Exception)
-            {	//exceptions were logged already
-            }
+            ClearTimer();
+            StartTimer();
         }
         public void OnStop()
         {
             IsRunning = false;
             ClearTimer();
-            if (tasks_ != null && tasks_.Count > 0)
+            if (_tasks != null && _tasks.Count > 0)
             {
-                foreach (WorkerRoleTask task in tasks_)
+                foreach (WorkerRoleTask task in _tasks)
                 {
                     LogProvider.InfoFormat("WorkerRole is stopping task '{0}'", task.Name);
                     task.OnStop();
@@ -190,7 +193,7 @@ namespace Candor.Tasks
         }
 
         #region IDisposable Members
-        private bool _disposed = false;
+        private bool _disposed;
         /// <summary>
         /// Disposed of resources used by this monitor.
         /// </summary>
@@ -205,10 +208,9 @@ namespace Candor.Tasks
             {
                 LogProvider.Debug("Disposing worker role.");
                 OnStop();
-                foreach (WorkerRoleTask task in tasks_)
+                foreach (var task in _tasks.OfType<IDisposable>())
                 {
-                    if (task is IDisposable)
-                        ((IDisposable)task).Dispose();
+                    (task).Dispose();
                 }
                 LogProvider.Debug("Disposed worker role.");
             }

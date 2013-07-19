@@ -9,10 +9,8 @@ namespace Candor.Security
 	/// </summary>
 	public static class SecurityContextManager
 	{
-		private static prov.ProviderCollection<SecurityContextProvider> _providers;
 		private static ILog _logProvider;
 
-		#region Properties
 		/// <summary>
 		/// Gets or sets the log destination for this type.  If not set, it will be automatically loaded when needed.
 		/// </summary>
@@ -34,13 +32,14 @@ namespace Candor.Security
 		public static prov.ProviderCollection<SecurityContextProvider> Providers
 		{
 			get
-			{
-				if (_providers == null)
-					_providers = new prov.ProviderCollection<SecurityContextProvider>(typeof (SecurityContextManager));
-				return _providers;
+            {
+                var resolver = prov.ProviderResolver<SecurityContextProvider>.Get;
+                if (resolver.Providers.Count == 0)
+                    resolver.Providers = new prov.ProviderCollection<SecurityContextProvider>(typeof(SecurityContextManager));
+
+                return resolver.Providers;
 			}
 		}
-		#endregion Properties
 
 		/// <summary>
 		/// Gets or sets the current user.

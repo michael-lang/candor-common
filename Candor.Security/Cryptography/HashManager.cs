@@ -7,7 +7,6 @@ namespace Candor.Security.Cryptography
 {
 	public class HashManager
 	{
-		private static prov.ProviderCollection<HashProvider> _providers;
         private static List<HashProvider> _currentProviders;
 
 		/// <summary>
@@ -23,10 +22,12 @@ namespace Candor.Security.Cryptography
 		public static prov.ProviderCollection<HashProvider> Providers
 		{
 			get
-			{
-				if (_providers == null)
-					_providers = new prov.ProviderCollection<HashProvider>(typeof(HashManager));
-				return _providers;
+            {
+                var resolver = prov.ProviderResolver<HashProvider>.Get;
+                if (resolver.Providers.Count == 0)
+                    resolver.Providers = new prov.ProviderCollection<HashProvider>(typeof(HashManager));
+
+                return resolver.Providers;
 			}
 		}
 
