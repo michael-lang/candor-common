@@ -83,14 +83,14 @@ namespace Candor.Configuration.Provider
         {
             get
             {
-                var resolver = (ProviderResolver<T>)ProviderResolverDictionary.Resolvers[typeof(T)];
-                if (resolver == null)
+                if (!ProviderResolverDictionary.Resolvers.ContainsKey(typeof(T)))
                 {
-                    resolver = new ProviderResolver<T>();
+                    var resolver = new ProviderResolver<T>();
                     //this one loads from configuration, since it wasn't configured
                     ProviderResolverDictionary.Resolvers[typeof(T)] = resolver;
+                    return resolver;
                 }
-                return resolver;
+                return (ProviderResolver<T>)ProviderResolverDictionary.Resolvers[typeof(T)];
             }
         }
 
