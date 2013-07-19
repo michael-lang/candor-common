@@ -15,14 +15,14 @@ namespace Candor.Configuration.Provider
 	public sealed class ProviderCollection<T> : prov.ProviderCollection
 		where T : prov.ProviderBase
 	{
-		private Type _parentType;
+		private readonly Type _parentType;
 		private string _configSectionName;
-		private ProviderConfigurationSection _config = null;
-		private T _provider = null;
+		private ProviderConfigurationSection _config;
+		private T _provider;
 
 		/// <summary>
 		/// Instantiates a new empty provider collection that does not use configuration, 
-		/// and instead allows for adding providers at runt time.
+		/// and instead allows for adding providers at run time.
 		/// </summary>
 		public ProviderCollection() { }
 		/// <summary>
@@ -48,19 +48,14 @@ namespace Candor.Configuration.Provider
 			InstantiateProviders();
 		}
 
-		private ILog logProvider_ = null;
+		private ILog _logProvider;
 		/// <summary>
 		/// Gets or sets the log destination for this collection.  If not set, it will be automatically loaded when needed.
 		/// </summary>
 		public ILog LogProvider
 		{
-			get
-			{
-				if (logProvider_ == null)
-					logProvider_ = LogManager.GetLogger(typeof(T));
-				return logProvider_;
-			}
-			set { logProvider_ = value; }
+			get { return _logProvider ?? (_logProvider = LogManager.GetLogger(typeof (T))); }
+		    set { _logProvider = value; }
 		}
 		/// <summary>
 		/// Gets the provider to be activated for the current environment.
@@ -83,7 +78,7 @@ namespace Candor.Configuration.Provider
 		/// <summary>
 		/// Instantiates all configured providers.
 		/// </summary>
-		public void InstantiateProviders( string configSectionName )
+		public void InstantiateProviders(string configSectionName )
 		{
 			_configSectionName = configSectionName;
 			if (LogProvider != null)
@@ -114,7 +109,7 @@ namespace Candor.Configuration.Provider
 		{
 			try
 			{
-				if (this.Count == 0)
+				if (Count == 0)
 					throw new ProviderException(string.Format("No '{0}' providers have been configured.", _configSectionName));
 
 				if (_provider == null)
@@ -162,7 +157,7 @@ namespace Candor.Configuration.Provider
 				Add(provider);
 			else if (existing != provider)
 			{
-				base.Remove(provider.Name);
+				Remove(provider.Name);
 				Add(provider);
 			}
 
@@ -197,7 +192,7 @@ namespace Candor.Configuration.Provider
 				throw new ArgumentNullException("provider");
 
 			base.Add(provider);
-			return (T)provider;
+			return provider;
 		}
 
 		/// <summary>

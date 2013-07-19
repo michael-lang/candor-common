@@ -1,4 +1,5 @@
-﻿using prov = System.Configuration.Provider;
+﻿using System;
+using prov = System.Configuration.Provider;
 
 namespace Candor.Configuration.Provider
 {
@@ -47,7 +48,7 @@ namespace Candor.Configuration.Provider
             get
             {
                 if (_providers == null)
-                    _providers = new ProviderCollection<T>(typeof(T));
+                    _providers = new ProviderCollection<T>();
                 return _providers;
             }
             set { _providers = value; }
