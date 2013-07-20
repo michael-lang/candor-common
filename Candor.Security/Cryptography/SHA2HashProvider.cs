@@ -1,11 +1,26 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Candor.Security.Cryptography
 {
-	public class SHA2HashProvider : HashProvider
+	public sealed class SHA2HashProvider : HashProvider
 	{
+        /// <summary>
+        /// Constructor for xml file configuration (web.config, app.config).
+        /// </summary>
+	    public SHA2HashProvider()
+	    {
+	    }
+        /// <summary>
+        /// Constructor for code configuration.
+        /// </summary>
+        /// <param name="name"></param>
+	    public SHA2HashProvider(string name)
+        {
+            Initialize(name, new NameValueCollection());   
+        }
 		/// <summary>
 		/// Creates a true random salt.
 		/// </summary>
