@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Candor.Web.Mvc.Security</id>
-    <version>0.10.9.30719</version>
+    <version>0.10.10.30725</version>
     <authors>Michael Lang</authors>
     <owners>Nexul Software LLC, Michael Lang</owners>
     <copyright>Copyright 2013 Michael Lang</copyright>
@@ -15,8 +15,8 @@
 	</releaseNotes>
     <tags>candor mvc security</tags>
     <dependencies>
-      <dependency id="Candor.Security" version="0.10.9.30719"/>
-      <dependency id="Candor.Web.Mvc" version="0.10.9.30719"/>
+      <dependency id="Candor.Security" version="0.10.10.30725"/>
+      <dependency id="Candor.Web.Mvc" version="0.10.10.30725"/>
       <dependency id="T4MVC" version="3.4.0" />
       <dependency id="T4MVCExtensions" version="3.4.0" />
     </dependencies>
