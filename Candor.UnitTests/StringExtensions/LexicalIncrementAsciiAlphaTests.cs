@@ -48,11 +48,12 @@ namespace Candor.StringExtensions
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlpha, true);
         }
         [Test]
-        [ExpectedException(typeof(System.ArgumentException))]
         public void LexicalIncrement_NoCase_99b()
         {
             var s = "99b";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlpha, true);
+
+            Assert.AreEqual("99c", s2);
         }
         [Test]
         [ExpectedException(typeof(System.ArgumentException))]
@@ -158,11 +159,12 @@ namespace Candor.StringExtensions
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlpha, false);
         }
         [Test]
-        [ExpectedException(typeof(System.ArgumentException))]
         public void LexicalIncrement_YesCase_99b()
         {
             var s = "99b";
             var s2 = s.LexicalIncrement(LexicalCharacterSet.AsciiAlpha, false);
+
+            Assert.AreEqual("99C", s2);
         }
         [Test]
         [ExpectedException(typeof(System.ArgumentException))]

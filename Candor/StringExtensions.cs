@@ -67,9 +67,9 @@ namespace Candor
         public static String LexicalAdd(this String source, LexicalCharacterSet charSet, Boolean ignoreCase, Int32 count)
         {
             var chars = source.ToCharArray().ToList();
-            if (!chars.All(value => char.IsWhiteSpace(value) || charSet.Characters.Contains(value)))
-                throw new ArgumentException(
-                    "The source string contains characters not available in the specified lexical increment character set.");
+            //if (!chars.All(value => char.IsWhiteSpace(value) || charSet.Characters.Contains(value)))
+            //    throw new ArgumentException(
+            //        "The source string contains characters not available in the specified lexical increment character set.");
             if (count < 0)
                 throw new ArgumentOutOfRangeException("count", count, "Only positive numbers can be added lexically at this time.");
 
@@ -107,7 +107,10 @@ namespace Candor
                     {   //Character removed when changing to an upper or lower case version, so get the equivalent case-insensitive character
                         posChar = char.IsLower(posChar) ? char.ToUpper(posChar) : char.ToLower(posChar);
                         posCharIndex = characters.IndexOf(posChar);
-                    } //if whitespace char, leave posCharIndex at -1
+                    } //if whitespace char, leave posCharIndex at -1 for replacement
+                    if (posCharIndex == -1 && !char.IsWhiteSpace(posChar))
+                        throw new ArgumentException(
+                            "The source string contains characters not available in the specified lexical increment character set.");
 
                     chars[chars.Count - position] = characters[((posCharIndex + posCount) % mathBase)];
                     carryOver = posCharIndex + posCount < characters.Count ? 0 : 1;
