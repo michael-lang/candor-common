@@ -331,9 +331,12 @@ namespace Candor.Security
                 //WARN: is this a valid check?  Can an imposter just fake the source IP?  Could a legitimate user hop IP Addresses during a single session?
             }
 
-            session.RenewedDate = DateTime.UtcNow;
-            session.ExpirationDate = DateTime.UtcNow.AddMinutes(duration == UserSessionDurationType.PublicComputer ? PublicSessionDuration : ExtendedSessionDuration);
-            SaveUserSession(session);
+            if ((DateTime.UtcNow - session.RenewedDate).Duration() > TimeSpan.FromMinutes(1))
+            {   //reduce the number of writes.  Only need to know within a minute how many active users there are.  There may be many json requests for a single page in a minute.
+                session.RenewedDate = DateTime.UtcNow;
+                session.ExpirationDate = DateTime.UtcNow.AddMinutes(duration == UserSessionDurationType.PublicComputer ? PublicSessionDuration : ExtendedSessionDuration);
+                SaveUserSession(session);
+            }
             history.UserSession = session;
             return new UserIdentity(history, Name);
         }
