@@ -1,36 +1,25 @@
-@echo Off
-set majorRev=%1
-if "%majorRev%" == "" (
-	GOTO MESSAGE   
-)
+md NuGetRelease
 
-set minorRev=%2
-if "%minorRev%" == "" (
-	GOTO MESSAGE   
-)
+.nuget\nuget pack Candor\Candor.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
 
-set patch=%3
-if "%patch%" == "" (
-	GOTO MESSAGE
-)
+.nuget\nuget pack Candor.Security\Candor.Security.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
 
-:CORE
-attrib -R *.* /S /D
-%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Release\Release.proj /p:MajorVersion="%majorRev%";MinorVersion="%minorRev%";Build="%patch%" /m /v:M /fl /flp:LogFile=release.log;Verbosity=Normal /nr:false 
-GOTO END
+.nuget\nuget pack Candor.Security.AzureStorageProvider\Candor.Security.AzureStorageProvider.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
 
-:MESSAGE
-echo.
-echo.
-echo Creates a new release of the Candor Core Libraries
-echo.
-echo Release ^<major^> ^<minor^> ^<patch^> 
-echo.release
-echo i.e. Release 2 1 0
-echo in order to create release versioned 2.1.0.
-echo.
-echo Saves results to .\NuGetRelease\ 
-echo.
-echo.
+.nuget\nuget pack Candor.Security.SqlProvider\Candor.Security.SqlProvider.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
 
-:END
+.nuget\nuget pack Candor.Tasks.ServiceProcess\Candor.Tasks.ServiceProcess.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
+
+.nuget\nuget pack Candor.Web.Mvc\Candor.Web.Mvc.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
+
+.nuget\nuget pack Candor.Web.Mvc.Bootstrap.ErrorHandler\Candor.Web.Mvc.ErrorHandler.proj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
+
+.nuget\nuget pack Candor.Web.Mvc.Bootstrap.Security\Candor.Web.Mvc.Security.proj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
+
+.nuget\nuget pack Candor.WindowsAzure\Candor.WindowsAzure.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
+
+.nuget\nuget pack Candor.WindowsAzure.Logging.Common\Candor.WindowsAzure.Logging.Common.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
+
+.nuget\nuget pack Candor.WindowsAzure.Tasks\Candor.WindowsAzure.Tasks.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
+
+.nuget\nuget pack Candor.Security.AzureStorageProvider\Candor.Security.AzureStorageProvider.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"

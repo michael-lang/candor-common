@@ -5,10 +5,10 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Candor.UnitTests")]
-[assembly: AssemblyDescription("Unit tests for all the Candor libraries")]
+[assembly: AssemblyTitle("Candor.Security.AzureStorageProvider")]
+[assembly: AssemblyDescription("An Azure storage provider implementation for Candor.Security base providers.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("Candor.UnitTests")]
+[assembly: AssemblyProduct("Candor.Security.AzureStorageProvider")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -17,7 +17,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1b8ea1af-43d2-4d97-8885-80f02186dad8")]
+[assembly: Guid("60ace3a0-647a-4f4e-8583-c2ea300f2a04")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -26,7 +26,8 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers 
+// You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
+// [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

@@ -1,13 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{77EC19E0-C8C5-4E49-B488-036CA88D1F50}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor", "Candor\Candor.csproj", "{DC704076-813E-4D6C-B2AD-1171FEB8829E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F3EC1E40-A74D-4433-949A-FEE6F85208B5}"
@@ -71,6 +64,21 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.Web.Mvc", "Candor.Web.Mvc\Candor.Web.Mvc.csproj", "{0F4C04C4-5735-4321-97D2-2E51B77DE1FA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.Web.Mvc.Bootstrap", "Candor.Web.Mvc.Bootstrap\Candor.Web.Mvc.Bootstrap.csproj", "{3BF6E874-8A1E-487B-B490-13DAC0488E94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.WindowsAzure", "Candor.WindowsAzure\Candor.WindowsAzure.csproj", "{B491E5B1-E7C1-4568-A05F-96F01CF934AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.WindowsAzure.Logging.Common", "Candor.WindowsAzure.Logging.Common\Candor.WindowsAzure.Logging.Common.csproj", "{6E6F8B84-A18B-463F-A2AA-C3606446714C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.WindowsAzure.Tasks", "Candor.WindowsAzure.Tasks\Candor.WindowsAzure.Tasks.csproj", "{187DBC7F-F5A2-4669-9EBF-84D58859F485}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.Security.AzureStorageProvider", "Candor.Security.AzureStorageProvider\Candor.Security.AzureStorageProvider.csproj", "{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A2D5BE31-35F2-4469-9236-ED4727D2437E}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -186,6 +194,46 @@ Global
 		{3BF6E874-8A1E-487B-B490-13DAC0488E94}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{3BF6E874-8A1E-487B-B490-13DAC0488E94}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{3BF6E874-8A1E-487B-B490-13DAC0488E94}.Release|x86.ActiveCfg = Release|Any CPU
+		{B491E5B1-E7C1-4568-A05F-96F01CF934AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B491E5B1-E7C1-4568-A05F-96F01CF934AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B491E5B1-E7C1-4568-A05F-96F01CF934AE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B491E5B1-E7C1-4568-A05F-96F01CF934AE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{B491E5B1-E7C1-4568-A05F-96F01CF934AE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B491E5B1-E7C1-4568-A05F-96F01CF934AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B491E5B1-E7C1-4568-A05F-96F01CF934AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B491E5B1-E7C1-4568-A05F-96F01CF934AE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B491E5B1-E7C1-4568-A05F-96F01CF934AE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{B491E5B1-E7C1-4568-A05F-96F01CF934AE}.Release|x86.ActiveCfg = Release|Any CPU
+		{6E6F8B84-A18B-463F-A2AA-C3606446714C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E6F8B84-A18B-463F-A2AA-C3606446714C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E6F8B84-A18B-463F-A2AA-C3606446714C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6E6F8B84-A18B-463F-A2AA-C3606446714C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6E6F8B84-A18B-463F-A2AA-C3606446714C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6E6F8B84-A18B-463F-A2AA-C3606446714C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E6F8B84-A18B-463F-A2AA-C3606446714C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E6F8B84-A18B-463F-A2AA-C3606446714C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6E6F8B84-A18B-463F-A2AA-C3606446714C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6E6F8B84-A18B-463F-A2AA-C3606446714C}.Release|x86.ActiveCfg = Release|Any CPU
+		{187DBC7F-F5A2-4669-9EBF-84D58859F485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{187DBC7F-F5A2-4669-9EBF-84D58859F485}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{187DBC7F-F5A2-4669-9EBF-84D58859F485}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{187DBC7F-F5A2-4669-9EBF-84D58859F485}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{187DBC7F-F5A2-4669-9EBF-84D58859F485}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{187DBC7F-F5A2-4669-9EBF-84D58859F485}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{187DBC7F-F5A2-4669-9EBF-84D58859F485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{187DBC7F-F5A2-4669-9EBF-84D58859F485}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{187DBC7F-F5A2-4669-9EBF-84D58859F485}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{187DBC7F-F5A2-4669-9EBF-84D58859F485}.Release|x86.ActiveCfg = Release|Any CPU
+		{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
