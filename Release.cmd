@@ -12,9 +12,13 @@ md NuGetRelease
 
 .nuget\nuget pack Candor.Web.Mvc\Candor.Web.Mvc.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
 
-.nuget\nuget pack Candor.Web.Mvc.Bootstrap.ErrorHandler\Candor.Web.Mvc.ErrorHandler.proj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
+msbuild Candor.Web.Mvc.Bootstrap.ErrorHandler\Candor.Web.Mvc.ErrorHandler.proj
 
-.nuget\nuget pack Candor.Web.Mvc.Bootstrap.Security\Candor.Web.Mvc.Security.proj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
+.nuget\nuget pack Candor.Web.Mvc.Bootstrap.ErrorHandler\Candor.Web.Mvc.ErrorHandler.nuspec -o "NuGetRelease" -verbosity detailed
+
+msbuild Candor.Web.Mvc.Bootstrap.Security\Candor.Web.Mvc.Security.proj
+
+.nuget\nuget pack Candor.Web.Mvc.Bootstrap.Security\Candor.Web.Mvc.Security.nuspec -o "NuGetRelease" -verbosity detailed
 
 .nuget\nuget pack Candor.WindowsAzure\Candor.WindowsAzure.csproj -Build -p Configuration=Release -includeReferencedProjects -o "NuGetRelease"
 

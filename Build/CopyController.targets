@@ -26,7 +26,7 @@
       ItemName="ControllerFilesToUpdate" />
  </Copy>
 
- <!-- Replace the namespace with the $rootnamespace$ project property -->
+ <!-- Replace the namespace with the $rootnamespace$ project property   -->
  <FileUpdate Files="@(ControllerFilesToUpdate)"
   Regex="$(RootNamespaceToReplace)"
   ReplacementText="$rootnamespace$" />
@@ -50,7 +50,7 @@
       ItemName="ModelFilesToUpdate" />
  </Copy>
 
- <!-- Replace the namespace with the $rootnamespace$ project property -->
+ <!-- Replace the namespace with the $rootnamespace$ project property   -->
  <FileUpdate Files="@(ModelFilesToUpdate)"
   Regex="$(RootNamespaceToReplace)"
   ReplacementText="$rootnamespace$" />
@@ -74,7 +74,7 @@
       ItemName="ViewFilesToUpdate" />
  </Copy>
 
- <!-- Replace the namespace with the $rootnamespace$ project property -->
+ <!-- Replace the namespace with the $rootnamespace$ project property   -->
  <FileUpdate Files="@(ViewFilesToUpdate)"
   Regex="$(RootNamespaceToReplace)"
   ReplacementText="$rootnamespace$" />
@@ -88,5 +88,5 @@
 </Target>
  
 	<Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets"/>
- 
+
 </Project>

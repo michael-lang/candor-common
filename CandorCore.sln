@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor", "Candor\Candor.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F3EC1E40-A74D-4433-949A-FEE6F85208B5}"
 	ProjectSection(SolutionItems) = preProject
+		Candor.Web.Mvc.Bootstrap.ErrorHandler\Candor.Web.Mvc.ErrorHandler.nuspec = Candor.Web.Mvc.Bootstrap.ErrorHandler\Candor.Web.Mvc.ErrorHandler.nuspec
+		Candor.Web.Mvc.Bootstrap.Security\Candor.Web.Mvc.Security.nuspec = Candor.Web.Mvc.Bootstrap.Security\Candor.Web.Mvc.Security.nuspec
 		README.markdown = README.markdown
 		SolutionInfo.cs = SolutionInfo.cs
 	EndProjectSection
@@ -24,21 +26,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NuGet", "NuGet", "{71360150
 		Build\OpenSource\NuGet\README.txt = Build\OpenSource\NuGet\README.txt
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NUnit", "NUnit", "{670228C4-21EC-4658-B3F7-A0EF7332DF25}"
-	ProjectSection(SolutionItems) = preProject
-		Build\OpenSource\NUnit\nunit-console-runner.dll = Build\OpenSource\NUnit\nunit-console-runner.dll
-		Build\OpenSource\NUnit\nunit-console.exe = Build\OpenSource\NUnit\nunit-console.exe
-		Build\OpenSource\NUnit\nunit-console.exe.config = Build\OpenSource\NUnit\nunit-console.exe.config
-		Build\OpenSource\NUnit\nunit-gui-runner.dll = Build\OpenSource\NUnit\nunit-gui-runner.dll
-		Build\OpenSource\NUnit\nunit.core.dll = Build\OpenSource\NUnit\nunit.core.dll
-		Build\OpenSource\NUnit\nunit.core.interfaces.dll = Build\OpenSource\NUnit\nunit.core.interfaces.dll
-		Build\OpenSource\NUnit\nunit.exe = Build\OpenSource\NUnit\nunit.exe
-		Build\OpenSource\NUnit\nunit.framework.dll = Build\OpenSource\NUnit\nunit.framework.dll
-		Build\OpenSource\NUnit\nunit.uiexception.dll = Build\OpenSource\NUnit\nunit.uiexception.dll
-		Build\OpenSource\NUnit\nunit.uikit.dll = Build\OpenSource\NUnit\nunit.uikit.dll
-		Build\OpenSource\NUnit\nunit.util.dll = Build\OpenSource\NUnit\nunit.util.dll
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MSBuildCommunityTasks", "MSBuildCommunityTasks", "{2E627125-6553-4894-8947-0C89B030F7A3}"
 	ProjectSection(SolutionItems) = preProject
 		Build\OpenSource\MSBuildCommunityTasks\MSBuild.Community.Tasks.dll = Build\OpenSource\MSBuildCommunityTasks\MSBuild.Community.Tasks.dll
@@ -50,8 +37,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{57DE
 	ProjectSection(SolutionItems) = preProject
 		Release.cmd = Release.cmd
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrepareNuSpecsForRelease", "PrepareNuSpecsForRelease\PrepareNuSpecsForRelease.csproj", "{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.Security.SqlProvider", "Candor.Security.SqlProvider\Candor.Security.SqlProvider.csproj", "{F12C68D3-B83E-47F9-8193-62AE9A2EEECA}"
 EndProject
@@ -73,7 +58,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.WindowsAzure.Tasks",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.Security.AzureStorageProvider", "Candor.Security.AzureStorageProvider\Candor.Security.AzureStorageProvider.csproj", "{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A2D5BE31-35F2-4469-9236-ED4727D2437E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6E31E455-E92E-4161-B95F-E23880454AF6}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
@@ -124,16 +109,6 @@ Global
 		{7FF800AF-AEBF-4974-B531-A5EE21B6E5B3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{7FF800AF-AEBF-4974-B531-A5EE21B6E5B3}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
 		{7FF800AF-AEBF-4974-B531-A5EE21B6E5B3}.Release|x86.ActiveCfg = Release|Any CPU
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}.Debug|x86.ActiveCfg = Debug|x86
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}.Debug|x86.Build.0 = Debug|x86
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}.Release|Any CPU.ActiveCfg = Release|x86
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}.Release|Mixed Platforms.Build.0 = Release|x86
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}.Release|x86.ActiveCfg = Release|x86
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429}.Release|x86.Build.0 = Release|x86
 		{F12C68D3-B83E-47F9-8193-62AE9A2EEECA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F12C68D3-B83E-47F9-8193-62AE9A2EEECA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F12C68D3-B83E-47F9-8193-62AE9A2EEECA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -243,8 +218,6 @@ Global
 		{57DE141B-3ABF-49D2-A75E-0F4F316EE782} = {F3EC1E40-A74D-4433-949A-FEE6F85208B5}
 		{3B7D7012-F898-4EFA-B8B9-9E4D14B75E55} = {C5FDD2D7-7330-461A-97C5-99071504AC1A}
 		{71360150-916C-41B4-B217-38A40C39CFCA} = {3B7D7012-F898-4EFA-B8B9-9E4D14B75E55}
-		{670228C4-21EC-4658-B3F7-A0EF7332DF25} = {3B7D7012-F898-4EFA-B8B9-9E4D14B75E55}
 		{2E627125-6553-4894-8947-0C89B030F7A3} = {3B7D7012-F898-4EFA-B8B9-9E4D14B75E55}
-		{3BA252DD-C0DB-4FCE-8D82-F5DA88631429} = {57DE141B-3ABF-49D2-A75E-0F4F316EE782}
 	EndGlobalSection
 EndGlobal

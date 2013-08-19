@@ -5,15 +5,16 @@
  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 <PropertyGroup>
- <ProjectDir>..\Candor.Web.Mvc.Bootstrap\</ProjectDir>
+ <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">$(MSBuildProjectDirectory)\..\</SolutionDir>
+ <SharedRoot>$(SolutionDir)</SharedRoot>
+ <ProjectDir>$(SolutionDir)\Candor.Web.Mvc.Bootstrap\</ProjectDir>
  <ProjectName>Candor.Web.Mvc.Bootstrap.csproj</ProjectName>
  <ProjectPath>$(ProjectDir)$(ProjectName)</ProjectPath>
  <TargetDir>Content\</TargetDir>
  <ControllerBaseName>Error</ControllerBaseName>
  <RootNamespaceToReplace>CandorMvcApplication</RootNamespaceToReplace>
- <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\..\Build\OpenSource\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
+ <MSBuildCommunityTasksPath>$(SolutionDir)\Build\OpenSource\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
 </PropertyGroup>
-
 <Target Name="CopyExtraFiles"> 
  <!-- Get the extra files -->
  <XmlPeek
@@ -32,12 +33,10 @@
       ItemName="ExtraFilesToUpdate" />
  </Copy>
 
- <!-- Replace the namespace with the $rootnamespace$ project property -->
+ <!-- Replace the namespace with the $rootnamespace$ project property  --> 
  <FileUpdate Files="@(ExtraFilesToUpdate)"
   Regex="$(RootNamespaceToReplace)"
   ReplacementText="$rootnamespace$" />
 </Target>
-
-<Import Project="..\Build\CopyController.targets"/>
-
+<Import Project="$(SolutionDir)\Build\CopyController.targets"/>
 </Project>
