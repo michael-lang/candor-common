@@ -138,7 +138,7 @@ namespace Candor.WindowsAzure.Storage.Table
                         propertyInfo.SetValue(propertyObject, entityProperty.Int64Value, null);
                     return;
                 default:
-                    return;
+                    throw new InvalidCastException(String.Format("Cannot cast Azure table value into property '{0}'.", propertyInfo.Name));
             }
         }
         public override IDictionary<string, EntityProperty> WriteEntity(OperationContext operationContext)
@@ -254,7 +254,7 @@ namespace Candor.WindowsAzure.Storage.Table
             if (typeConverter.CanConvertTo(typeof(string)) && typeConverter.CanConvertFrom(typeof(string)))
                 return new EntityProperty((string)typeConverter.ConvertTo(value, typeof(string)));
 
-            return null;
+            throw new InvalidCastException(String.Format("Cannot cast property '{0}' into an EntityProperty to be persisted into Azure. Implement a TypeConverter for conversion to and from a String.", type.FullName));
         }
     }
 }
