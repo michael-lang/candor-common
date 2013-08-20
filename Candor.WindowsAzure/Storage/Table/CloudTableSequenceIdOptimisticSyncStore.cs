@@ -56,14 +56,8 @@ namespace Candor.WindowsAzure.Storage.Table
             var schema = SchemaTableProxy.Get(tableName.GetValidPartitionKey(), tableName.GetValidRowKey());
             if (schema == null || schema.Entity == null)
                 return null;
-            var sequence = SequenceTableProxy.Get(tableName.GetValidPartitionKey(), tableName.GetValidRowKey());
-            if (sequence == null)
-            {
-                sequence = new TableEntityProxy<DynamicTableEntity>(new DynamicTableEntity(schema.PartitionKey, schema.RowKey, "",
-                    new Dictionary<string, EntityProperty>()));
-                sequence.Entity.Properties.Add(PropertyFinalCachedId, new EntityProperty(schema.Entity.SeedValue));
-                SequenceTableProxy.Insert(sequence.Entity); //this could throw if another thread created after SequenceTableProxy.Get was called above.
-            }
+            var sequence = SequenceTableProxy.Get(tableName.GetValidPartitionKey(), tableName.GetValidRowKey()) ??
+                CreateSequenceFromSchema(tableName);
             return new SequenceIdStore
                 {
                     FinalCachedId = sequence.Entity.Properties[PropertyFinalCachedId].StringValue,
@@ -105,20 +99,8 @@ namespace Candor.WindowsAzure.Storage.Table
 
         public OptimisticSyncData GetData(string tableName)
         {
-            var sequence = SequenceTableProxy.Get(tableName.GetValidPartitionKey(), tableName.GetValidRowKey());
-            if (sequence == null)
-            {
-                var schema = SchemaTableProxy.Get(tableName.GetValidPartitionKey(), tableName.GetValidRowKey());
-                if (schema == null)
-                    throw new ArgumentException(String.Format("Sequence '{0}' is not defined.  Cannot get the latest reserved key value.", tableName));
-
-                sequence = new TableEntityProxy<DynamicTableEntity>(new DynamicTableEntity(schema.PartitionKey, schema.RowKey, "",
-                    new Dictionary<string, EntityProperty>()));
-                sequence.Entity.Properties.Add(PropertyFinalCachedId, new EntityProperty(schema.Entity.SeedValue));
-                SequenceTableProxy.Insert(sequence.Entity); 
-                //Insert would throw if another thread created after SequenceTableProxy.Get was called above.  Only one thread can create the sequence.
-                //  - a lock would not help, since the other thread may be in another role (web or worker) instance
-            }
+            var sequence = SequenceTableProxy.Get(tableName.GetValidPartitionKey(), tableName.GetValidRowKey()) ??
+                           CreateSequenceFromSchema(tableName);
             return new OptimisticSyncData
                 {
                     TableName = tableName,
@@ -127,11 +109,25 @@ namespace Candor.WindowsAzure.Storage.Table
                 };
         }
 
+        private TableEntityProxy<DynamicTableEntity> CreateSequenceFromSchema(string tableName)
+        {
+            var schema = SchemaTableProxy.Get(tableName.GetValidPartitionKey(), tableName.GetValidRowKey());
+            if (schema == null)
+                throw new ArgumentException(String.Format("Sequence '{0}' is not defined.  Cannot get the latest reserved key value.", tableName));
+
+            var sequence = new TableEntityProxy<DynamicTableEntity>(new DynamicTableEntity(schema.PartitionKey, schema.RowKey, "",
+                new Dictionary<string, EntityProperty>()));
+            sequence.Entity.Properties.Add(PropertyFinalCachedId, new EntityProperty(schema.Entity.SeedValue));
+            SequenceTableProxy.Insert(sequence.Entity);
+            //Insert would throw if another thread created after SequenceTableProxy.Get was called above.  Only one thread can create the sequence.
+            //  - a lock would not help, since the other thread may be in another role (web or worker) instance
+            return sequence;
+        }
+
         public bool TryWrite(OptimisticSyncData syncData)
         {
-            var sequence = SequenceTableProxy.Get(syncData.TableName.GetValidPartitionKey(), syncData.TableName.GetValidRowKey());
-            if (sequence == null)
-                throw new ArgumentException(String.Format("Sequence '{0}' is not defined.  Cannot update the latest reserved key value.", syncData.TableName));
+            var sequence = SequenceTableProxy.Get(syncData.TableName.GetValidPartitionKey(), syncData.TableName.GetValidRowKey()) ??
+                           CreateSequenceFromSchema(syncData.TableName);
 
             if (sequence.ETag != syncData.ConcurrencyKey)
                 return false; //caller can get data again and attempt a retry.
