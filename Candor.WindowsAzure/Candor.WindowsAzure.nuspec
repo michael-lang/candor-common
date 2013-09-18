@@ -10,9 +10,13 @@
     <licenseUrl>https://github.com/michael-lang/candor-windowsazure/blob/master/MIT-LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>This code is open source and can be found at http://github.com/michael-lang/candor-windowsazure.
-	In depth articles can be found at http://candordeveloper.com/
-	</releaseNotes>
+    <releaseNotes>
+      This code is open source and can be found at http://github.com/michael-lang/candor-windowsazure.
+      In depth articles can be found at http://candordeveloper.com/
+      Changes:
+      1.1: Added CloudTableProxy: InsertOrMergeBatch() and InsertOrReplaceBatch()
+      1.1.2: Batch update/insert operations now recompute PartitionKey/RowKey for each record before running the batch.
+    </releaseNotes>
     <tags>Candor WindowsAzure Azure</tags>
   </metadata>
 </package>

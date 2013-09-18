@@ -554,7 +554,83 @@ namespace Candor.WindowsAzure.Storage.Table
                     batchSize = 0;
                     batchOperation = new TableBatchOperation();
                 }
+                item.PartitionKey = PartitionKey(item.Entity);
+                item.RowKey = RowKey(item.Entity);
+                if (String.IsNullOrEmpty(item.PartitionKey))
+                    throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
+                if (String.IsNullOrEmpty(item.RowKey))
+                    throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
                 batchOperation.Insert(item);
+                batchSize++;
+            }
+
+            if (batchSize > 0)
+                table.ExecuteBatch(batchOperation);
+        }
+        /// <summary>
+        /// Inserts or Replaces up to 100 items in a batch.  (Azure limit per batch).
+        /// Batches of any larger size are broken into smaller batches.
+        /// </summary>
+        /// <param name="items"></param>
+        public void InsertOrReplaceBatch(IEnumerable<TableEntityProxy<T>> items)
+        {
+            var table = GetTable();
+            if (!table.Exists())
+                throw new InvalidOperationException(String.Format("Table '{0}' does not exist.  Update not possible.", table.Name));
+
+            var batchOperation = new TableBatchOperation();
+
+            Int32 batchSize = 0;
+            foreach (var item in items)
+            {
+                if (batchSize == 100)
+                {   //hit max batch size, break it into pieces.
+                    table.ExecuteBatch(batchOperation);
+                    batchSize = 0;
+                    batchOperation = new TableBatchOperation();
+                }
+                item.PartitionKey = PartitionKey(item.Entity);
+                item.RowKey = RowKey(item.Entity);
+                if (String.IsNullOrEmpty(item.PartitionKey))
+                    throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
+                if (String.IsNullOrEmpty(item.RowKey))
+                    throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
+                batchOperation.InsertOrReplace(item);
+                batchSize++;
+            }
+
+            if (batchSize > 0)
+                table.ExecuteBatch(batchOperation);
+        }
+        /// <summary>
+        /// Inserts or Merges up to 100 items in a batch.  (Azure limit per batch).
+        /// Batches of any larger size are broken into smaller batches.
+        /// </summary>
+        /// <param name="items"></param>
+        public void InsertOrMergeBatch(IEnumerable<TableEntityProxy<T>> items)
+        {
+            var table = GetTable();
+            if (!table.Exists())
+                throw new InvalidOperationException(String.Format("Table '{0}' does not exist.  Update not possible.", table.Name));
+
+            var batchOperation = new TableBatchOperation();
+
+            Int32 batchSize = 0;
+            foreach (var item in items)
+            {
+                if (batchSize == 100)
+                {   //hit max batch size, break it into pieces.
+                    table.ExecuteBatch(batchOperation);
+                    batchSize = 0;
+                    batchOperation = new TableBatchOperation();
+                }
+                item.PartitionKey = PartitionKey(item.Entity);
+                item.RowKey = RowKey(item.Entity);
+                if (String.IsNullOrEmpty(item.PartitionKey))
+                    throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
+                if (String.IsNullOrEmpty(item.RowKey))
+                    throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
+                batchOperation.InsertOrMerge(item);
                 batchSize++;
             }
 
