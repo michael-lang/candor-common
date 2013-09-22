@@ -67,6 +67,7 @@ namespace Candor.WindowsAzure.Storage.Queue
                 var result = new StreamReader(stream).ReadToEnd();
 
                 var queue = GetQueue();
+                queue.CreateIfNotExists();
                 var message = new CloudQueueMessage(result);
                 queue.AddMessage(message);
             }
