@@ -498,7 +498,7 @@ namespace Candor.WindowsAzure.Storage.Table
             var deleteOperation = TableOperation.Delete(item);
             var result = table.Execute(deleteOperation);
             if (result.HttpStatusCode != 200)
-                throw new InvalidOperationException(String.Format("Failed to delete {0}.", table.Name));
+                throw new InvalidOperationException(String.Format("Failed to delete {0}.  Status Code {1}. {2}", table.Name, result.HttpStatusCode, result.Result));
         }
         /// <summary>
         /// Delete up to 100 items as a  batch. (Azure limit per batch)
