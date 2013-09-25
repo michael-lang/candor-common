@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -42,7 +43,7 @@ namespace Candor.WindowsAzure.Storage.Blob
             get { return _containerName; }
             set
             {
-                _containerName = value.GetValidTableName();
+                _containerName = value.GetValidBlobContainerName();
                 _container = null;
             }
         }
@@ -56,29 +57,24 @@ namespace Candor.WindowsAzure.Storage.Blob
                     _account = CloudStorageAccount.Parse(CloudConfigurationManager.GetSetting(_connectionName));
                 if (_blobClient == null)
                     _blobClient = _account.CreateCloudBlobClient();
-                _container = _blobClient.GetContainerReference(!String.IsNullOrWhiteSpace(ContainerName) ? ContainerName : typeof(T).Name.GetValidTableName());
+                _container = _blobClient.GetContainerReference(!String.IsNullOrWhiteSpace(ContainerName) ? ContainerName : typeof(T).Name.GetValidBlobContainerName());
             }
             return _container;
         }
         /// <summary>
-        /// Gets or sets a function that takes T and returns the folder path.
-        /// </summary>
-        public Func<T, String> Folder { get; set; }
-        /// <summary>
-        /// Gets or sets a function that takes T and returns the blob file name.
+        /// Gets or sets a function that takes T and returns the blob folder/file name.  
+        /// This may also include forward slashes to designate folders and dots (.) to designate file extensions.
         /// </summary>
         public Func<T, String> BlobName { get; set; }
 
-        public T Get(String folder, String blobName)
+        public T Get(String blobName)
         {
             var container = GetContainer();
             container.CreateIfNotExists();
 
-            var blobFullPath = !String.IsNullOrWhiteSpace(folder)
-                                   ? String.Format("{0}/{1}", folder, blobName)
-                                   : blobName;
-
-            var blockBlob = container.GetBlockBlobReference(blobFullPath);
+            var blockBlob = container.GetBlockBlobReference(blobName);
+            if (!blockBlob.Exists())
+                return null;
             using (var stream = blockBlob.OpenRead())
             {
                 var formatter = new BinaryFormatter();
@@ -90,34 +86,28 @@ namespace Candor.WindowsAzure.Storage.Blob
             var container = GetContainer();
             container.CreateIfNotExists();
 
-            var folderName = Folder(item);
-            var blobName = BlobName(item).GetValidTableName();
-            var blobFullPath = !String.IsNullOrWhiteSpace(folderName)
-                                   ? String.Format("{0}/{1}", folderName, blobName)
-                                   : blobName;
-            var blockBlob = container.GetBlockBlobReference(blobFullPath);
-            using (var stream = blockBlob.OpenWrite())
+            var blobName = BlobName(item);
+            var blockBlob = container.GetBlockBlobReference(blobName);
+            var formatter = new BinaryFormatter();
+            using (var memory = new MemoryStream())
             {
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(stream, item);
+                formatter.Serialize(memory, item);
+                memory.Seek(0, SeekOrigin.Begin);
+                blockBlob.UploadFromStream(memory);
             }
         }
-        public void Delete(String fullPath)
+        public void Delete(String blobName)
         {
             var container = GetContainer();
             container.CreateIfNotExists();
 
-            var blockBlob = container.GetBlockBlobReference(fullPath);
+            var blockBlob = container.GetBlockBlobReference(blobName);
             blockBlob.Delete();
         }
         public void Delete(T item)
         {
-            var folderName = Folder(item);
-            var blobName = BlobName(item).GetValidTableName();
-            var blobFullPath = !String.IsNullOrWhiteSpace(folderName)
-                                   ? String.Format("{0}/{1}", folderName, blobName)
-                                   : blobName;
-            Delete(blobFullPath);
+            var blobName = BlobName(item);
+            Delete(blobName);
         }
     }
 }

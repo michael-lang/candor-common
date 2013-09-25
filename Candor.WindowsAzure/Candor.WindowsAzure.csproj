@@ -71,6 +71,7 @@
     <Compile Include="CompiledExpressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Storage\Blob\CloudBlobProxy.cs" />
+    <Compile Include="Storage\Blob\CloudBlobRules.cs" />
     <Compile Include="Storage\Queue\CloudQueueProxy.cs" />
     <Compile Include="Storage\Queue\CloudQueueRules.cs" />
     <Compile Include="Storage\Queue\RecordChangeNotification.cs" />

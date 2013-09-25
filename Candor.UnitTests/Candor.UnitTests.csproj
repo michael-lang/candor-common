@@ -61,6 +61,7 @@
     <Compile Include="Reflection\AccountType.cs" />
     <Compile Include="Reflection\ReflectionExtensionsTests.cs" />
     <Compile Include="StringExtensions\ToCharacterSetAsciiAutoTests.cs" />
+    <Compile Include="WindowsAzure\CloudBlobRulesTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Candor.Security.SqlProvider\Candor.Security.SqlProvider.csproj">
@@ -70,6 +71,10 @@
     <ProjectReference Include="..\Candor.Security\Candor.Security.csproj">
       <Project>{5b839fb3-8f8f-47db-87e6-a64d83c9b4ad}</Project>
       <Name>Candor.Security</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Candor.WindowsAzure\Candor.WindowsAzure.csproj">
+      <Project>{b491e5b1-e7c1-4568-a05f-96f01cf934ae}</Project>
+      <Name>Candor.WindowsAzure</Name>
     </ProjectReference>
     <ProjectReference Include="..\Candor\Candor.csproj">
       <Project>{dc704076-813e-4d6c-b2ad-1171feb8829e}</Project>

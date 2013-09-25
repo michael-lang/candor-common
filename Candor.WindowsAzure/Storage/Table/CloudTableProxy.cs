@@ -482,8 +482,8 @@ namespace Candor.WindowsAzure.Storage.Table
             if (deleteEntity == null) return;
             var deleteOperation = TableOperation.Delete(deleteEntity);
             var result = table.Execute(deleteOperation);
-            if (result.HttpStatusCode != 200)
-                throw new InvalidOperationException(String.Format("Failed to delete {0}.", table.Name));
+            if (result.HttpStatusCode != 204) //204 = "No Content" = Successful delete per Azure docs
+                throw new InvalidOperationException(String.Format("Failed to delete {0}.  Status Code {1}. {2}", table.Name, result.HttpStatusCode, result.Result));
         }
         /// <summary>
         /// Deletes an item only if it has not changed since the item was retrieved.
@@ -497,7 +497,7 @@ namespace Candor.WindowsAzure.Storage.Table
 
             var deleteOperation = TableOperation.Delete(item);
             var result = table.Execute(deleteOperation);
-            if (result.HttpStatusCode != 200)
+            if (result.HttpStatusCode != 204) //204 = "No Content" = Successful delete per Azure docs
                 throw new InvalidOperationException(String.Format("Failed to delete {0}.  Status Code {1}. {2}", table.Name, result.HttpStatusCode, result.Result));
         }
         /// <summary>
