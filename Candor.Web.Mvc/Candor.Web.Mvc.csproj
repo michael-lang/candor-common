@@ -48,8 +48,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="T4MVCExtensions">
-      <HintPath>..\packages\T4MVCExtensions.3.4.0\lib\net40\T4MVCExtensions.dll</HintPath>
+    <Reference Include="T4MVCExtensions, Version=3.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\T4MVCExtensions.3.7.4\lib\net40\T4MVCExtensions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

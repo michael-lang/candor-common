@@ -19,6 +19,7 @@
       1.1.3: CloudQueueProxy: On adding a record change notification, it now ensures the Azure queue exists.
       1.1.4: CloudTableProxy: Delete failures now return more cause detail in exception.
       1.2.0: Added CloudBlobProxy class: works similarly to CloudTableProxy and CloudQueueProxy
+      1.2.6: Updates to CloudBlobProxy, update package dependency references
     </releaseNotes>
     <tags>Candor WindowsAzure Azure</tags>
   </metadata>

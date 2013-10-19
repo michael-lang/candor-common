@@ -10,8 +10,12 @@
     <licenseUrl>https://github.com/michael-lang/candor-common/blob/master/MIT-LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>This code is open source and can be found at http://github.com/michael-lang/candor-common.
-	In depth articles can be found at http://candordeveloper.com/</releaseNotes>
+    <releaseNotes>
+      This code is open source and can be found at http://github.com/michael-lang/candor-common.
+      In depth articles can be found at http://candordeveloper.com/
+      Changes:
+      1.0.1: Update package dependency references
+    </releaseNotes>
     <tags>Candor Security Authentication Hash</tags>
     <dependencies>
       <dependency id="Candor.Core" version="0.10.11.30726" />
