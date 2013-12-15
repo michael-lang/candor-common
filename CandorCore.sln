@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor", "Candor\Candor.csproj", "{DC704076-813E-4D6C-B2AD-1171FEB8829E}"
-EndProject
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F3EC1E40-A74D-4433-949A-FEE6F85208B5}"
 	ProjectSection(SolutionItems) = preProject
 		Candor.Web.Mvc.Bootstrap.ErrorHandler\Candor.Web.Mvc.ErrorHandler.nuspec = Candor.Web.Mvc.Bootstrap.ErrorHandler\Candor.Web.Mvc.ErrorHandler.nuspec
@@ -10,10 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.markdown = README.markdown
 		SolutionInfo.cs = SolutionInfo.cs
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.Security", "Candor.Security\Candor.Security.csproj", "{5B839FB3-8F8F-47DB-87E6-A64D83C9B4AD}"
-EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Candor.Security.Database", "Candor.Security.Database\Candor.Security.Database.sqlproj", "{7FF800AF-AEBF-4974-B531-A5EE21B6E5B3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C5FDD2D7-7330-461A-97C5-99071504AC1A}"
 EndProject
@@ -38,6 +34,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{57DE
 		Release.cmd = Release.cmd
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6E31E455-E92E-4161-B95F-E23880454AF6}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor", "Candor\Candor.csproj", "{DC704076-813E-4D6C-B2AD-1171FEB8829E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.Security", "Candor.Security\Candor.Security.csproj", "{5B839FB3-8F8F-47DB-87E6-A64D83C9B4AD}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Candor.Security.Database", "Candor.Security.Database\Candor.Security.Database.sqlproj", "{7FF800AF-AEBF-4974-B531-A5EE21B6E5B3}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.Security.SqlProvider", "Candor.Security.SqlProvider\Candor.Security.SqlProvider.csproj", "{F12C68D3-B83E-47F9-8193-62AE9A2EEECA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.UnitTests", "Candor.UnitTests\Candor.UnitTests.csproj", "{D94CEBA9-9E39-4253-85A5-78A91B04DC44}"
@@ -57,13 +66,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.WindowsAzure.Tasks", "Candor.WindowsAzure.Tasks\Candor.WindowsAzure.Tasks.csproj", "{187DBC7F-F5A2-4669-9EBF-84D58859F485}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Candor.Security.AzureStorageProvider", "Candor.Security.AzureStorageProvider\Candor.Security.AzureStorageProvider.csproj", "{18DCA2E9-0848-4D6E-A714-DEDFA3E73417}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6E31E455-E92E-4161-B95F-E23880454AF6}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -110,13 +110,18 @@ namespace Candor.Security
         /// <remarks>This can change as often as desired without affecting storage of existing user password hashes.</remarks>
         public Int32 HashGroupMaximum { get; set; }
         /// <summary>
-        /// Gets or sets the amount of time a remembered session (on a private computer) should be.
+        /// Gets or sets the amount of time a remembered session (on a private computer) should be in minutes.
         /// </summary>
         public Int32 ExtendedSessionDuration { get; set; }
         /// <summary>
-        /// Gets or sets the amount of time a session on a public computer should be.
+        /// Gets or sets the amount of time a session on a public computer should be in minutes.
         /// </summary>
         public Int32 PublicSessionDuration { get; set; }
+        /// <summary>
+        /// Gets or sets the number of days a newly setup guest user account password is valid for.
+        /// Any amount of time past this would just require a password reset to be emailed again.
+        /// </summary>
+        public Int32 GuestUserExpirationDays { get; set; }
         /// <summary>
         /// Gets the configured hash provider, or the default one if
         /// one was not specifically configured for this authentication provider.
@@ -190,6 +195,7 @@ namespace Candor.Security
 
             ExtendedSessionDuration = configValue.GetInt32Value("extendedSessionDuration", 20160); //20160=2weeks
             PublicSessionDuration = configValue.GetInt32Value("publicSessionDuration", 20); //20 minutes default.
+            GuestUserExpirationDays = configValue.GetInt32Value("GuestUserExpirationDays", 14);
             _hashProviderName = configValue.GetStringValue("hashProviderName", String.Empty);
             if (!string.IsNullOrEmpty(_hashProviderName))
             {
@@ -305,7 +311,7 @@ namespace Candor.Security
         /// </returns>
         public virtual UserIdentity AuthenticateUser(string token, UserSessionDurationType duration, String ipAddress, ExecutionResults result)
         {
-            String errorMsg = "Authentication token invalid.";
+            const string errorMsg = "Authentication token invalid.";
             Guid renewalToken;
             if (!Guid.TryParse(token, out renewalToken))
             {
@@ -340,26 +346,25 @@ namespace Candor.Security
             history.UserSession = session;
             return new UserIdentity(history, Name);
         }
+
         /// <summary>
-        /// Registers a new user.  The PasswordHash property should be the actual password.
+        /// Base logic to register a full user, or a guest user.  Creates the appropriate records and the proper validation.
         /// </summary>
         /// <param name="user">A user with a raw password which is turned into a password hash as part of registration.</param>
-        /// <param name="duration">The amount of time that the initial session will be valid.</param>
-        /// <param name="ipAddress">The internet address where the user is connecting from.</param>
         /// <param name="result">A ExecutionResults instance to add applicable
         /// warning and error messages to.</param>
         /// <returns>A boolean indicating success (true) or failure (false).</returns>
-        public virtual UserIdentity RegisterUser(User user, UserSessionDurationType duration, String ipAddress, ExecutionResults result)
+        protected virtual bool RegisterBase(User user, ExecutionResults result)
         {
             var password = user.PasswordHash;
             if (!ValidateName(user.Name, result) || !ValidatePassword(password, result))
-                return new UserIdentity();
+                return false;
 
             var existing = GetUserByName(user.Name);
             if (existing != null)
             {   //seed user table with deleted users with names you don't want users to have
                 result.AppendError("The name you specified cannot be used.");
-                return new UserIdentity();
+                return false;
             }
             if (user.UserID.Equals(Guid.Empty))
                 user.UserID = Guid.NewGuid();
@@ -382,8 +387,41 @@ namespace Candor.Security
                 SaveUserSalt(salt);
                 scope.Complete();
             }
+            return true;
+        }
+
+        /// <summary>
+        /// Registers a new user.  The PasswordHash property should be the actual password.
+        /// </summary>
+        /// <param name="user">A user with a raw password which is turned into a password hash as part of registration.</param>
+        /// <param name="duration">The amount of time that the initial session will be valid.</param>
+        /// <param name="ipAddress">The internet address where the user is connecting from.</param>
+        /// <param name="result">A ExecutionResults instance to add applicable
+        /// warning and error messages to.</param>
+        /// <returns>A boolean indicating success (true) or failure (false).</returns>
+        public virtual UserIdentity RegisterUser(User user, UserSessionDurationType duration, String ipAddress, ExecutionResults result)
+        {
+            var password = user.PasswordHash; //grab before it gets hashed.
+            if (!RegisterBase(user, result))
+                return new UserIdentity();
+
             return AuthenticateUser(name: user.Name, password: password, duration: duration,
                                     ipAddress: ipAddress, checkHistory: false, allowUpdateHash: false, result: result);
+        }
+
+        /// <summary>
+        /// Registers a new guest user.  The user is being created by another user
+        /// that is inviting this user to join.
+        /// </summary>
+        /// <param name="user">A user with a raw password which is turned into a password hash as part of registration.</param>
+        /// <param name="result">A ExecutionResults instance to add applicable
+        /// warning and error messages to.</param>
+        /// <returns>The guest password good for 14 days, or another configurable number of days.  
+        /// After that initial period the user can request a password reset when joining.</returns>
+        public virtual String RegisterGuestUser(User user, ExecutionResults result)
+        {
+            return !RegisterBase(user, result) ? null 
+                : GenerateUserResetCode(user.Name, TimeSpan.FromDays(GuestUserExpirationDays));
         }
 
         protected virtual UserIdentity AuthenticateUser(string name, string password,
@@ -532,6 +570,17 @@ namespace Candor.Security
         /// <returns>If the user exists, then a reset code string; otherwise null.</returns>
         public virtual String GenerateUserResetCode(String name)
         {
+            return GenerateUserResetCode(name, TimeSpan.FromHours(1));
+        }
+        /// <summary>
+        /// Generates a new password reset code for a user and stores that as the current code valid
+        /// for a configurable time.  Shared logic between normal user and guest user functionality.
+        /// </summary>
+        /// <param name="name">The user name / email address.</param>
+        /// <param name="resetExpiration">The configurable duration the reset code should last.</param>
+        /// <returns></returns>
+        protected virtual String GenerateUserResetCode(String name, TimeSpan resetExpiration)
+        {
             var user = GetUserByName(name);
             if (user == null)
                 return null;
@@ -542,7 +591,7 @@ namespace Candor.Security
 
             HashProvider hasher = !string.IsNullOrEmpty(salt.HashName) ? HashManager.Providers[salt.HashName] : HashManager.DefaultProvider;
             salt.ResetCode = hasher.GetSalt(16);
-            salt.ResetCodeExpiration = DateTime.UtcNow.AddHours(1);
+            salt.ResetCodeExpiration = DateTime.UtcNow.Add(resetExpiration);
             SaveUserSalt(salt);
 
             return salt.ResetCode;
