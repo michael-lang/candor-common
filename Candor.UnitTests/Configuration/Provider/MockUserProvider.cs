@@ -1,50 +1,57 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using Candor.Security;
 
 namespace Candor.Configuration.Provider
 {
-    class MockUserProvider : Security.UserProvider
+    public sealed class MockUserProvider : UserProvider
     {
         public MockUserProvider()
         {
-            this.Initialize("mock", new NameValueCollection());
+            Initialize("mock", new NameValueCollection());
         }
-        public override Security.User GetUserByID(Guid userId)
+        public override User GetUserByID(Guid userId)
         {
             throw new NotImplementedException();
         }
 
-        public override Security.User GetUserByName(string name)
+        public override User GetUserByName(string name)
         {
             throw new NotImplementedException();
         }
 
-        protected override void InsertUserHistory(Security.AuthenticationHistory history)
+        protected override void InsertUserHistory(AuthenticationHistory history)
         {
             throw new NotImplementedException();
         }
 
-        protected override void SaveUserSession(Security.UserSession session)
+        protected override void SaveUserSession(UserSession session)
         {
             throw new NotImplementedException();
         }
 
-        protected override void SaveUser(Security.User user)
+        protected override void SaveUser(User user)
         {
             throw new NotImplementedException();
         }
 
-        protected override void SaveUserSalt(Security.UserSalt salt)
+        protected override void SaveUserSalt(UserSalt salt)
         {
             throw new NotImplementedException();
         }
 
-        protected override Security.UserSalt GetUserSalt(Guid userId)
+        protected override UserSalt GetUserSalt(Guid userId)
         {
             throw new NotImplementedException();
         }
 
-        protected override Security.UserSession GetUserSession(Guid renewalToken)
+        public override List<UserSession> GetLatestUserSessions(Guid userId, Int32 take)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override UserSession GetUserSession(Guid renewalToken)
         {
             throw new NotImplementedException();
         }
@@ -54,7 +61,7 @@ namespace Candor.Configuration.Provider
             throw new NotImplementedException();
         }
 
-        protected override Security.AuthenticationHistory GetSessionAuthenticationHistory(Security.UserSession session)
+        protected override AuthenticationHistory GetSessionAuthenticationHistory(UserSession session)
         {
             throw new NotImplementedException();
         }

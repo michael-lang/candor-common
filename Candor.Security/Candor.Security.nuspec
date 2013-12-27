@@ -9,13 +9,11 @@
     <projectUrl>https://github.com/michael-lang/candor-common</projectUrl>
     <licenseUrl>https://github.com/michael-lang/candor-common/blob/master/MIT-LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>$description$  This code is open source.</description>
     <releaseNotes>
-      This code is open source and can be found at http://github.com/michael-lang/candor-common.
-      In depth articles can be found at http://candordeveloper.com/
-      Changes:
-	  1.1.0: User Provider can now register a guest user.
-      1.0.1: Update package dependency references
+	  2.0.0: * Add support to get latest x login sessions for a user (null for never).
+	  1.1.0: * User Provider can now register a guest user.
+      1.0.1: * Update package dependency references
     </releaseNotes>
     <tags>Candor Security Authentication Hash</tags>
     <dependencies>

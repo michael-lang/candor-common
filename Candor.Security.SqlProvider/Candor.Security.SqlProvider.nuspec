@@ -11,10 +11,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
-      This code is open source and can be found at http://github.com/michael-lang/candor-common.  The required Sql scripts are available within the project on github.
-      In depth articles can be found at http://candordeveloper.com/
-      Changes:
-      1.0.1: Update package dependency references
+	  2.0.0: * Add support to get latest x login sessions for a user (null for never).
+      1.0.1: * Update package dependency references
     </releaseNotes>
     <tags>Candor Security SqlClient</tags>
     <dependencies>

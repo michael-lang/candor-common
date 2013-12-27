@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration.Provider;
 using System.Text.RegularExpressions;
@@ -596,6 +597,13 @@ namespace Candor.Security
 
             return salt.ResetCode;
         }
+        /// <summary>
+        /// Gets the latest session(s) for a given user.
+        /// </summary>
+        /// <param name="userId">The unique identity.</param>
+        /// <param name="take">The maximum number of sessions to retrieve.</param>
+        /// <returns>A list of sessions; If empty then the user has never logged in (such as a no-show guest).</returns>
+        public abstract List<UserSession> GetLatestUserSessions(Guid userId, Int32 take); 
 
         protected abstract void InsertUserHistory(AuthenticationHistory history);
         protected abstract void SaveUserSession(UserSession session);

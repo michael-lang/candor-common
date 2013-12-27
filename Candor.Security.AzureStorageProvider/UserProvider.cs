@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using Candor.Configuration.Provider;
-using Candor.WindowsAzure.Storage;
 using Candor.WindowsAzure.Storage.Table;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -152,11 +151,10 @@ namespace Candor.Security.AzureStorageProvider
             {
                 return _tableProxyAuthenticationHistoryByUserName ??
                        (_tableProxyAuthenticationHistoryByUserName = new CloudTableProxy<AuthenticationHistory>
-                           {
+                       {   //paritioned by user name, row always has latest entered record as first (lowest) row key
                                ConnectionName = ConnectionNameAudit ?? ConnectionName,
-                               TableName = String.Format("{0}ByUserName", typeof (AuthenticationHistory).Name),
-                               PartitionKey = x => x.UserName.GetValidPartitionKey(),
-                               RowKey = x => x.CreatedDate.ToString("yyyyMMddHHmmss")
+                               PartitionKey = x => string.Format("UserName|{0}", x.UserName).GetValidPartitionKey(),
+                               RowKey = x => String.Format("{0:d19}", DateTime.MaxValue.Ticks - x.CreatedDate.Ticks).GetValidRowKey()
                            });
             }
         }
@@ -169,9 +167,9 @@ namespace Candor.Security.AzureStorageProvider
                     _tableProxyAuthenticationHistoryByToken = new CloudTableProxy<AuthenticationHistory>
                     {
                         ConnectionName = ConnectionNameAudit ?? ConnectionName,
-                        TableName = String.Format("{0}BySessionToken", typeof(AuthenticationHistory).Name)
+                        PartitionKey = x => "ByToken",
+                        RowKey = x => String.Format("{0}", x.UserSession.RenewalToken).GetValidRowKey()
                     };
-                    _tableProxyAuthenticationHistoryByToken.SetPartitionRowKeyAsGuid(x => x.UserSession.RenewalToken);
                 }
                 return _tableProxyAuthenticationHistoryByToken;
             }
@@ -185,9 +183,9 @@ namespace Candor.Security.AzureStorageProvider
                     _tableProxyUserSessionByToken = new CloudTableProxy<UserSession>
                     {
                         ConnectionName = ConnectionNameAudit ?? ConnectionName,
-                        TableName = String.Format("{0}ByToken", typeof(UserSession).Name)
+                        PartitionKey = x => "ByToken",
+                        RowKey = x => x.RenewalToken.ToString().GetValidRowKey()
                     };
-                    _tableProxyUserSessionByToken.SetPartitionRowKeyAsGuid(x => x.RenewalToken);
                 }
                 return _tableProxyUserSessionByToken;
             }
@@ -197,11 +195,10 @@ namespace Candor.Security.AzureStorageProvider
             get
             {
                 return _tableProxyUserSessionByUser ?? (_tableProxyUserSessionByUser = new CloudTableProxy<UserSession>
-                    {
+                    {   //paritioned by user Id, row always has latest entered record as first (lowest) row key
                         ConnectionName = ConnectionNameAudit ?? ConnectionName,
-                        TableName = String.Format("{0}ByUser", typeof (UserSession).Name),
-                        PartitionKey = x => x.UserID.ToString().GetValidPartitionKey(),
-                        RowKey = x => x.RenewalToken.ToString().GetValidRowKey()
+                        PartitionKey = x => String.Format("UserId|{0}", x.UserID).GetValidPartitionKey(),
+                        RowKey = x => String.Format("{0:d19}", DateTime.MaxValue.Ticks - x.CreatedDate.Ticks).GetValidRowKey()
                     });
             }
         }
@@ -264,6 +261,18 @@ namespace Candor.Security.AzureStorageProvider
             return item == null ? null : item.Entity;
         }
 
+        /// <summary>
+        /// Gets the latest session(s) for a given user.
+        /// </summary>
+        /// <param name="userId">The unique identity.</param>
+        /// <param name="take">The maximum number of sessions to retrieve.</param>
+        /// <returns></returns>
+        public override List<UserSession> GetLatestUserSessions(Guid userId, Int32 take)
+        {
+            var proxies = TableProxyUserSessionByUser.GetPartition(String.Format("UserId|{0}", userId), take: take);
+            return (proxies == null) ? null : proxies.Select(x => x.Entity).ToList();
+        }
+
         protected override void InsertUserHistory(AuthenticationHistory history)
         {
             TableProxyAuthenticationHistoryByUserName.Insert(history);
@@ -275,27 +284,29 @@ namespace Candor.Security.AzureStorageProvider
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("name", "User name must be supplied.");
+
+            var rkCompare = DateTime.MaxValue.Ticks - DateTime.UtcNow.AddMinutes(-1*FailurePeriodMinutes).Ticks;
             var rowKeyFilter = TableQuery.GenerateFilterCondition(TableConstants.RowKey,
-                                                                  QueryComparisons.GreaterThanOrEqual,
-                                                                  DateTime.UtcNow.AddMinutes(-1 * FailurePeriodMinutes)
-                                                                          .ToString("yyyyMMddHHmmss"));
+                                                                  QueryComparisons.LessThanOrEqual, //smallest is latest
+                                                                  rkCompare.ToString("d19"));
             var attempts =
-                TableProxyAuthenticationHistoryByUserName.QueryPartition(name.GetValidPartitionKey(), rowKeyFilter);
+                TableProxyAuthenticationHistoryByUserName.QueryPartition(String.Format("UserName|{0}", name).GetValidPartitionKey(), 
+                rowKeyFilter, take: AllowedFailuresPerPeriod * 2);
             if (attempts == null || attempts.Count == 0)
                 return 0;
-            attempts.Sort((x, y) => y.Entity.CreatedDate.CompareTo(x.Entity.CreatedDate)); //sort descending
+            //already sorted descending
             return attempts.TakeWhile(t => !t.Entity.IsAuthenticated).Count();
         }
 
         protected override AuthenticationHistory GetSessionAuthenticationHistory(UserSession session)
         {
-            var item = TableProxyAuthenticationHistoryByToken.Get(session.RenewalToken);
+            var item = TableProxyAuthenticationHistoryByToken.Get("ByToken", session.RenewalToken.ToString().GetValidRowKey());
             return item == null ? null : item.Entity;
         }
 
         protected override UserSession GetUserSession(Guid renewalToken)
         {
-            var item = TableProxyUserSessionByToken.Get(renewalToken);
+            var item = TableProxyUserSessionByToken.Get("ByToken", renewalToken.ToString());
             return item == null ? null : item.Entity;
         }
         protected override void SaveUserSession(UserSession session)

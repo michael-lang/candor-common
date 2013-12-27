@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Common.Logging;
 using prov = Candor.Configuration.Provider;
 
@@ -234,6 +235,17 @@ namespace Candor.Security
         public static String GenerateUserResetCode(String name)
         {
             return Provider.GenerateUserResetCode(name);
+        }
+
+        /// <summary>
+        /// Gets the latest session(s) for a given user.
+        /// </summary>
+        /// <param name="userId">The unique identity.</param>
+        /// <param name="take">The maximum number of sessions to retrieve.</param>
+        /// <returns>A list of sessions; If empty then the user has never logged in (such as a no-show guest).</returns>
+        public static List<UserSession> GetLatestUserSessions(Guid userId, Int32 take)
+        {
+            return Provider.GetLatestUserSessions(userId, take);
         }
     }
 }

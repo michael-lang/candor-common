@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using cs = Candor.Security;
 using System.Collections.Specialized;
@@ -373,6 +374,47 @@ namespace Candor.Security.SqlProvider
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Gets the latest session(s) for a given user.
+        /// </summary>
+        /// <param name="userId">The unique identity.</param>
+        /// <param name="take">The maximum number of sessions to retrieve.</param>
+        /// <returns></returns>
+        public override List<UserSession> GetLatestUserSessions(Guid userId, Int32 take)
+        {
+            var items = new List<UserSession>();
+            using (var cn = new SqlConnection(ConnectionStringAudit))
+            {
+                cn.Open();
+                using (var cmd = new SqlCommand())
+                {
+                    cmd.Connection = cn;
+                    cmd.CommandType = System.Data.CommandType.Text;
+                    cmd.CommandText = "Select top " + take + @" SessionID, UserID, RenewalToken, CreatedDate, ExpirationDate, RenewedDate
+ From Security.UserSession
+ where UserID = @UserID
+ order by CreatedDate desc";
+                    cmd.Parameters.AddWithValue("UserID", userId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            items.Add(new UserSession
+                            {
+                                SessionID = reader.GetInt32("SessionID", 0),
+                                UserID = reader.GetGuid("UserID"),
+                                RenewalToken = reader.GetGuid("RenewalToken"),
+                                CreatedDate = reader.GetUTCDateTime("CreatedDate", DateTime.MinValue),
+                                ExpirationDate = reader.GetUTCDateTime("ExpirationDate", DateTime.MinValue),
+                                RenewedDate = reader.GetUTCDateTime("RenewedDate", DateTime.MinValue)
+                            });
+                        }
+                    }
+                }
+            }
+            return items;
         }
         protected override UserSession GetUserSession(Guid renewalToken)
         {
