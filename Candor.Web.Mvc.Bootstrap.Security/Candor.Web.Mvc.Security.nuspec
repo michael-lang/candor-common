@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Candor.Web.Mvc.Security</id>
-    <version>1.0.0.0</version>
+    <version>2.1.0.0</version>
     <authors>Michael Lang</authors>
     <owners>Nexul Software LLC, Michael Lang</owners>
     <copyright>Copyright 2013 Michael Lang</copyright>
@@ -10,15 +10,15 @@
     <licenseUrl>https://github.com/michael-lang/candor-common/blob/master/MIT-LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An MVC AccountController with corresponding view models, and views.  When installed the added files will adopt your project's root namespace.</description>
-    <releaseNotes>This code is open source and can be found at http://github.com/michael-lang/candor-common.
-	In depth articles can be found at http://candordeveloper.com/
+    <releaseNotes>
+	2.1.0.0: * Updated AccountController, ForgotPassword to call new UserNotificationProvider
 	</releaseNotes>
     <tags>candor mvc security</tags>
     <dependencies>
-      <dependency id="Candor.Security" version="1.0.0.0"/>
-      <dependency id="Candor.Web.Mvc" version="1.0.0.0"/>
-      <dependency id="T4MVC" version="3.4.0" />
-      <dependency id="T4MVCExtensions" version="3.4.0" />
+      <dependency id="Candor.Security" version="2.1.0.0"/>
+      <dependency id="Candor.Web.Mvc" version="1.0.1.0"/>
+      <dependency id="T4MVC" version="3.7.4" />
+      <dependency id="T4MVCExtensions" version="3.7.4" />
     </dependencies>
   </metadata>
 </package>

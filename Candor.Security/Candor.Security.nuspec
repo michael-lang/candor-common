@@ -11,6 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$  This code is open source.</description>
     <releaseNotes>
+	  2.1.0: * Added UserNotificationProvider base provider class
 	  2.0.0: * Add support to get latest x login sessions for a user (null for never).
 	  1.1.0: * User Provider can now register a guest user.
       1.0.1: * Update package dependency references

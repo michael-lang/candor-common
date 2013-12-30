@@ -11,11 +11,15 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
-      This code is open source and can be found at http://github.com/michael-lang/candor-windowsazure.
-      In depth articles can be found at http://candordeveloper.com/
-      Changes:
+      2.1.0: Created a task to process queue messages for forgot password requests.
+	  You should set the view cshtml files property "Copy to output folder" to "Copy Always"
       1.0.1: Update package dependency references
     </releaseNotes>
     <tags>Candor WindowsAzure Azure</tags>
   </metadata>
+  <files>
+	<file src="bin\$configuration$\$id$.dll" target="lib\net45\" />
+	<file src="bin\$configuration$\$id$.pdb" target="lib\net45\" />
+	<file src="Views\**\*.*" target="Content\Views" />
+  </files>
 </package>
