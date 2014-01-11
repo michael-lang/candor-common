@@ -11,6 +11,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$  This code is open source.</description>
     <releaseNotes>
+	  2.2.0: * SHA2HashProvider GetSalt method now returns the requested length of a string.  Unit Tests added for GetSalt to ensure future correctness.
+		* CandorAuthenticationModule now accepts authentication via headers in addition to cookies.  response headers are set with same values as auth response cookies.
+		Headers have the same keys as cookies, except with "X-" prefix.
+		* Added debug symbols and xml documentation
 	  2.1.0: * Added UserNotificationProvider base provider class
 	  2.0.0: * Add support to get latest x login sessions for a user (null for never).
 	  1.1.0: * User Provider can now register a guest user.
@@ -21,4 +25,9 @@
       <dependency id="Candor.Core" version="0.10.11.30726" />
     </dependencies>
   </metadata>
+  <files>
+	<file src="bin\$configuration$\$id$.dll" target="lib\net45\" />
+	<file src="bin\$configuration$\$id$.pdb" target="lib\net45\" />
+	<file src="bin\$configuration$\$id$.xml" target="lib\net45\" />
+  </files>
 </package>

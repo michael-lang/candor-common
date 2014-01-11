@@ -25,13 +25,19 @@ namespace Candor.Security.SqlProvider
     /// </remarks>
     public class UserProvider : cs.UserProvider
     {
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public UserProvider()
         {
             ConnectionNameAudit = null;
             ConnectionNameUserSalt = null;
             ConnectionNameUser = null;
         }
-
+        /// <summary>
+        /// Creates a new isntance with a specific name.  No initialization.
+        /// </summary>
+        /// <param name="name"></param>
         public UserProvider(string name)
             : base(name)
         {
@@ -39,7 +45,12 @@ namespace Candor.Security.SqlProvider
             ConnectionNameUserSalt = null;
             ConnectionNameUser = null;
         }
-
+        /// <summary>
+        /// Creates a new instance with a specific name and a single named connection
+        /// used for all operations.
+        /// </summary>
+        /// <param name="name">A name for this provider instance, unique for all User Providers.</param>
+        /// <param name="connectionName">A SQL database connection named defined in configuration.</param>
         public UserProvider(String name, string connectionName)
             : base(name)
         {
@@ -48,7 +59,13 @@ namespace Candor.Security.SqlProvider
             ConnectionNameUser = null;
             ConnectionName = connectionName;
         }
-
+        /// <summary>
+        /// Creates a new instance with a separate named connections for each secure area.
+        /// </summary>
+        /// <param name="name">A name for this provider instance, unique for all User Providers.</param>
+        /// <param name="connectionNameUser">A SQL database connection named defined in configuration; used for the user table only.</param>
+        /// <param name="connectionNameUserSalt">A SQL database connection named defined in configuration; used for storing user salts only.</param>
+        /// <param name="connectionNameAudit">A SQL database connection named defined in configuration;  used for audit tables.</param>
         public UserProvider(String name, string connectionNameUser, string connectionNameUserSalt, string connectionNameAudit)
             : base(name)
         {
@@ -207,7 +224,10 @@ namespace Candor.Security.SqlProvider
                 UpdatedByUserID = reader.GetGuid("UpdatedByUserID")
             };
         }
-
+        /// <summary>
+        /// Inserts a new user authentication history.
+        /// </summary>
+        /// <param name="history"></param>
         protected override void InsertUserHistory(AuthenticationHistory history)
         {
             using (var cn = new SqlConnection(ConnectionStringAudit))
@@ -228,6 +248,10 @@ namespace Candor.Security.SqlProvider
             }
             SaveUserSession(history.UserSession);
         }
+        /// <summary>
+        /// Saves a user session, insert or update.
+        /// </summary>
+        /// <param name="session"></param>
         protected override void SaveUserSession(UserSession session)
         {
             using (var cn = new SqlConnection(ConnectionStringAudit))
@@ -260,6 +284,10 @@ namespace Candor.Security.SqlProvider
                 }
             }
         }
+        /// <summary>
+        /// Saves a user, insert or update depending if RecordId is non-zero.
+        /// </summary>
+        /// <param name="user"></param>
         protected override void SaveUser(User user)
         {
             using (var cn = new SqlConnection(ConnectionStringUser))
@@ -302,6 +330,10 @@ namespace Candor.Security.SqlProvider
                 }
             }
         }
+        /// <summary>
+        /// Saves a user salt, insert or update depending if RecordId is non-zero.
+        /// </summary>
+        /// <param name="salt"></param>
         protected override void SaveUserSalt(UserSalt salt)
         {
             using (var cn = new SqlConnection(ConnectionStringUserSalt))
@@ -341,7 +373,11 @@ namespace Candor.Security.SqlProvider
                 }
             }
         }
-
+        /// <summary>
+        /// Gets a user's salt metadata.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         protected override UserSalt GetUserSalt(Guid userId)
         {
             using (var cn = new SqlConnection(ConnectionStringUserSalt))
@@ -375,7 +411,6 @@ namespace Candor.Security.SqlProvider
             }
             return null;
         }
-
         /// <summary>
         /// Gets the latest session(s) for a given user.
         /// </summary>
@@ -416,6 +451,11 @@ namespace Candor.Security.SqlProvider
             }
             return items;
         }
+        /// <summary>
+        /// Gets a user session by the renewal token.
+        /// </summary>
+        /// <param name="renewalToken"></param>
+        /// <returns></returns>
         protected override UserSession GetUserSession(Guid renewalToken)
         {
             using (var cn = new SqlConnection(ConnectionStringAudit))
@@ -448,6 +488,11 @@ namespace Candor.Security.SqlProvider
             }
             return null;
         }
+        /// <summary>
+        /// Gets the number of times a user name has failed authentication within the configured allowable failure period.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         protected override Int32 GetRecentFailedUserNameAuthenticationCount(string name)
         {
             using (var cn = new SqlConnection(ConnectionStringAudit))
@@ -469,6 +514,11 @@ namespace Candor.Security.SqlProvider
                 }
             }
         }
+        /// <summary>
+        /// Gets the authentication history for a specific session.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
         protected override AuthenticationHistory GetSessionAuthenticationHistory(UserSession session)
         {
             using (var cn = new SqlConnection(ConnectionStringAudit))

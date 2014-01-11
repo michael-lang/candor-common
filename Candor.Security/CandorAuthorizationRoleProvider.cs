@@ -13,12 +13,12 @@ namespace Candor.Security
 	public class CandorAuthorizationRoleProvider : RoleProvider
 	{
 		NameValueCollection _config = null; //storing for use by AuthorizationProvider web service implementation
-		/// <summary>
-		/// gets or sets if this role provider should load roles using the <see cref="AuthorizationManager"/>.
-		/// </summary>
-		/// <remarks>
-		/// If false, the authorization web service will be called directly and without any caching.
-		/// </remarks>
+        ///// <summary>
+        ///// gets or sets if this role provider should load roles using the <see cref="AuthorizationManager"/>.
+        ///// </summary>
+        ///// <remarks>
+        ///// If false, the authorization web service will be called directly and without any caching.
+        ///// </remarks>
 		//public bool UseAuthorizationManager { get; set; }
 
 		/// <summary>

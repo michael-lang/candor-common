@@ -11,6 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
+	  2.1.0.3: Added debug symbols and xml documentation
       2.1.0: Created a task to process queue messages for forgot password requests.
 	  You should set the view cshtml files property "Copy to output folder" to "Copy Always"
       1.0.1: Update package dependency references
@@ -20,6 +21,7 @@
   <files>
 	<file src="bin\$configuration$\$id$.dll" target="lib\net45\" />
 	<file src="bin\$configuration$\$id$.pdb" target="lib\net45\" />
+	<file src="bin\$configuration$\$id$.xml" target="lib\net45\" />
 	<file src="Views\**\*.*" target="Content\Views" />
   </files>
 </package>

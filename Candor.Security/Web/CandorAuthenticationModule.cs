@@ -80,28 +80,35 @@ namespace Candor.Security.Web
 				return;
 
 			var ticketCookie = HttpContext.Current.Request.Cookies[AuthenticationTicketTokenKey];
+            var ticketHeader = HttpContext.Current.Request.Headers["X-" + AuthenticationTicketTokenKey];
 			var rememberCookie = HttpContext.Current.Request.Cookies[RememberMeKey];
+		    var rememberHeader = HttpContext.Current.Request.Headers["X-" + RememberMeKey];
 			var rememberMe = false;
 			if (rememberCookie != null && !String.IsNullOrWhiteSpace(rememberCookie.Value))
 				Boolean.TryParse(rememberCookie.Value, out rememberMe);
+            else if (!String.IsNullOrWhiteSpace(rememberHeader))
+                Boolean.TryParse(rememberHeader, out rememberMe);
 			var ipAddress = context.Request.UserHostAddress;
 
-			if (ticketCookie == null || string.IsNullOrWhiteSpace(ticketCookie.Value))
+			if ((ticketCookie == null || string.IsNullOrWhiteSpace(ticketCookie.Value))
+                && string.IsNullOrWhiteSpace(ticketHeader))
 			{
 				SecurityContextManager.CurrentUser = new UserPrincipal(); //anonymous
 				return;
 			}
 
-			var identity = UserManager.AuthenticateUser(ticketCookie.Value, rememberMe ? UserSessionDurationType.Extended : UserSessionDurationType.PublicComputer, ipAddress, new ExecutionResults());
+			var identity = UserManager.AuthenticateUser(ticketHeader ?? ticketCookie.Value, rememberMe ? UserSessionDurationType.Extended : UserSessionDurationType.PublicComputer, ipAddress, new ExecutionResults());
 			var principal = new UserPrincipal(identity);
 			SecurityContextManager.CurrentUser = principal;
 
 			if (ImpersonationEnabled && !principal.IsAnonymous && principal.IsInAnyRole(UserManager.Provider.ImpersonationAllowedRoles))
 			{	//check for impersonation
 				HttpCookie impersonatedUserCookie = context.Request.Cookies[ImpersonationKey];
-				if (impersonatedUserCookie != null && !string.IsNullOrEmpty(impersonatedUserCookie.Value))
+			    var impersonatedHeader = context.Request.Headers["X-" + ImpersonationKey];
+				if (!String.IsNullOrWhiteSpace(impersonatedHeader) ||
+                    (impersonatedUserCookie != null && !string.IsNullOrEmpty(impersonatedUserCookie.Value)))
 				{
-                    User impersonatedUser = UserManager.GetUserByName(impersonatedUserCookie.Value);
+                    var impersonatedUser = UserManager.GetUserByName(impersonatedHeader ?? impersonatedUserCookie.Value);
                     if (impersonatedUser != null)
                     {
                         principal = new UserPrincipal(new UserIdentity(impersonatedUser.UserID, impersonatedUser.Name, identity));
@@ -135,7 +142,8 @@ namespace Candor.Security.Web
 						app.Context.Response.Cookies.Add(cookie);
 					}
 					cookie.Expires = DateTime.Now.AddMinutes(15);
-					cookie.Value = SecurityContextManager.CurrentUser.Identity.Name;
+                    cookie.Value = SecurityContextManager.CurrentUser.Identity.Name;
+                    app.Context.Response.Headers.Add("X-" + ImpersonationKey, SecurityContextManager.CurrentUser.Identity.Name);
 				}
 				else if (cookie != null)
 				{
@@ -153,6 +161,8 @@ namespace Candor.Security.Web
 			{
 				authCookie.Expires = SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.ExpirationDate;
 				authCookie.Value = SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.RenewalToken.ToString();
+                app.Context.Response.Headers.Add("X-" + AuthenticationTicketTokenKey, 
+                    SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.RenewalToken.ToString());
 
 				HttpCookie rememberCookie = app.Context.Response.Cookies[RememberMeKey];
 				if (rememberCookie == null)
@@ -161,7 +171,9 @@ namespace Candor.Security.Web
 					app.Context.Response.Cookies.Add(rememberCookie);
 				}
 				rememberCookie.Expires = authCookie.Expires;
-				rememberCookie.Value = ((authCookie.Expires - DateTime.UtcNow).TotalMinutes > 21).ToString();
+			    bool remember = ((authCookie.Expires - DateTime.UtcNow).TotalMinutes > 21);
+				rememberCookie.Value = remember.ToString();
+                app.Context.Response.Headers.Add("X-" + RememberMeKey, remember.ToString());
 			}
 		}
 	}

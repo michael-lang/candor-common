@@ -51,6 +51,7 @@
     </Compile>
     <Compile Include="Configuration\Provider\MockUserProvider.cs" />
     <Compile Include="Configuration\Provider\ProviderResolverTests.cs" />
+    <Compile Include="Security\Cryptography\SHA2HashProviderTests.cs" />
     <Compile Include="StringExtensions\LexicalAddAsciiAlphaNumericTests.cs" />
     <Compile Include="StringExtensions\LexicalAddAsciiAlphaTests.cs" />
     <Compile Include="StringExtensions\LexicalAddNumericTests.cs" />

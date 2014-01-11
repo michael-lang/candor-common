@@ -6,6 +6,9 @@ namespace Candor.Security.Cryptography
 {
 	// See http://crackstation.net/hashing-security.htm
 	// See http://blog.barthe.ph/2012/06/15/howto-store-passwords/
+    /// <summary>
+    /// Provides cryptographic hash capabilities.
+    /// </summary>
 	public abstract class HashProvider : ProviderBase
 	{
         /// <summary>
@@ -66,7 +69,5 @@ namespace Candor.Security.Cryptography
 		/// <param name="iterations">The iterations to hash the originalValue and salt.</param>
 		/// <returns>The hashed value.</returns>
 		public abstract String Hash(String salt, String originalValue, Int32 iterations);
-
-
 	}
 }

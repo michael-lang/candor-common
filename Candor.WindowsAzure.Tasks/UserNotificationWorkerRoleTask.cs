@@ -44,15 +44,26 @@ namespace Candor.WindowsAzure.Tasks
         /// Gets or sets the email address used as the from address.
         /// </summary>
         public string FromAddress { get; set; }
-
+        /// <summary>
+        /// Creates a new instance, initialized with a name equal to the type name.
+        /// </summary>
         public UserNotificationWorkerRoleTask()
         {
             Initialize(typeof(UserNotificationWorkerRoleTask).Name, new NameValueCollection());
         }
+        /// <summary>
+        /// Creates a new instance, initialized with a specific name.
+        /// </summary>
+        /// <param name="name"></param>
         public UserNotificationWorkerRoleTask(string name)
         {
             Initialize(name, new NameValueCollection());
         }
+        /// <summary>
+        /// Initializes the provider.  Already called by the 2 constructors.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="configValue"></param>
         public override void Initialize(string name, NameValueCollection configValue)
         {
             QueueName = "UserForgotPassword";
@@ -66,6 +77,11 @@ namespace Candor.WindowsAzure.Tasks
 
             _razorMachine = new RazorMachine();
         }
+        /// <summary>
+        /// Processes a notification queue and sends the notification email.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public override bool ProcessMessage(CloudQueueMessage message)
         {
             var change = QueueProxy.DeserializeRecordChangeNotification(message);

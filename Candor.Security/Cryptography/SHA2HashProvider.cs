@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Candor.Security.Cryptography
 {
+    /// <summary>
+    /// A cryptographic hash provider based on the <seealso cref="SHA256Managed"/> algorithm.
+    /// </summary>
 	public sealed class SHA2HashProvider : HashProvider
 	{
         /// <summary>
@@ -29,7 +32,7 @@ namespace Candor.Security.Cryptography
 		public override string GetSalt(int length)
 		{
 			RNGCryptoServiceProvider random = new RNGCryptoServiceProvider();
-			Byte[] salt = new Byte[length / 8];	//32 length = 256 bits
+			Byte[] salt = new Byte[length / 2];
 			random.GetBytes(salt);
 			return BytesToHex(salt);
 		}

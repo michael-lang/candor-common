@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using prov = Candor.Configuration.Provider;
+using Candor.Configuration.Provider;
 
 namespace Candor.Security.Cryptography
 {
+    /// <summary>
+    /// Classic provider model front end for <seealso cref="HashProvider"/>.
+    /// Alternatively, you can use <seealso cref="ProviderResolver{HashProvider}"/>
+    /// </summary>
 	public class HashManager
 	{
         private static List<HashProvider> _currentProviders;
@@ -19,13 +22,13 @@ namespace Candor.Security.Cryptography
 		/// <summary>
 		/// Gets all the configured Authorization providers.
 		/// </summary>
-		public static prov.ProviderCollection<HashProvider> Providers
+		public static ProviderCollection<HashProvider> Providers
 		{
 			get
             {
-                var resolver = prov.ProviderResolver<HashProvider>.Get;
+                var resolver = ProviderResolver<HashProvider>.Get;
                 if (resolver.Providers.Count == 0)
-                    resolver.Providers = new prov.ProviderCollection<HashProvider>(typeof(HashManager));
+                    resolver.Providers = new ProviderCollection<HashProvider>(typeof(HashManager));
 
                 return resolver.Providers;
 			}

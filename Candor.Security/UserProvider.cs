@@ -21,8 +21,14 @@ namespace Candor.Security
         private Regex _passwordRegex;
         private string _passwordRegexExpression;
 
+        /// <summary>
+        /// Creates a new instance, not initialized.
+        /// </summary>
         protected UserProvider() { }
-
+        /// <summary>
+        /// Creates a new instance, initialized with a specific name, but with default property configuration values.
+        /// </summary>
+        /// <param name="name"></param>
         protected UserProvider(string name)
         {
             InitializeInternal(name, new NameValueCollection());
@@ -424,7 +430,19 @@ namespace Candor.Security
             return !RegisterBase(user, result) ? null 
                 : GenerateUserResetCode(user.Name, TimeSpan.FromDays(GuestUserExpirationDays));
         }
-
+        /// <summary>
+        /// Authenticates a user with the requested rule options.  This internal method is called
+        /// by the other public versions of the method.  Override in a derived class if you want
+        /// to change the rule interpretations or add new rules.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="password"></param>
+        /// <param name="duration"></param>
+        /// <param name="ipAddress"></param>
+        /// <param name="checkHistory"></param>
+        /// <param name="allowUpdateHash"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
         protected virtual UserIdentity AuthenticateUser(string name, string password,
             UserSessionDurationType duration, string ipAddress, bool checkHistory,
             bool allowUpdateHash, ExecutionResults result)
@@ -603,17 +621,58 @@ namespace Candor.Security
         /// <param name="userId">The unique identity.</param>
         /// <param name="take">The maximum number of sessions to retrieve.</param>
         /// <returns>A list of sessions; If empty then the user has never logged in (such as a no-show guest).</returns>
-        public abstract List<UserSession> GetLatestUserSessions(Guid userId, Int32 take); 
-
+        public abstract List<UserSession> GetLatestUserSessions(Guid userId, Int32 take);
+        /// <summary>
+        /// Inserts a new user authentication history.
+        /// </summary>
+        /// <param name="history"></param>
         protected abstract void InsertUserHistory(AuthenticationHistory history);
+        /// <summary>
+        /// Saves a user session, insert or update.
+        /// </summary>
+        /// <param name="session"></param>
         protected abstract void SaveUserSession(UserSession session);
+        /// <summary>
+        /// Saves a user, insert or update.
+        /// </summary>
+        /// <param name="user"></param>
         protected abstract void SaveUser(User user);
+        /// <summary>
+        /// Saves a user salt, insert or update.
+        /// </summary>
+        /// <param name="salt"></param>
         protected abstract void SaveUserSalt(UserSalt salt);
+        /// <summary>
+        /// Gets a user's salt metadata.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         protected abstract UserSalt GetUserSalt(Guid userId);
+        /// <summary>
+        /// Gets a user session by the renewal token.
+        /// </summary>
+        /// <param name="renewalToken"></param>
+        /// <returns></returns>
         protected abstract UserSession GetUserSession(Guid renewalToken);
+        /// <summary>
+        /// Gets the number of times a user name has failed authentication within the configured allowable failure period.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         protected abstract int GetRecentFailedUserNameAuthenticationCount(string name);
+        /// <summary>
+        /// Gets the authentication history for a specific session.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
         protected abstract AuthenticationHistory GetSessionAuthenticationHistory(UserSession session);
-
+        /// <summary>
+        /// Returns a failed authentication attempt, an anonymous user identity.
+        /// </summary>
+        /// <param name="name">The user name.</param>
+        /// <param name="ipAddress">The IP address the user was coming from.</param>
+        /// <param name="result">A container for error messages.</param>
+        /// <returns></returns>
         protected UserIdentity FailAuthenticateUser(string name, string ipAddress, ExecutionResults result)
         {
             result.AppendError(LoginCredentialsFailureMessage);

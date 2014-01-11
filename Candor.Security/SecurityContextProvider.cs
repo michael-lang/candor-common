@@ -9,10 +9,16 @@ namespace Candor.Security
     /// </summary>
     public abstract class SecurityContextProvider : ProviderBase
     {
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public SecurityContextProvider()
         {
         }
-
+        /// <summary>
+        /// Creates a new instance with a specific name.
+        /// </summary>
+        /// <param name="name"></param>
         public SecurityContextProvider(string name)
         {
             InitializeInternal(name, new NameValueCollection());

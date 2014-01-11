@@ -8,10 +8,16 @@ namespace Candor.Security.Web
 	/// </summary>
 	public class WebSecurityContextProvider : SecurityContextProvider
 	{
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
 	    public WebSecurityContextProvider()
 	    {
 	    }
-
+        /// <summary>
+        /// Creates a new instance with a specified name.
+        /// </summary>
+        /// <param name="name"></param>
 	    public WebSecurityContextProvider(string name) : base(name)
 	    {
 	    }

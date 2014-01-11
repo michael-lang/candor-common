@@ -8,6 +8,9 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Candor.Security.AzureStorageProvider
 {
+    /// <summary>
+    /// An Azure table storage implementation of the <seealso cref="Candor.Security.UserProvider"/>
+    /// </summary>
     public class UserProvider : Security.UserProvider
     {
         private string _connectionName = string.Empty;
@@ -22,17 +25,37 @@ namespace Candor.Security.AzureStorageProvider
         private CloudTableProxy<UserSession> _tableProxyUserSessionByToken;
         private CloudTableProxy<UserSession> _tableProxyUserSessionByUser;
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public UserProvider() { }
-
+        /// <summary>
+        /// Creates a new isntance with a specific name.  No initialization.
+        /// </summary>
+        /// <param name="name"></param>
         public UserProvider(String name)
             : base(name)
         {
         }
+        /// <summary>
+        /// Creates a new instance with a specific name and a single named connection
+        /// used for all operations.
+        /// </summary>
+        /// <param name="name">A name for this provider instance, unique for all User Providers.</param>
+        /// <param name="connectionName">A table storage connection named defined in configuration.</param>
         public UserProvider(String name, String connectionName)
         {
             InitializeInternal(name, new NameValueCollection());
             ConnectionName = connectionName;
         }
+        /// <summary>
+        /// Creates a new instance with a separate named connections for each secure area.
+        /// </summary>
+        /// <param name="name">A name for this provider instance, unique for all User Providers.</param>
+        /// <param name="connectionName">A table storage connection named defined in configuration; only used if one of the other named connections is not specified.</param>
+        /// <param name="connectionNameUser">A table storage connection named defined in configuration; used for the user table only.</param>
+        /// <param name="connectionNameUserSalt">A table storage connection named defined in configuration; used for storing user salts only.</param>
+        /// <param name="connectionNameAudit">A table storage connection named defined in configuration;  used for audit tables.</param>
         public UserProvider(String name, String connectionName, String connectionNameUser, String connectionNameUserSalt, String connectionNameAudit)
         {
             InitializeInternal(name, new NameValueCollection());
@@ -43,7 +66,7 @@ namespace Candor.Security.AzureStorageProvider
         }
 
         /// <summary>
-        /// Gets the connection name to the SQL database.
+        /// Gets the connection name to Azure storage.
         /// </summary>
         public string ConnectionName
         {
@@ -61,7 +84,7 @@ namespace Candor.Security.AzureStorageProvider
             }
         }
         /// <summary>
-        /// Gets the connection name to the SQL database for the user table.
+        /// Gets the connection name to Azure storage for the user table.
         /// </summary>
         public string ConnectionNameUser
         {
@@ -74,7 +97,7 @@ namespace Candor.Security.AzureStorageProvider
             }
         }
         /// <summary>
-        /// Gets the connection name to the SQL database for the salt table.
+        /// Gets the connection name to Azure storage for the salt table.
         /// </summary>
         public string ConnectionNameUserSalt
         {
@@ -86,7 +109,7 @@ namespace Candor.Security.AzureStorageProvider
             }
         }
         /// <summary>
-        /// Gets the connection name to the SQL database for the audit tables.
+        /// Gets the connection name to Azure storage for the audit tables.
         /// </summary>
         public string ConnectionNameAudit
         {
@@ -108,7 +131,7 @@ namespace Candor.Security.AzureStorageProvider
                 {
                     _tableProxyUserById = new CloudTableProxy<User>
                     {
-                        ConnectionName = ConnectionNameUser ?? ConnectionName,
+                        ConnectionName = !String.IsNullOrWhiteSpace(ConnectionNameUser) ? ConnectionNameUser : ConnectionName,
                         TableName = String.Format("{0}ById", typeof(User).Name)
                     };
                     _tableProxyUserById.SetPartitionRowKeyAsGuid(x => x.UserID);
@@ -122,7 +145,7 @@ namespace Candor.Security.AzureStorageProvider
             {
                 return _tableProxyUserByName ?? (_tableProxyUserByName = new CloudTableProxy<User>
                     {
-                        ConnectionName = ConnectionNameUser ?? ConnectionName,
+                        ConnectionName = !String.IsNullOrWhiteSpace(ConnectionNameUser) ? ConnectionNameUser : ConnectionName,
                         TableName = typeof (User).Name,
                         PartitionKey = x => x.Name.GetValidPartitionKey(),
                         RowKey = x => x.UserID.ToString().GetValidRowKey()
@@ -137,7 +160,7 @@ namespace Candor.Security.AzureStorageProvider
                 {
                     _tableProxyUserSalt = new CloudTableProxy<UserSalt>
                     {
-                        ConnectionName = ConnectionNameUserSalt ?? ConnectionName,
+                        ConnectionName = !String.IsNullOrWhiteSpace(ConnectionNameUserSalt) ? ConnectionNameUserSalt : ConnectionName,
                         TableName = typeof(UserSalt).Name
                     };
                     _tableProxyUserSalt.SetPartitionRowKeyAsGuid(x => x.UserID);
@@ -152,7 +175,7 @@ namespace Candor.Security.AzureStorageProvider
                 return _tableProxyAuthenticationHistoryByUserName ??
                        (_tableProxyAuthenticationHistoryByUserName = new CloudTableProxy<AuthenticationHistory>
                        {   //paritioned by user name, row always has latest entered record as first (lowest) row key
-                               ConnectionName = ConnectionNameAudit ?? ConnectionName,
+                           ConnectionName = !String.IsNullOrWhiteSpace(ConnectionNameAudit) ? ConnectionNameAudit : ConnectionName,
                                PartitionKey = x => string.Format("UserName|{0}", x.UserName).GetValidPartitionKey(),
                                RowKey = x => String.Format("{0:d19}", DateTime.MaxValue.Ticks - x.CreatedDate.Ticks).GetValidRowKey()
                            });
@@ -166,7 +189,7 @@ namespace Candor.Security.AzureStorageProvider
                 {
                     _tableProxyAuthenticationHistoryByToken = new CloudTableProxy<AuthenticationHistory>
                     {
-                        ConnectionName = ConnectionNameAudit ?? ConnectionName,
+                        ConnectionName = !String.IsNullOrWhiteSpace(ConnectionNameAudit) ? ConnectionNameAudit : ConnectionName,
                         PartitionKey = x => "ByToken",
                         RowKey = x => String.Format("{0}", x.UserSession.RenewalToken).GetValidRowKey()
                     };
@@ -182,7 +205,7 @@ namespace Candor.Security.AzureStorageProvider
                 {
                     _tableProxyUserSessionByToken = new CloudTableProxy<UserSession>
                     {
-                        ConnectionName = ConnectionNameAudit ?? ConnectionName,
+                        ConnectionName = !String.IsNullOrWhiteSpace(ConnectionNameAudit) ? ConnectionNameAudit : ConnectionName,
                         PartitionKey = x => "ByToken",
                         RowKey = x => x.RenewalToken.ToString().GetValidRowKey()
                     };
@@ -196,7 +219,7 @@ namespace Candor.Security.AzureStorageProvider
             {
                 return _tableProxyUserSessionByUser ?? (_tableProxyUserSessionByUser = new CloudTableProxy<UserSession>
                     {   //paritioned by user Id, row always has latest entered record as first (lowest) row key
-                        ConnectionName = ConnectionNameAudit ?? ConnectionName,
+                        ConnectionName = !String.IsNullOrWhiteSpace(ConnectionNameAudit) ? ConnectionNameAudit : ConnectionName,
                         PartitionKey = x => String.Format("UserId|{0}", x.UserID).GetValidPartitionKey(),
                         RowKey = x => String.Format("{0:d19}", DateTime.MaxValue.Ticks - x.CreatedDate.Ticks).GetValidRowKey()
                     });
@@ -244,17 +267,28 @@ namespace Candor.Security.AzureStorageProvider
             return user == null ? null : user.Entity;
         }
 
+        /// <summary>
+        /// Saves a user, insert or update.
+        /// </summary>
+        /// <param name="user"></param>
         protected override void SaveUser(User user)
         {
             TableProxyUserByName.InsertOrUpdate(user);
             TableProxyUserById.InsertOrUpdate(user);
         }
-
+        /// <summary>
+        /// Saves a user salt, insert or update.
+        /// </summary>
+        /// <param name="salt"></param>
         protected override void SaveUserSalt(UserSalt salt)
         {
             TableProxyUserSalt.InsertOrUpdate(salt);
         }
-
+        /// <summary>
+        /// Gets a user's salt metadata.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         protected override UserSalt GetUserSalt(Guid userId)
         {
             var item = TableProxyUserSalt.Get(userId);
@@ -272,14 +306,21 @@ namespace Candor.Security.AzureStorageProvider
             var proxies = TableProxyUserSessionByUser.GetPartition(String.Format("UserId|{0}", userId), take: take);
             return (proxies == null) ? null : proxies.Select(x => x.Entity).ToList();
         }
-
+        /// <summary>
+        /// Inserts a new user authentication history.
+        /// </summary>
+        /// <param name="history"></param>
         protected override void InsertUserHistory(AuthenticationHistory history)
         {
             TableProxyAuthenticationHistoryByUserName.Insert(history);
             if (history.UserSession != null && !history.UserSession.RenewalToken.Equals(Guid.Empty))
                 TableProxyAuthenticationHistoryByToken.InsertOrUpdate(history);
         }
-
+        /// <summary>
+        /// Gets the number of times a user name has failed authentication within the configured allowable failure period.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         protected override int GetRecentFailedUserNameAuthenticationCount(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -297,18 +338,30 @@ namespace Candor.Security.AzureStorageProvider
             //already sorted descending
             return attempts.TakeWhile(t => !t.Entity.IsAuthenticated).Count();
         }
-
+        /// <summary>
+        /// Gets the authentication history for a specific session.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns></returns>
         protected override AuthenticationHistory GetSessionAuthenticationHistory(UserSession session)
         {
             var item = TableProxyAuthenticationHistoryByToken.Get("ByToken", session.RenewalToken.ToString().GetValidRowKey());
             return item == null ? null : item.Entity;
         }
-
+        /// <summary>
+        /// Gets a user session by the renewal token.
+        /// </summary>
+        /// <param name="renewalToken"></param>
+        /// <returns></returns>
         protected override UserSession GetUserSession(Guid renewalToken)
         {
             var item = TableProxyUserSessionByToken.Get("ByToken", renewalToken.ToString());
             return item == null ? null : item.Entity;
         }
+        /// <summary>
+        /// Saves a user session, insert or update.
+        /// </summary>
+        /// <param name="session"></param>
         protected override void SaveUserSession(UserSession session)
         {
             TableProxyUserSessionByUser.InsertOrUpdate(session);

@@ -7,6 +7,9 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Candor.Security.AzureStorageProvider
 {
+    /// <summary>
+    /// Sends notifications to users regarding their account.
+    /// </summary>
     public class UserNotificationProvider : Security.UserNotificationProvider
     {
         private string _connectionName;
@@ -37,15 +40,26 @@ namespace Candor.Security.AzureStorageProvider
                         });
             }
         }
-
+        /// <summary>
+        /// Creates a new instance, initialized with a name equaling the type name.
+        /// </summary>
         public UserNotificationProvider()
         {
             InitializeInternal(typeof(UserNotificationProvider).Name, new NameValueCollection());
         }
+        /// <summary>
+        /// Creates a new instance, initialized with a specific name.
+        /// </summary>
+        /// <param name="name"></param>
         public UserNotificationProvider(string name)
         {
             InitializeInternal(name, new NameValueCollection());
         }
+        /// <summary>
+        /// Initializes the provider.  This is already called by both constructors.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="config"></param>
         public override void Initialize(string name, NameValueCollection config)
         {
             InitializeInternal(name, config);

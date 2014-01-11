@@ -9,6 +9,10 @@ using Microsoft.WindowsAzure.Storage.Queue;
 
 namespace Candor.WindowsAzure.Tasks
 {
+    /// <summary>
+    /// A worker role task that scans an Azure cloud Queue for messages to process.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public abstract class CloudQueueWorkerRoleTask<T> : RepeatingWorkerRoleTask
         where T : class, new()
     {
@@ -45,6 +49,9 @@ namespace Candor.WindowsAzure.Tasks
                 _queueProxy = null;
             }
         }
+        /// <summary>
+        /// A proxy for the queue.
+        /// </summary>
         public CloudQueueProxy<T> QueueProxy
         {
             get
@@ -58,6 +65,9 @@ namespace Candor.WindowsAzure.Tasks
                         });
             }
         }
+        /// <summary>
+        /// A table proxy for job status.
+        /// </summary>
         public CloudTableProxy<JobStatus> StatusTableProxy
         {
             get
@@ -70,6 +80,9 @@ namespace Candor.WindowsAzure.Tasks
                 });
             }
         }
+        /// <summary>
+        /// A table proxy for the latest job status record.
+        /// </summary>
         public CloudTableProxy<JobStatus> StatusLatestTableProxy
         {
             get
@@ -82,23 +95,34 @@ namespace Candor.WindowsAzure.Tasks
                 });
             }
         }
+        /// <summary>
+        /// A logging provider.
+        /// </summary>
         protected new ILog LogProvider
         {
             get { return _logProvider ?? (_logProvider = LogManager.GetLogger(GetType())); }
         }
-
+        /// <summary>
+        /// Initializes the worker task with the specified configuration.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="configValue"></param>
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection configValue)
         {
             ConnectionName = configValue.GetStringValue("connectionName", null);
             base.Initialize(name, configValue);
         }
-
+        /// <summary>
+        /// Starts the worker task.
+        /// </summary>
         public override void OnStart()
         {
             QueueProxy.GetQueue().CreateIfNotExists();
             base.OnStart(); //start timers
         }
-
+        /// <summary>
+        /// Continues processing after the waiting period has elapsed.
+        /// </summary>
         public override void OnWaitingPeriodElapsed()
         {
             var queue = QueueProxy.GetQueue();
@@ -138,7 +162,11 @@ namespace Candor.WindowsAzure.Tasks
                 }
             }
         }
-
+        /// <summary>
+        /// Processes the message from the queue, to be implemented by a derived class.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public abstract bool ProcessMessage(CloudQueueMessage message);
     }
 }

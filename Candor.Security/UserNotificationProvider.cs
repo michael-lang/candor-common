@@ -3,6 +3,9 @@ using System.Configuration.Provider;
 
 namespace Candor.Security
 {
+    /// <summary>
+    /// A base provider definition to send notifications to users regarding their account.
+    /// </summary>
     public abstract class UserNotificationProvider : ProviderBase
     {
         /// <summary>
