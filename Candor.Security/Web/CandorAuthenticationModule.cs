@@ -143,7 +143,6 @@ namespace Candor.Security.Web
 					}
 					cookie.Expires = DateTime.Now.AddMinutes(15);
                     cookie.Value = SecurityContextManager.CurrentUser.Identity.Name;
-                    app.Context.Response.Headers.Add("X-" + ImpersonationKey, SecurityContextManager.CurrentUser.Identity.Name);
 				}
 				else if (cookie != null)
 				{
@@ -161,8 +160,6 @@ namespace Candor.Security.Web
 			{
 				authCookie.Expires = SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.ExpirationDate;
 				authCookie.Value = SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.RenewalToken.ToString();
-                app.Context.Response.Headers.Add("X-" + AuthenticationTicketTokenKey, 
-                    SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.RenewalToken.ToString());
 
 				HttpCookie rememberCookie = app.Context.Response.Cookies[RememberMeKey];
 				if (rememberCookie == null)
@@ -173,7 +170,6 @@ namespace Candor.Security.Web
 				rememberCookie.Expires = authCookie.Expires;
 			    bool remember = ((authCookie.Expires - DateTime.UtcNow).TotalMinutes > 21);
 				rememberCookie.Value = remember.ToString();
-                app.Context.Response.Headers.Add("X-" + RememberMeKey, remember.ToString());
 			}
 		}
 	}
