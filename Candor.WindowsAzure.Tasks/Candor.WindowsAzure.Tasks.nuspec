@@ -11,10 +11,11 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
-	  2.1.0.4: update RazorMachine usage from 2.6.0 to 2.6.1, ForgotPassword template updated with RazorMachine inherits declaration
-	  2.1.0.3: Added debug symbols and xml documentation
+      2.1.1: CloudBlobRules .GetValidBlobName now supports mixed case (upper case previously caused validation error)
+      2.1.0.4: update RazorMachine usage from 2.6.0 to 2.6.1, ForgotPassword template updated with RazorMachine inherits declaration
+      2.1.0.3: Added debug symbols and xml documentation
       2.1.0: Created a task to process queue messages for forgot password requests.
-	  You should set the view cshtml files property "Copy to output folder" to "Copy Always"
+      You should set the view cshtml files property "Copy to output folder" to "Copy Always"
       1.0.1: Update package dependency references
     </releaseNotes>
     <tags>Candor WindowsAzure Azure</tags>

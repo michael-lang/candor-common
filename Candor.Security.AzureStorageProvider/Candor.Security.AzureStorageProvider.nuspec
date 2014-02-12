@@ -11,18 +11,19 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$  This code is open source.</description>
     <releaseNotes>
-	  2.1.0.2: Added debug symbols and xml documentation
-	  2.1.0: * Add implementation of UserNotificationProvider that writes the notifications to a queue.
-	  2.0.0: * Add support to get latest x login sessions for a user (null for never).
-	  * changed some audit table keys, including current session table.
-	  this means all users tokens will be considered invalid and require re-login.
+      2.1.1: CloudBlobRules .GetValidBlobName now supports mixed case (upper case previously caused validation error)
+      2.1.0.2: Added debug symbols and xml documentation
+      2.1.0: * Add implementation of UserNotificationProvider that writes the notifications to a queue.
+      2.0.0: * Add support to get latest x login sessions for a user (null for never).
+      * changed some audit table keys, including current session table.
+      this means all users tokens will be considered invalid and require re-login.
       1.0.1: * Update package dependency references
     </releaseNotes>
     <tags>Candor WindowsAzure Azure Security UserProvider</tags>
   </metadata>
   <files>
-	<file src="bin\$configuration$\$id$.dll" target="lib\net45\" />
-	<file src="bin\$configuration$\$id$.pdb" target="lib\net45\" />
-	<file src="bin\$configuration$\$id$.xml" target="lib\net45\" />
+    <file src="bin\$configuration$\$id$.dll" target="lib\net45\" />
+    <file src="bin\$configuration$\$id$.pdb" target="lib\net45\" />
+    <file src="bin\$configuration$\$id$.xml" target="lib\net45\" />
   </files>
 </package>

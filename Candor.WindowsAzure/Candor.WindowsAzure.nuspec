@@ -9,7 +9,8 @@
     <projectUrl>https://github.com/michael-lang/candor-windowsazure</projectUrl>
     <licenseUrl>https://github.com/michael-lang/candor-windowsazure/blob/master/MIT-LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>Currently Supports Azure SDK 2.2.  Azure SDK 3.x support will come after RTM.
+      $description$</description>
     <releaseNotes>
       This code is open source and can be found at http://github.com/michael-lang/candor-windowsazure.
       In depth articles can be found at http://candordeveloper.com/
@@ -20,6 +21,7 @@
       1.1.4: CloudTableProxy: Delete failures now return more cause detail in exception.
       1.2.0: Added CloudBlobProxy class: works similarly to CloudTableProxy and CloudQueueProxy
       1.2.6: Updates to CloudBlobProxy, update package dependency references
+      1.2.7: CloudBlobRules .GetValidBlobName now supports mixed case (upper case previously caused validation error)
     </releaseNotes>
     <tags>Candor WindowsAzure Azure</tags>
   </metadata>
