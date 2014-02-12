@@ -44,6 +44,6 @@ namespace Candor.WindowsAzure
         /// <summary>
         /// A validation expressions for Azure Blob Storage blob names.
         /// </summary>
-        public static readonly Regex AzureBlobNameValidationRegex = new Regex(@"^(?=.{1,1024}$)[a-z0-9]([\./]?[_a-z0-9])+$", RegexOptions.Singleline | RegexOptions.Compiled);
+        public static readonly Regex AzureBlobNameValidationRegex = new Regex(@"^(?=.{1,1024}$)[A-Za-z0-9]([\./]?[_A-Za-z0-9])+$", RegexOptions.Singleline | RegexOptions.Compiled);
     }
 }

@@ -17,7 +17,7 @@ namespace Candor.WindowsAzure.Storage.Queue
         /// The first and last letters in the queue name must be alphanumeric.  The
         /// dash (-) character cannot be the first or last character.  Consecutive
         /// dash characters are not permitted in the queue name.
-        /// ALl letters in a queue name must be lowercase.
+        /// All letters in a queue name must be lowercase.
         /// A queue name must be from 3 to 63 characters long.
         /// </remarks>
         public static String GetValidQueueName(this String name)
