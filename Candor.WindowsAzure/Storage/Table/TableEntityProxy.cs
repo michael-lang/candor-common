@@ -210,7 +210,16 @@ namespace Candor.WindowsAzure.Storage.Table
 
             var propertyFromObject = CreateEntityPropertyFromObject(propertyInfo.PropertyType, propertyValue);
             if (propertyFromObject != null)
+            {
+                if (properties.ContainsKey(columnName))
+                {
+                    throw new InvalidOperationException(
+                        String.Format(
+                            "Property '{1}' of type '{2}' serializes to the same column name '{0}' as another property.  Change one of your property names, or set one of the conflicting property values to null to prevent it from serializing.",
+                            columnName, memberExpression, typeof(T).FullName));
+                }
                 properties.Add(columnName, propertyFromObject);
+            }
         }
 
         private static EntityProperty CreateEntityPropertyFromObject(Type type, object value)
