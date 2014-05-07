@@ -162,7 +162,7 @@ namespace Candor.Security.SqlProvider
                 {
                     cmd.Connection = cn;
                     cmd.CommandType = System.Data.CommandType.Text;
-                    cmd.CommandText = @"Select RecordID, UserID, Name, Password`, PasswordHashUpdatedDate, PasswordUpdatedDate, IsDeleted, CreatedDate, CreatedByUserID, UpdatedDate, UpdatedByUserID
+                    cmd.CommandText = @"Select RecordID, UserID, Name, IsGuest, Password`, PasswordHashUpdatedDate, PasswordUpdatedDate, IsDeleted, CreatedDate, CreatedByUserID, UpdatedDate, UpdatedByUserID
  from Security.User
  where UserID = @UserID";
                     cmd.Parameters.AddWithValue("UserID", userId);
@@ -191,7 +191,7 @@ namespace Candor.Security.SqlProvider
                 {
                     cmd.Connection = cn;
                     cmd.CommandType = System.Data.CommandType.Text;
-                    cmd.CommandText = @"Select RecordID, UserID, Name, PasswordHash, PasswordHashUpdatedDate, PasswordUpdatedDate, IsDeleted, CreatedDate, CreatedByUserID, UpdatedDate, UpdatedByUserID
+                    cmd.CommandText = @"Select RecordID, UserID, Name, IsGuest, PasswordHash, PasswordHashUpdatedDate, PasswordUpdatedDate, IsDeleted, CreatedDate, CreatedByUserID, UpdatedDate, UpdatedByUserID
  from Security.User
  where Name = @Name";
                     cmd.Parameters.AddWithValue("Name", name);
@@ -214,6 +214,7 @@ namespace Candor.Security.SqlProvider
                 RecordID = reader.GetInt32("RecordID", 0),
                 UserID = reader.GetGuid("UserID"),
                 Name = reader.GetString("Name", ""),
+                IsGuest = reader.GetBoolean("IsGuest", false),
                 PasswordHash = reader.GetString("PasswordHash", null),
                 PasswordHashUpdatedDate = reader.GetUTCDateTime("PasswordHashUpdatedDate", DateTime.MinValue),
                 PasswordUpdatedDate = reader.GetUTCDateTime("PasswordUpdatedDate", DateTime.MinValue),
@@ -300,16 +301,18 @@ namespace Candor.Security.SqlProvider
                     if (user.RecordID == 0)
                     {
                         cmd.CommandText = @"insert into Security.User 
- (UserID, Name, PasswordHash, PasswordHashUpdatedDate)
- Values (@UserID, @Name, @PasswordHash, getutcdate())";
+ (UserID, Name, IsGuest, PasswordHash, PasswordHashUpdatedDate)
+ Values (@UserID, @Name, @IsGuest, @PasswordHash, getutcdate())";
                         cmd.Parameters.AddWithValue("UserID", user.UserID);
                         cmd.Parameters.AddWithValue("Name", user.Name);
+                        cmd.Parameters.AddWithValue("IsGuest", user.IsGuest);
                         cmd.Parameters.AddWithValue("PasswordHash", user.PasswordHash);
                     }
                     else
                     {
                         cmd.CommandText = @"update Security.User 
  set Name = @Name,
+ IsGuest = @IsGuest,
  PasswordHash = @PasswordHash,
  PasswordHashUpdatedDate = @PasswordHashUpdatedDate,
  PasswordUpdatedDate = @PasswordUpdatedDate
@@ -318,6 +321,7 @@ namespace Candor.Security.SqlProvider
  UpdatedByUserID = @UpdatedByUserID
  where UserID = @UserID";
                         cmd.Parameters.AddWithValue("Name", user.Name);
+                        cmd.Parameters.AddWithValue("IsGuest", user.IsGuest);
                         cmd.Parameters.AddWithValue("PasswordHash", user.PasswordHash);
                         cmd.Parameters.AddWithValue("PasswordHashUpdatedDate", user.PasswordHashUpdatedDate);
                         cmd.Parameters.AddWithValue("PasswordUpdatedDate", user.PasswordUpdatedDate);

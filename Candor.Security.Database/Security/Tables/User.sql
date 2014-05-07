@@ -3,6 +3,7 @@
     [RecordID]            INT              IDENTITY (1, 1) NOT NULL,
     [UserID]              UNIQUEIDENTIFIER NOT NULL,
     [Name]                NVARCHAR (200)   NOT NULL,
+    [IsGuest]             BIT              CONSTRAINT [DF_Security_User_IsGuest] DEFAULT ((0)) NOT NULL,
     [PasswordHash]        NVARCHAR (2048)   NOT NULL,
     [PasswordHashUpdatedDate] DATETIME         NULL,
     [PasswordUpdatedDate] DATETIME         NULL,
