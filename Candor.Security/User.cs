@@ -43,6 +43,10 @@ namespace Candor.Security
         /// </summary>
 		public bool IsDeleted { get; set; }
         /// <summary>
+        /// Determines if this is a guest user or not yet validated, false by default.
+        /// </summary>
+        public bool IsGuest { get; set; }
+        /// <summary>
         /// The date and time when the user was created.
         /// </summary>
 		public DateTime CreatedDate { get; set; }

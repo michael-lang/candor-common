@@ -89,7 +89,8 @@ namespace Candor.Configuration.Provider
 				if (_config == null)
 					throw new ProviderException(string.Format("'{0}' section missing.", _configSectionName));
 				if (_config.Providers == null || _config.Providers.Count == 0)
-					throw new ProviderException(string.Format("No '{0}' providers have been configured.", _configSectionName));
+					throw new ProviderException(string.Format("No '{0}' providers have been configured.", 
+                        String.IsNullOrWhiteSpace(_configSectionName) ? typeof(T).FullName : _configSectionName));
 
 				ProvidersHelper.InstantiateProviders(_config.Providers, this, typeof(T));
 
@@ -110,7 +111,8 @@ namespace Candor.Configuration.Provider
 			try
 			{
 				if (Count == 0)
-					throw new ProviderException(string.Format("No '{0}' providers have been configured.", _configSectionName));
+					throw new ProviderException(string.Format("No '{0}' providers have been configured.",
+                        String.IsNullOrWhiteSpace(_configSectionName) ? typeof(T).FullName : _configSectionName));
 
 				if (_provider == null)
 					throw new ProviderException(string.Format("The {0} provider to use was not specified.  Use the 'defaultProvider' attribute or set it via code.", typeof(T).FullName, _configSectionName));

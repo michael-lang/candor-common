@@ -125,6 +125,11 @@ namespace Candor.Security
         /// </summary>
         public Int32 PublicSessionDuration { get; set; }
         /// <summary>
+        /// Gets or sets the number of hours a password reset code is valid for.
+        /// Any amount of time past this would just require a password reset to be emailed again.
+        /// </summary>
+        public Int32 PasswordResetCodeExpirationHours { get; set; }
+        /// <summary>
         /// Gets or sets the number of days a newly setup guest user account password is valid for.
         /// Any amount of time past this would just require a password reset to be emailed again.
         /// </summary>
@@ -202,6 +207,7 @@ namespace Candor.Security
 
             ExtendedSessionDuration = configValue.GetInt32Value("extendedSessionDuration", 20160); //20160=2weeks
             PublicSessionDuration = configValue.GetInt32Value("publicSessionDuration", 20); //20 minutes default.
+            PasswordResetCodeExpirationHours = configValue.GetInt32Value("PasswordResetCodeExpirationHours", 1);
             GuestUserExpirationDays = configValue.GetInt32Value("GuestUserExpirationDays", 14);
             _hashProviderName = configValue.GetStringValue("hashProviderName", String.Empty);
             if (!string.IsNullOrEmpty(_hashProviderName))
@@ -427,6 +433,7 @@ namespace Candor.Security
         /// After that initial period the user can request a password reset when joining.</returns>
         public virtual String RegisterGuestUser(User user, ExecutionResults result)
         {
+            user.IsGuest = true;
             return !RegisterBase(user, result) ? null 
                 : GenerateUserResetCode(user.Name, TimeSpan.FromDays(GuestUserExpirationDays));
         }
@@ -531,7 +538,9 @@ namespace Candor.Security
                 if (salt.ResetCodeExpiration < DateTime.UtcNow)
                 {
                     result.AppendError(
-                        "Your password reset code has expired.  Request a new one to be sent to you, and then use it immediately.");
+                        user.IsGuest
+                        ? "Your account verification code has expired.  Request a password reset to complete your registration."
+                        : "Your password reset code has expired.  Request a new one to be sent to you, and then use it immediately.");
                     return false;
                 }
                 salt.ResetCode = null;
@@ -589,7 +598,7 @@ namespace Candor.Security
         /// <returns>If the user exists, then a reset code string; otherwise null.</returns>
         public virtual String GenerateUserResetCode(String name)
         {
-            return GenerateUserResetCode(name, TimeSpan.FromHours(1));
+            return GenerateUserResetCode(name, TimeSpan.FromHours(PasswordResetCodeExpirationHours));
         }
         /// <summary>
         /// Generates a new password reset code for a user and stores that as the current code valid
