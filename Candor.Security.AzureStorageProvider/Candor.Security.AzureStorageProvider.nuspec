@@ -11,6 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$  This code is open source.</description>
     <releaseNotes>
+      2.3.0: Compiled to update referenced definition of User with new IsGuestUser property.
       2.1.1: CloudBlobRules .GetValidBlobName now supports mixed case (upper case previously caused validation error)
       2.1.0.2: Added debug symbols and xml documentation
       2.1.0: * Add implementation of UserNotificationProvider that writes the notifications to a queue.

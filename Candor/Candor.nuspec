@@ -14,6 +14,7 @@
       This code is open source and can be found at http://github.com/michael-lang/candor-common.
       In depth articles can be found at http://candordeveloper.com/
       Changes:
+      1.1.0: ProviderResolver error message for resolving a non-configured type is now meaningful.
       1.0.1: Update package dependency references
     </releaseNotes>
     <tags>Candor Reflection Provider Paging</tags>

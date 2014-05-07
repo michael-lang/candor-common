@@ -22,6 +22,7 @@
       1.2.0: Added CloudBlobProxy class: works similarly to CloudTableProxy and CloudQueueProxy
       1.2.6: Updates to CloudBlobProxy, update package dependency references
       1.2.7: CloudBlobRules .GetValidBlobName now supports mixed case (upper case previously caused validation error)
+      1.2.8: Update candor package dependency references (Still Azure libs 2.1.0.3)
     </releaseNotes>
     <tags>Candor WindowsAzure Azure</tags>
   </metadata>

@@ -11,6 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
+    2.3.0: Added storage/retrieval of User.IsGuest property (default false for backwards compat)
 	  2.1.0.1: Added debug symbols and xml documentation
 	  2.0.0: * Add support to get latest x login sessions for a user (null for never).
       1.0.1: * Update package dependency references
