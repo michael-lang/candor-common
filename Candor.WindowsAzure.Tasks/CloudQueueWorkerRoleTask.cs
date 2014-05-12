@@ -133,22 +133,25 @@ namespace Candor.WindowsAzure.Tasks
                     var message = queue.GetMessage();
                     if (message == null)
                         return;
-
-
+                    
                     var status = new JobStatus
                         {
                             QueueName = queue.Name,
                             Success = true,
-                            RunDateTime = DateTime.UtcNow
+                            RunDateTime = DateTime.UtcNow,
+                            Message = message.AsString
                         };
                     StatusLatestTableProxy.InsertOrUpdate(status);
 
-                    if (ProcessMessage(message))
-                        queue.DeleteMessage(message);
-
+                    status.Success = ProcessMessage(message);
                     status.RunDateTime = DateTime.UtcNow;
+                    if (status.Success)
+                        queue.DeleteMessage(message);
+                    else  //log status record for failed processing
+                        StatusTableProxy.InsertOrUpdate(status);
+
+                    //always update latest status
                     StatusLatestTableProxy.InsertOrUpdate(status);
-                    StatusTableProxy.InsertOrUpdate(status);
                 }
                 catch (OperationCanceledException e)
                 {

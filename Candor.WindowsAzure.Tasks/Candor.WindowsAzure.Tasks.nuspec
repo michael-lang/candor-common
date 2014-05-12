@@ -11,6 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
+      2.2.0: CloudQueueWorkerRoleTask: Reduced job status log writes to error only and updated single record for latest success or failure, include queue message in status.
       2.1.2: Update package dependency references (Still Azure libs 2.1.0.3)
       2.1.1: CloudBlobRules .GetValidBlobName now supports mixed case (upper case previously caused validation error)
       2.1.0.4: update RazorMachine usage from 2.6.0 to 2.6.1, ForgotPassword template updated with RazorMachine inherits declaration
