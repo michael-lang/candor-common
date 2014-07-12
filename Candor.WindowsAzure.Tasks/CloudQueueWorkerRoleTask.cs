@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Candor.Tasks;
 using Candor.WindowsAzure.Storage;
 using Candor.Configuration.Provider;
@@ -20,6 +21,7 @@ namespace Candor.WindowsAzure.Tasks
         private String _queueName;
         private CloudQueueProxy<T> _queueProxy;
         private CloudTableProxy<JobStatus> _statusTableProxy;
+        private CloudTableProxy<JobStatus> _messageStatusTableProxy;
         private CloudTableProxy<JobStatus> _statusLatestTableProxy;
         private ILog _logProvider;
 
@@ -34,6 +36,7 @@ namespace Candor.WindowsAzure.Tasks
                 _connectionName = value;
                 _queueProxy = null;
                 _statusTableProxy = null;
+                _messageStatusTableProxy = null;
                 _statusLatestTableProxy = null;
             }
         }
@@ -49,6 +52,14 @@ namespace Candor.WindowsAzure.Tasks
                 _queueProxy = null;
             }
         }
+        /// <summary>
+        /// Gets or sets the amount of time to wait to reprocess a message that failed.
+        /// </summary>
+        /// <remarks>
+        /// To disable the failure wait to reprocess logic, then leave this value at
+        /// the default of 0.0.
+        /// </remarks>
+        public double MessageFailedSkipSeconds { get; set; }
         /// <summary>
         /// A proxy for the queue.
         /// </summary>
@@ -77,6 +88,21 @@ namespace Candor.WindowsAzure.Tasks
                     ConnectionName = ConnectionName,
                     PartitionKey = x => x.QueueName.GetValidPartitionKey(),
                     RowKey = x => x.RunDateTime.ToString("yyyyMMdd-HHmmss-tttt").GetValidRowKey()
+                });
+            }
+        }
+        /// <summary>
+        /// A table proxy for job status by MessageId.
+        /// </summary>
+        public CloudTableProxy<JobStatus> MessageStatusTableProxy
+        {
+            get
+            {
+                return _messageStatusTableProxy ?? (_messageStatusTableProxy = new CloudTableProxy<JobStatus>
+                {
+                    ConnectionName = ConnectionName,
+                    PartitionKey = x => x.QueueName.GetValidPartitionKey(),
+                    RowKey = x => string.Format("M|{0}|S|{1}", x.MessageId, x.Success).GetValidRowKey()
                 });
             }
         }
@@ -110,6 +136,7 @@ namespace Candor.WindowsAzure.Tasks
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection configValue)
         {
             ConnectionName = configValue.GetStringValue("connectionName", null);
+            MessageFailedSkipSeconds = configValue.GetDoubleValue("MessageExceptionSkipSeconds", 0.0);
             base.Initialize(name, configValue);
         }
         /// <summary>
@@ -128,29 +155,40 @@ namespace Candor.WindowsAzure.Tasks
             var queue = QueueProxy.GetQueue();
             while (IsRunning)
             {
+                CloudQueueMessage message = null;
                 try
                 {
-                    var message = queue.GetMessage();
+                    message = queue.GetMessage();
                     if (message == null)
-                        return;
-                    
-                    var status = new JobStatus
-                        {
-                            QueueName = queue.Name,
-                            Success = true,
-                            RunDateTime = DateTime.UtcNow,
-                            Message = message.AsString
-                        };
+                        return; //no more messages, yeild thread for WaitingPeriodSeconds
+
+                    var statEntity = MessageStatusTableProxy.Get(queue.Name.GetValidPartitionKey(),
+                        string.Format("M|{0}|S|{1}", message.Id, false));
+                    var status = statEntity != null && statEntity.Entity != null
+                        ? statEntity.Entity
+                        : CreateJobStatus(message);
+
+                    if (MessageFailedSkipSeconds > double.Epsilon
+                        && !status.Success
+                        && status.RunDateTime > DateTime.UtcNow.AddSeconds(-1*MessageFailedSkipSeconds))
+                        break; //skip this message temporarily and continue with the next.
+
+                    //this lets us know the processing has started.
                     StatusLatestTableProxy.InsertOrUpdate(status);
 
-                    status.Success = ProcessMessage(message);
+                    status.Success = ProcessMessage(message, status);
                     status.RunDateTime = DateTime.UtcNow;
                     if (status.Success)
                         queue.DeleteMessage(message);
-                    else  //log status record for failed processing
+                    else //log status record for failed processing
+                    {
+                        //record every failure by date/time
                         StatusTableProxy.InsertOrUpdate(status);
+                        //in another table, record latest failure only for each message.
+                        MessageStatusTableProxy.InsertOrUpdate(status);
+                    }
 
-                    //always update latest status
+                    //always update latest status for this queue
                     StatusLatestTableProxy.InsertOrUpdate(status);
                 }
                 catch (OperationCanceledException e)
@@ -162,8 +200,25 @@ namespace Candor.WindowsAzure.Tasks
                 catch (Exception ex)
                 {
                     LogProvider.Error("Unhandled exception.", ex);
+                    if (message == null) continue;
+                    var errorStatus = CreateJobStatus(message);
+                    errorStatus.Success = false;
+                    errorStatus.LogMessage = ex.ToString();
+                    MessageStatusTableProxy.InsertOrUpdate(errorStatus);
                 }
             }
+        }
+
+        private JobStatus CreateJobStatus(CloudQueueMessage message)
+        {
+            return new JobStatus
+            {
+                QueueName = QueueProxy.GetQueue().Name,
+                MessageId = message.Id,
+                Success = true,
+                RunDateTime = DateTime.UtcNow,
+                Message = message.AsString
+            };
         }
         /// <summary>
         /// Processes the message from the queue, to be implemented by a derived class.
@@ -171,5 +226,16 @@ namespace Candor.WindowsAzure.Tasks
         /// <param name="message"></param>
         /// <returns></returns>
         public abstract bool ProcessMessage(CloudQueueMessage message);
+        /// <summary>
+        /// Processes the message from the queue and updates the status of the job run.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public virtual bool ProcessMessage(CloudQueueMessage message, JobStatus status)
+        {
+            status.Success = ProcessMessage(message);
+            return status.Success;
+        }
     }
 }
