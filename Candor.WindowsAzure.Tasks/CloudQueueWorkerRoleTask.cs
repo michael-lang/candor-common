@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using Candor.Tasks;
-using Candor.WindowsAzure.Storage;
 using Candor.Configuration.Provider;
 using Candor.WindowsAzure.Storage.Queue;
 using Candor.WindowsAzure.Storage.Table;
@@ -147,10 +145,16 @@ namespace Candor.WindowsAzure.Tasks
             QueueProxy.GetQueue().CreateIfNotExists();
             base.OnStart(); //start timers
         }
+
+        [Obsolete]
+        public override void OnWaitingPeriodElapsed()
+        {   //never called with advanced implementation overridden
+        }
+
         /// <summary>
         /// Continues processing after the waiting period has elapsed.
         /// </summary>
-        public override void OnWaitingPeriodElapsed()
+        public override IterationResult OnWaitingPeriodElapsedAdvanced()
         {
             var queue = QueueProxy.GetQueue();
             while (IsRunning)
@@ -160,7 +164,7 @@ namespace Candor.WindowsAzure.Tasks
                 {
                     message = queue.GetMessage();
                     if (message == null)
-                        return; //no more messages, yeild thread for WaitingPeriodSeconds
+                        return new IterationResult();
 
                     var statEntity = MessageStatusTableProxy.Get(queue.Name.GetValidPartitionKey(),
                         string.Format("M|{0}|S|{1}", message.Id, false));
@@ -176,7 +180,8 @@ namespace Candor.WindowsAzure.Tasks
                     //this lets us know the processing has started.
                     StatusLatestTableProxy.InsertOrUpdate(status);
 
-                    status.Success = ProcessMessage(message, status);
+                    var result = ProcessMessageAdvanced(message, status);
+                    status.Success = result.Success;
                     status.RunDateTime = DateTime.UtcNow;
                     if (status.Success)
                         queue.DeleteMessage(message);
@@ -190,6 +195,9 @@ namespace Candor.WindowsAzure.Tasks
 
                     //always update latest status for this queue
                     StatusLatestTableProxy.InsertOrUpdate(status);
+                    
+                    if (result.DelayNextMessageSeconds > Double.Epsilon)
+                        return new IterationResult { NextWaitingPeriodSeconds = result.DelayNextMessageSeconds };
                 }
                 catch (OperationCanceledException e)
                 {
@@ -207,6 +215,7 @@ namespace Candor.WindowsAzure.Tasks
                     MessageStatusTableProxy.InsertOrUpdate(errorStatus);
                 }
             }
+            return new IterationResult();
         }
 
         private JobStatus CreateJobStatus(CloudQueueMessage message)
@@ -236,6 +245,22 @@ namespace Candor.WindowsAzure.Tasks
         {
             status.Success = ProcessMessage(message);
             return status.Success;
+        }
+        /// <summary>
+        /// Processes the message from the queue and updates the status of the job run
+        /// and returns some advanced result options.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
+        public virtual ProcessMessageResult ProcessMessageAdvanced(CloudQueueMessage message, JobStatus status)
+        {
+            var success = ProcessMessage(message, status);
+            return new ProcessMessageResult
+            {
+                DelayNextMessageSeconds = 0.0,
+                Success = success
+            };
         }
     }
 }

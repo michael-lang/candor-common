@@ -86,11 +86,12 @@ namespace Candor.Tasks
         {
             lock (_iterationLock)
             {
+                IterationResult result = null;
                 try
                 {
                     PauseTimer();
                     _iterationRunning = true;
-                    OnWaitingPeriodElapsed();
+                    result = OnWaitingPeriodElapsedAdvanced();
                     _lastIterationTimestamp = DateTime.Now;
                     _iterationRunning = false;
                 }
@@ -103,7 +104,7 @@ namespace Candor.Tasks
                     try
                     {
                         _iterationRunning = false;
-                        ResumeTimer();
+                        ResumeTimer(result ?? new IterationResult());
                     }
                     catch (Exception ex)
                     {
@@ -152,13 +153,16 @@ namespace Candor.Tasks
                 _mainTimer.Change(Timeout.Infinite, Timeout.Infinite);
             }
         }
-        private void ResumeTimer()
+        private void ResumeTimer(IterationResult result)
         {
             if (_disposed)
                 throw new ObjectDisposedException("WorkerRole");
             lock (_timerLock)
             {
-                TimeSpan duration = TimeSpan.FromSeconds(Math.Max(1, WaitingPeriodSeconds));
+                var waitSeconds = result.NextWaitingPeriodSeconds > 1
+                    ? result.NextWaitingPeriodSeconds
+                    : Math.Max(1, WaitingPeriodSeconds);
+                var duration = TimeSpan.FromSeconds(waitSeconds);
                 _mainTimer.Change(duration, duration);
             }
         }
@@ -186,7 +190,7 @@ namespace Candor.Tasks
             try
             {
                 if (_disposed)
-                    throw new ObjectDisposedException("WorkerRole");
+                    throw new ObjectDisposedException("RepeatingWorkerRoleTask");
                 lock (_timerLock)
                 {
                     TimeSpan duration = TimeSpan.FromSeconds(Math.Max(1, WaitingPeriodSeconds));
@@ -209,7 +213,26 @@ namespace Candor.Tasks
         /// <remarks>
         /// This will complete before the waiting period until the next iteration begins.
         /// </remarks>
+        [Obsolete]
         public abstract void OnWaitingPeriodElapsed();
+        /// <summary>
+        /// Code to be executed everytime the waiting period elapses,
+        /// but with controls to alter the flow of subsequent iterations.
+        /// This gives more fine grained control to derived classes to
+        /// follow different workloads on a custom schedule.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        /// If this method is overridden, then the other OnWaitingPeriodElapsed 
+        /// method will never be called by this base class.
+        /// </remarks>
+        public virtual IterationResult OnWaitingPeriodElapsedAdvanced()
+        {
+#pragma warning disable 612
+            OnWaitingPeriodElapsed();
+#pragma warning restore 612
+            return new IterationResult {NextWaitingPeriodSeconds = 0.0};
+        }
 
         #region IDisposable Members
         private bool _disposed;

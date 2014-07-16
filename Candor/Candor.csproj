@@ -75,6 +75,7 @@
     <Compile Include="Reflection\ReflectionExtensions.cs" />
     <Compile Include="SortOption.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="Tasks\IterationResult.cs" />
     <Compile Include="Tasks\RepeatingWorkerRoleTask.cs" />
     <Compile Include="Tasks\WorkerRole.cs" />
     <Compile Include="Tasks\WorkerRoleTask.cs" />
