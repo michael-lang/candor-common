@@ -11,6 +11,9 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
+      2.3.0: * CloudQueueWorkerRoleTask implementations can now pass back a custom
+      delay after each iteration
+      * No broken interfaces, only additions.  An upgrade should not cause any issues.
       2.2.3: JobStatus: added properties MessageId and MessageStep. CloudQueueWorkerRoleTask: added property MessageFailedSkipSeconds and ProcessMessage method overload adding status parameter
       2.2.0: CloudQueueWorkerRoleTask: Reduced job status log writes to error only and updated single record for latest success or failure, include queue message in status.
       2.1.2: Update package dependency references (Still Azure libs 2.1.0.3)

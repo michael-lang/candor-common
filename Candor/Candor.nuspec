@@ -14,6 +14,9 @@
       This code is open source and can be found at http://github.com/michael-lang/candor-common.
       In depth articles can be found at http://candordeveloper.com/
       Changes:
+      1.2.0: * RepeatingWorkerTask implementations can now pass back an override
+      custom delay duration from each processing iteration
+      * No broken interfaces, only additions.  An upgrade should not cause any issues.
       1.1.0: ProviderResolver error message for resolving a non-configured type is now meaningful.
       1.0.1: Update package dependency references
     </releaseNotes>
