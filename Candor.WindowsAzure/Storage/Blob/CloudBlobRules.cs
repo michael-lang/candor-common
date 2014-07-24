@@ -2,6 +2,9 @@
 
 namespace Candor.WindowsAzure.Storage.Blob
 {
+    /// <summary>
+    /// Helper methods to convert a string into valid blob key values.
+    /// </summary>
     public static class CloudBlobRules
     {
         /// <summary>

@@ -2,10 +2,16 @@
 
 namespace Candor.Data
 {
+    /// <summary>
+    /// A container for the latest sequence ID generated for a given schema (table).
+    /// </summary>
     public class SequenceIdStore
     {
         private readonly object _idLock = new object();
 
+        /// <summary>
+        /// A lock object used by the Id Generator to only allow a single caller to increment the Sequence Id.
+        /// </summary>
         public object IdLock
         {
             get { return _idLock; }

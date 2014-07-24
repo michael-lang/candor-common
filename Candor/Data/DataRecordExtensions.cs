@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Candor.Data
 {
+    /// <summary>
+    /// Methods to get a data record row value cast to the desired type.
+    /// </summary>
     public static class DataRecordExtensions
     {
         /// <summary>

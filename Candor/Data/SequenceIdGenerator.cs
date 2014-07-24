@@ -107,6 +107,9 @@ namespace Candor.Data
             {
                 try
                 {
+                    if (retryCount == 0 && String.IsNullOrWhiteSpace(sequence.LastId))
+                        _store.InsertOrUpdate(sequence.Schema);
+
                     var syncData = _store.GetData(sequence.Schema.TableName);
                     var lastStoredId = syncData.Data;
                     syncData.Data = syncData.Data.LexicalAdd(sequence.CharacterSet, _ignoreCase, sequence.Schema.RangeSize);
@@ -119,10 +122,8 @@ namespace Candor.Data
                 }
                 catch (Exception aex)
                 {
-                    LogProvider.ErrorFormat("Failed to RenewCachedIds for table '{0}' on attempt {1} of {2}", aex,
+                    LogProvider.WarnFormat("Failed to RenewCachedIds for table '{0}' on attempt {1} of {2}", aex,
                                             sequence.Schema.TableName, retryCount, MaxSyncRetries);
-                    if (retryCount == 0 && String.IsNullOrWhiteSpace(sequence.LastId))
-                        _store.InsertOrUpdate(sequence.Schema);
                     if (retryCount == MaxSyncRetries)
                         throw;
                 }

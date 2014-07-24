@@ -146,6 +146,10 @@ namespace Candor.WindowsAzure.Tasks
             base.OnStart(); //start timers
         }
 
+        /// <summary>
+        /// Continues processing after the waiting period has elapsed.
+        /// Obsolete.  Use OnWaitingPeriodElapsedAdvanced instead.
+        /// </summary>
         [Obsolete]
         public override void OnWaitingPeriodElapsed()
         {   //never called with advanced implementation overridden

@@ -15,7 +15,7 @@ namespace Candor.Tasks
         private Timer _mainTimer;
         private readonly object _timerLock = new object();
         private readonly object _iterationLock = new object();
-        private DateTime _lastIterationTimestamp = DateTime.MinValue;
+        private DateTime _nextIterationTimestamp = DateTime.MinValue;
         private bool _iterationRunning;
 
         /// <summary>
@@ -26,6 +26,9 @@ namespace Candor.Tasks
             get { return _logProvider ?? (_logProvider = LogManager.GetLogger(typeof(RepeatingWorkerRoleTask))); }
             set { _logProvider = value; }
         }
+        /// <summary>
+        /// Determines if the task is currently started.
+        /// </summary>
         public Boolean IsRunning { get; private set; }
         /// <summary>
         /// Gets or sets the amount of time to wait between completing rating
@@ -33,11 +36,18 @@ namespace Candor.Tasks
         /// </summary>
         public double WaitingPeriodSeconds { get; set; }
 
+        /// <summary>
+        /// The default constructor.
+        /// </summary>
         protected RepeatingWorkerRoleTask()
         {
             IsRunning = false;
             WaitingPeriodSeconds = 0.0;
         }
+
+        /// <summary>
+        /// Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.
+        /// </summary>
         ~RepeatingWorkerRoleTask()
         {
             Dispose(false);
@@ -72,7 +82,7 @@ namespace Candor.Tasks
                     return;
                 }
                 IsRunning = true;
-                _lastIterationTimestamp = DateTime.Now;
+                _nextIterationTimestamp = DateTime.Now.AddSeconds(WaitingPeriodSeconds);
                 StartTimer();
                 LogProvider.InfoFormat("'{0}' has started.", Name);
             }
@@ -92,7 +102,6 @@ namespace Candor.Tasks
                     PauseTimer();
                     _iterationRunning = true;
                     result = OnWaitingPeriodElapsedAdvanced();
-                    _lastIterationTimestamp = DateTime.Now;
                     _iterationRunning = false;
                 }
                 catch (Exception ex)
@@ -133,15 +142,15 @@ namespace Candor.Tasks
                 throw new ObjectDisposedException("WorkerRole");
             if (_iterationRunning)
             {
-                LogProvider.DebugFormat("Running iteration for '{1}' now, previous completed was {0:yyyy-MM-dd HH:mm:ss}", _lastIterationTimestamp, Name);
+                LogProvider.DebugFormat("Running iteration for '{1}' now, next due is {0:yyyy-MM-dd HH:mm:ss}", _nextIterationTimestamp, Name);
             }
-            if (_lastIterationTimestamp < DateTime.Now.AddSeconds((WaitingPeriodSeconds + 5) * -1))
-            {
-                LogProvider.WarnFormat("Task timer is being restarted for '{1}' due to last iteration being too old: {0:yyyy-MM-dd HH:mm:ss}", _lastIterationTimestamp, Name);
+            if (_nextIterationTimestamp.AddSeconds(WaitingPeriodSeconds) < DateTime.Now)
+            {   //if behind by a normal iteration duration, then restart the timer
+                LogProvider.WarnFormat("Task timer is being restarted for '{1}' due to next iteration not firing on time, Due: {0:yyyy-MM-dd HH:mm:ss}. Now: {2:yyyy-MM-dd HH:mm:ss}", _nextIterationTimestamp, Name, DateTime.Now);
                 ResetTimer();
             }
             else
-                LogProvider.DebugFormat("Last completed iteration for '{1}' was {0:yyyy-MM-dd HH:mm:ss}", _lastIterationTimestamp, Name);
+                LogProvider.DebugFormat("Next iteration for '{1}' due by {0:yyyy-MM-dd HH:mm:ss}", _nextIterationTimestamp, Name);
         }
 
         private void PauseTimer()
@@ -164,6 +173,7 @@ namespace Candor.Tasks
                     : Math.Max(1, WaitingPeriodSeconds);
                 var duration = TimeSpan.FromSeconds(waitSeconds);
                 _mainTimer.Change(duration, duration);
+                _nextIterationTimestamp = DateTime.Now.AddSeconds(waitSeconds);
             }
         }
         private void ClearTimer()
@@ -195,6 +205,7 @@ namespace Candor.Tasks
                 {
                     TimeSpan duration = TimeSpan.FromSeconds(Math.Max(1, WaitingPeriodSeconds));
                     _mainTimer = new Timer(mainTimer__Elapsed, null, duration, duration);
+                    _nextIterationTimestamp = DateTime.Now.AddSeconds(Math.Max(1, WaitingPeriodSeconds));
                 }
             }
             catch (Exception ex)

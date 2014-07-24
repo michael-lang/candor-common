@@ -6,6 +6,9 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Candor.WindowsAzure.Storage.Table
 {
+    /// <summary>
+    /// An optimistic sync store for sequence Ids that persists to an Azure table.
+    /// </summary>
     public class CloudTableSequenceIdOptimisticSyncStore : ISequenceIdOptimisticSyncStore
     {
         private const String PropertyFinalCachedId = "FinalCachedId";
@@ -50,7 +53,11 @@ namespace Candor.WindowsAzure.Storage.Table
                 });
             }
         }
-
+        /// <summary>
+        /// Gets the sequence for a given table.
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
         public SequenceIdStore GetSequenceIdStore(string tableName)
         {
             var schema = SchemaTableProxy.Get(tableName.GetValidPartitionKey(), tableName.GetValidRowKey());
@@ -64,7 +71,10 @@ namespace Candor.WindowsAzure.Storage.Table
                     Schema = schema.Entity
                 };
         }
-
+        /// <summary>
+        /// Gets all sequence definitions available.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<SequenceIdStore> GetSequenceIdStores()
         {
             var schemas = SchemaTableProxy.QueryPartitions("0", "zzzzz");
@@ -91,12 +101,20 @@ namespace Candor.WindowsAzure.Storage.Table
             }
             return stores;
         }
-
+        /// <summary>
+        /// Saves the specified sequence schema, overwriting the existing schema if applicable.
+        /// The schema does not contain the current latest sequence value.
+        /// </summary>
+        /// <param name="sequence"></param>
         public void InsertOrUpdate(SequenceIdSchema sequence)
         {
             SchemaTableProxy.InsertOrUpdate(sequence);
         }
-
+        /// <summary>
+        /// Gets the current sequence value for a given table.
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
         public OptimisticSyncData GetData(string tableName)
         {
             var sequence = SequenceTableProxy.Get(tableName.GetValidPartitionKey(), tableName.GetValidRowKey()) ??
@@ -123,7 +141,13 @@ namespace Candor.WindowsAzure.Storage.Table
             //  - a lock would not help, since the other thread may be in another role (web or worker) instance
             return sequence;
         }
-
+        /// <summary>
+        /// Tries to write the current sequence value for a table.
+        /// </summary>
+        /// <param name="syncData">The table name and current value for the sequence.  Also an ETag representing
+        /// the latest reserved value retrieved.  The ETag must match the curent stored value for the update/write
+        /// to succeed.</param>
+        /// <returns></returns>
         public bool TryWrite(OptimisticSyncData syncData)
         {
             var sequence = SequenceTableProxy.Get(syncData.TableName.GetValidPartitionKey(), syncData.TableName.GetValidRowKey()) ??

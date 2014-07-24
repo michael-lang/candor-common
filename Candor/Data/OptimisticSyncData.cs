@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Candor.Data
 {
+    /// <summary>
+    /// A container to store the actual latest sequence Id reserved for a given id generator
+    /// and table name.
+    /// </summary>
     public class OptimisticSyncData
     {
         /// <summary>

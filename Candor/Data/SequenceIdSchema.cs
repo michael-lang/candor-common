@@ -2,6 +2,10 @@
 
 namespace Candor.Data
 {
+    /// <summary>
+    /// Defines the schema for a sequence Id that supports an Id with any character set.
+    /// This is not limited to simple numeric sequences.
+    /// </summary>
     public class SequenceIdSchema
     {
         private LexicalCharacterSetType _characterSet = LexicalCharacterSetType.Numeric;
@@ -12,7 +16,7 @@ namespace Candor.Data
         /// </summary>
         public String TableName { get; set; }
         /// <summary>
-        /// Gets or sets the character set type.
+        /// Gets or sets the character set type used to generate the next sequence Id from a given value.
         /// </summary>
         public LexicalCharacterSetType CharacterSetType
         {

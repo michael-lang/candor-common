@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.Web.Mvc;
 using System.Web.Routing;
 
 namespace Candor.Web.Mvc
 {
+    /// <summary>
+    /// Extension methods for HtmlHelper for creating tags.
+    /// </summary>
     public static class MvcTagHtmlHelperExtension
     {
         /// <summary>

@@ -55,6 +55,11 @@ namespace Candor.Tasks.ServiceProcess
         private const int FORCE = 4;
         private const int SHUTDOWN = 8;
 
+        /// <summary>
+        /// Initializes the provider with the specified values.
+        /// </summary>
+        /// <param name="name">The name of the provider.</param>
+        /// <param name="configValue">Provider specific attributes.</param>
         public override void Initialize(string name, NameValueCollection configValue)
         {
             base.Initialize(name, configValue);
@@ -65,11 +70,22 @@ namespace Candor.Tasks.ServiceProcess
             OutputFileMaxAgeMinutes = configValue.GetInt32Value("outputFileMaxAgeMinutes", 60);
             AssertConfigurationValid();
         }
+        /// <summary>
+        /// Ensures the configuration is valid, otherwise it throws an ArgumentException.
+        /// </summary>
+        /// <exception cref="ArgumentException"></exception>
         protected virtual void AssertConfigurationValid()
         {
             if (String.IsNullOrWhiteSpace(OutputFileNameToWatch) && String.IsNullOrWhiteSpace(ServiceName))
                 throw new ArgumentException("No Service or File was specified to be watched.");
         }
+
+        /// <summary>
+        /// The code to be executed everytime the waiting period elapses.
+        /// </summary>
+        /// <remarks>
+        /// This will complete before the waiting period until the next iteration begins.
+        /// </remarks>
         public override void OnWaitingPeriodElapsed()
         {
             AssertConfigurationValid();
@@ -102,6 +118,11 @@ namespace Candor.Tasks.ServiceProcess
             return true;
         }
 
+        /// <summary>
+        /// Validates that a service file exists, and if not it is logged.
+        /// A custom logger should be provided to notify the appropriate party.
+        /// </summary>
+        /// <returns></returns>
         protected bool ValidateServiceFile()
         {
             if (string.IsNullOrEmpty(OutputFileNameToWatch)) { return true; }
@@ -160,6 +181,10 @@ namespace Candor.Tasks.ServiceProcess
             return OutputFileMaxAgeMinutes;
         }
 
+        /// <summary>
+        /// Validates if a windows service is running.
+        /// </summary>
+        /// <returns></returns>
         protected bool ValidateWindowsService()
         {
             try
@@ -187,6 +212,10 @@ namespace Candor.Tasks.ServiceProcess
                 return false;
             }
         }
+        /// <summary>
+        /// Restarts the windows service, if possible.
+        /// </summary>
+        /// <returns></returns>
         protected bool RestartService()
         {
             try
@@ -226,6 +255,10 @@ namespace Candor.Tasks.ServiceProcess
                 return false;
             }
         }
+        /// <summary>
+        /// Force Restarts the service, if possible.
+        /// </summary>
+        /// <returns></returns>
         protected bool RestartServer()
         {
             try
@@ -266,6 +299,11 @@ namespace Candor.Tasks.ServiceProcess
                 return false;
             }
         }
+        /// <summary>
+        /// Formats a server name for use by management API to restart the server.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         protected string FormatServerName(string name)
         {
             //->  \\computerName\root\cimv2

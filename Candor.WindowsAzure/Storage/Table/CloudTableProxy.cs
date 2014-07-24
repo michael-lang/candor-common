@@ -7,6 +7,15 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Candor.WindowsAzure.Storage.Table
 {
+    /// <summary>
+    /// A proxy for simplifying operations against an Azure cloud table.
+    /// </summary>
+    /// <typeparam name="T">The type of entity to store in this table.</typeparam>
+    /// <remarks>
+    /// This proxy should be persisted with a long lifecycle, possible a singleton per table.
+    /// A longer lifetime will result in less garbage collection of this resuable proxy type.
+    /// The methods of this type are thread safe.
+    /// </remarks>
     public class CloudTableProxy<T>
         where T : class, new()
     {
@@ -42,6 +51,11 @@ namespace Candor.WindowsAzure.Storage.Table
                 _table = null;
             }
         }
+        /// <summary>
+        /// Gets the initialized CloudTable instance given the table name.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">The connectionName must be supplied.</exception>
         public CloudTable GetTable()
         {
             if (_table == null)
@@ -137,6 +151,13 @@ namespace Candor.WindowsAzure.Storage.Table
 
             return table.ExecuteQuery(query).ToList();
         }
+        /// <summary>
+        /// Returns all the first x items from a partition that can be modified and then passed into the Delete method.
+        /// Only the keys of each item are returned to reduce bandwidth.
+        /// </summary>
+        /// <param name="partitionKey"></param>
+        /// <param name="take">The x number of items to retrieve.</param>
+        /// <returns></returns>
         public IEnumerable<DynamicTableEntity> GetPartitionForDelete(String partitionKey, Int32 take)
         {
             var table = GetTable();

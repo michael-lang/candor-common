@@ -9,46 +9,80 @@ using System.Text;
 
 namespace Candor
 {
+    /// <summary>
+    /// Defines a character set of which can be used to increment a string.
+    /// </summary>
     public class LexicalCharacterSet
     {
         private readonly IList<char> _characters;
         private readonly Int32 _caseInsensitiveLength;
         private readonly string _name;
 
+        /// <summary>
+        /// The characters contained in the set.
+        /// </summary>
         public IList<char> Characters
         {
             get { return _characters; }
         }
+        /// <summary>
+        /// The length of the set when not case sensitive.
+        /// </summary>
         public Int32 CaseInsensitiveLength
         {
             get { return _caseInsensitiveLength; }
         }
+        /// <summary>
+        /// The length of the set when case sensitive.
+        /// </summary>
         public Int32 CaseSensitiveLength
         {
             get { return _characters.Count; }
         }
+        /// <summary>
+        /// Determines if case sensitivity is supported or possible by this set.
+        /// </summary>
         public Boolean IsCaseSensitive
         {
             get { return CaseInsensitiveLength < CaseSensitiveLength; }
         }
+        /// <summary>
+        /// The name of the character set.
+        /// </summary>
         public String Name
         {
             get { return _name; }
         }
-
+        /// <summary>
+        /// Creates a new character set.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="caseInsensitiveLength"></param>
+        /// <param name="chars"></param>
         public LexicalCharacterSet(String name, Int32 caseInsensitiveLength, IList<char> chars)
         {
             _name = name;
             _characters = new ReadOnlyCollection<char>(chars);
             _caseInsensitiveLength = caseInsensitiveLength;
         }
+        /// <summary>
+        /// Creates a new character set.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="caseInsensitiveLength"></param>
+        /// <param name="chars"></param>
         public LexicalCharacterSet(String name, Int32 caseInsensitiveLength, IEnumerable<char> chars)
         {
             _name = name;
             _characters = new ReadOnlyCollection<char>(new List<char>(chars));
             _caseInsensitiveLength = caseInsensitiveLength;
         }
-
+        /// <summary>
+        /// Finds the next character in this set after a given character.
+        /// </summary>
+        /// <param name="after"></param>
+        /// <param name="ignoreCase"></param>
+        /// <returns></returns>
         public char FindNext(char after, bool ignoreCase)
         {
             var index = _characters.IndexOf(after);
@@ -190,6 +224,9 @@ namespace Candor
             }
         }
     }
+    /// <summary>
+    /// Extension methods for LexicalCharacterSet and LexicalCharacterSetType
+    /// </summary>
     public static class LexicalCharacterSetExtensions
     {
         /// <summary>

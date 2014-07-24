@@ -11,15 +11,16 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$  This code is open source.</description>
     <releaseNotes>
-    2.3.0: UserProvider new configuration option for reset code expiration, also added User.IsGuestUser property
-	  2.2.1: * CandorAuthenticationModule - remove setting authentication token header values during EndResponse.  No value in doing so, and EndRequest is too late in the response cycle (caused error).
-	  2.2.0: * SHA2HashProvider GetSalt method now returns the requested length of a string.  Unit Tests added for GetSalt to ensure future correctness.
-		* CandorAuthenticationModule now accepts authentication via headers in addition to cookies.  response headers are set with same values as auth response cookies.
-		Headers have the same keys as cookies, except with "X-" prefix.
-		* Added debug symbols and xml documentation
-	  2.1.0: * Added UserNotificationProvider base provider class
-	  2.0.0: * Add support to get latest x login sessions for a user (null for never).
-	  1.1.0: * User Provider can now register a guest user.
+      2.3.1 : * Update package dependency references
+      2.3.0: * UserProvider new configuration option for reset code expiration, also added User.IsGuestUser property
+      2.2.1: * CandorAuthenticationModule - remove setting authentication token header values during EndResponse.  No value in doing so, and EndRequest is too late in the response cycle (caused error).
+      2.2.0: * SHA2HashProvider GetSalt method now returns the requested length of a string.  Unit Tests added for GetSalt to ensure future correctness.
+      * CandorAuthenticationModule now accepts authentication via headers in addition to cookies.  response headers are set with same values as auth response cookies.
+      Headers have the same keys as cookies, except with "X-" prefix.
+      * Added debug symbols and xml documentation
+      2.1.0: * Added UserNotificationProvider base provider class
+      2.0.0: * Add support to get latest x login sessions for a user (null for never).
+      1.1.0: * User Provider can now register a guest user.
       1.0.1: * Update package dependency references
     </releaseNotes>
     <tags>Candor Security Authentication Hash</tags>

@@ -5,7 +5,7 @@
     <version>$version$</version>
     <authors>$author$</authors>
     <owners>Nexul Software LLC, $author$</owners>
-    <copyright>Copyright 2013 Michael Lang</copyright>
+    <copyright>Copyright 2014 Michael Lang</copyright>
     <projectUrl>https://github.com/michael-lang/candor-common</projectUrl>
     <licenseUrl>https://github.com/michael-lang/candor-common/blob/master/MIT-LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -14,6 +14,10 @@
       This code is open source and can be found at http://github.com/michael-lang/candor-common.
       In depth articles can be found at http://candordeveloper.com/
       Changes:
+      1.2.1: * SequenceIdGenerator - Fix retry bug when calling NextId when cached ids are used up.
+      Also now a syncronization failure to get a new Id range logs the problem as a warning (formerly error) since it will retry.
+      * RepeatingWorkerRoleTask - fix Ping task restart logic to recognize new custom delay added in 1.2.0.
+      * updated NuGet package to include debug symbols, updated documentation.
       1.2.0: * RepeatingWorkerTask implementations can now pass back an override
       custom delay duration from each processing iteration
       * No broken interfaces, only additions.  An upgrade should not cause any issues.
@@ -22,4 +26,9 @@
     </releaseNotes>
     <tags>Candor Reflection Provider Paging</tags>
   </metadata>
+  <files>
+    <file src="bin\$configuration$\$id$.dll" target="lib\net45\" />
+    <file src="bin\$configuration$\$id$.pdb" target="lib\net45\" />
+    <file src="bin\$configuration$\$id$.xml" target="lib\net45\" />
+  </files>
 </package>

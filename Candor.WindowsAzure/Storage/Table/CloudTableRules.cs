@@ -2,6 +2,9 @@
 
 namespace Candor.WindowsAzure.Storage.Table
 {
+    /// <summary>
+    /// Helper methods to convert a string into valid table key values.
+    /// </summary>
     public static class CloudTableRules
     {
         /// <summary>

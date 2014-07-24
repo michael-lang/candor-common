@@ -29,6 +29,9 @@ namespace Candor.Tasks
             get { return _logProvider ?? (_logProvider = LogManager.GetLogger(typeof(WorkerRole))); }
             set { _logProvider = value; }
         }
+        /// <summary>
+        /// Determines if the role is currently running.
+        /// </summary>
         public Boolean IsRunning { get; private set; }
         /// <summary>
         /// Gets or sets the interval of time between ping to each task to ensure they are alive.
@@ -43,16 +46,28 @@ namespace Candor.Tasks
             IsRunning = false; //just clarifying the default bool value is intentional
             PingInterval = TimeSpan.FromMinutes(5);
         }
+        /// <summary>
+        /// The primary constructor taking in the tasks to be run in this role.
+        /// </summary>
+        /// <param name="tasks"></param>
         public WorkerRole(ProviderCollection<WorkerRoleTask> tasks)
             : this()
         {
             _tasks = tasks;
         }
+
+        /// <summary>
+        /// Allows an object to try to free resources and perform other cleanup operations before it is reclaimed by garbage collection.
+        /// </summary>
         ~WorkerRole()
         {
             Dispose(false);
         }
 
+        /// <summary>
+        /// Starts this worker role and all containing tasks.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"></exception>
         public void OnStart()
         {
             try
@@ -174,6 +189,9 @@ namespace Candor.Tasks
             ClearTimer();
             StartTimer();
         }
+        /// <summary>
+        /// Stops the worker role and all contained tasks.
+        /// </summary>
         public void OnStop()
         {
             IsRunning = false;

@@ -5,12 +5,13 @@
     <version>$version$</version>
     <authors>$author$</authors>
     <owners>Nexul Software LLC, $author$</owners>
-    <copyright>Copyright 2013 Michael Lang</copyright>
+    <copyright>Copyright 2014 Michael Lang</copyright>
     <projectUrl>https://github.com/michael-lang/candor-windowsazure</projectUrl>
     <licenseUrl>https://github.com/michael-lang/candor-windowsazure/blob/master/MIT-LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
+      2.3.1: Update package dependency references, updated documentation.
       2.3.0: * CloudQueueWorkerRoleTask implementations can now pass back a custom
       delay after each iteration
       * No broken interfaces, only additions.  An upgrade should not cause any issues.

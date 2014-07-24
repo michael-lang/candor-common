@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
-using Candor.WindowsAzure.Storage.Table;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Candor.WindowsAzure.Storage.Blob
 {
+    /// <summary>
+    /// A proxy for simplifying operations against an Azure cloud blob.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class CloudBlobProxy<T>
         where T : class, new()
     {
@@ -47,6 +46,11 @@ namespace Candor.WindowsAzure.Storage.Blob
                 _container = null;
             }
         }
+        /// <summary>
+        /// Gets the initialized CloudBlobContainer instance given the container name.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">The connectionName must be supplied.</exception>
         public CloudBlobContainer GetContainer()
         {
             if (_container == null)
@@ -67,6 +71,11 @@ namespace Candor.WindowsAzure.Storage.Blob
         /// </summary>
         public Func<T, String> BlobName { get; set; }
 
+        /// <summary>
+        /// Gets a given blob with the specified blob name.
+        /// </summary>
+        /// <param name="blobName"></param>
+        /// <returns></returns>
         public T Get(String blobName)
         {
             var container = GetContainer();
@@ -81,6 +90,11 @@ namespace Candor.WindowsAzure.Storage.Blob
                 return (T)formatter.Deserialize(stream);
             }
         }
+        /// <summary>
+        /// Saves an item as a blob.
+        /// The blob name to store as is calculated from the BlobName function delegate.
+        /// </summary>
+        /// <param name="item"></param>
         public void Save(T item)
         {
             var container = GetContainer();
@@ -96,6 +110,10 @@ namespace Candor.WindowsAzure.Storage.Blob
                 blockBlob.UploadFromStream(memory);
             }
         }
+        /// <summary>
+        /// Deletes the blob with the specified blob name.
+        /// </summary>
+        /// <param name="blobName"></param>
         public void Delete(String blobName)
         {
             var container = GetContainer();
@@ -104,6 +122,11 @@ namespace Candor.WindowsAzure.Storage.Blob
             var blockBlob = container.GetBlockBlobReference(blobName);
             blockBlob.Delete();
         }
+        /// <summary>
+        /// Deletes an item from the blob container.
+        /// The blob name to delete is calculated from the BlobName function delegate.
+        /// </summary>
+        /// <param name="item"></param>
         public void Delete(T item)
         {
             var blobName = BlobName(item);

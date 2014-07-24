@@ -7,6 +7,10 @@ using System.Xml;
 
 namespace Candor.Configuration.Provider
 {
+	/// <summary>
+	/// Extension methods to get configuration values more simply from
+	/// NameValueCollection or XmlAttributeCollection
+	/// </summary>
 	public static class ProviderHelperExtensions
 	{
 

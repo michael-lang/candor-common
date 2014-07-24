@@ -2,6 +2,9 @@
 
 namespace Candor.WindowsAzure.Storage.Queue
 {
+    /// <summary>
+    /// Helper methods to ensure valid queue names.
+    /// </summary>
     public static class CloudQueueRules
     {
         /// <summary>

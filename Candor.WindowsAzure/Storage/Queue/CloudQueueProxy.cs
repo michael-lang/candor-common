@@ -7,6 +7,15 @@ using Microsoft.WindowsAzure.Storage.Queue;
 
 namespace Candor.WindowsAzure.Storage.Queue
 {
+    /// <summary>
+    /// A proxy for simplifying operations against an Azure cloud queue.
+    /// </summary>
+    /// <typeparam name="T">The type of entity to notify about in this queue.</typeparam>
+    /// <remarks>
+    /// This proxy should be persisted with a long lifecycle, possible a singleton per table.
+    /// A longer lifetime will result in less garbage collection of this resuable proxy type.
+    /// The methods of this type are thread safe.
+    /// </remarks>
     public class CloudQueueProxy<T>
         where T : class, new()
     {
@@ -41,6 +50,11 @@ namespace Candor.WindowsAzure.Storage.Queue
                 _queue = null;
             }
         }
+        /// <summary>
+        /// Gets the initialized CloudQueue instance given the queue name.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">The connectionName must be supplied.</exception>
         public CloudQueue GetQueue()
         {
             if (String.IsNullOrEmpty(QueueName))
@@ -58,6 +72,10 @@ namespace Candor.WindowsAzure.Storage.Queue
             }
             return _queue;
         }
+        /// <summary>
+        /// Puts a new change notification on the queue.
+        /// </summary>
+        /// <param name="detail"></param>
         public void AddRecordChangeNotification(RecordChangeNotification detail)
         {
             using (Stream stream = new MemoryStream())
@@ -72,6 +90,11 @@ namespace Candor.WindowsAzure.Storage.Queue
                 queue.AddMessage(message);
             }
         }
+        /// <summary>
+        /// Retrieves the change notification from the raw cloud queue message.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public RecordChangeNotification DeserializeRecordChangeNotification(CloudQueueMessage message)
         {
             using (Stream stream = new MemoryStream())

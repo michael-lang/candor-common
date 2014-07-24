@@ -1,13 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Web.Mvc;
 
 namespace Candor.Web.Mvc
 {
+    /// <summary>
+    /// Extensions for ModelStateDictionary
+    /// </summary>
     public static class ModelStateDictionaryExtension
     {
+        /// <summary>
+        /// Converts a model state dictionary into an html formatted string
+        /// for a custom presentation.
+        /// </summary>
+        /// <param name="modelState"></param>
+        /// <returns></returns>
         public static String ToHtmlString(this ModelStateDictionary modelState)
         {
             StringBuilder sb = new StringBuilder();
@@ -23,6 +30,12 @@ namespace Candor.Web.Mvc
             }
             return sb.ToString();
         }
+        /// <summary>
+        /// Converts a model state dictionary into a Json response
+        /// for a custom presentation.
+        /// </summary>
+        /// <param name="modelState"></param>
+        /// <returns></returns>
         public static object ToJson(this ModelStateDictionary modelState)
         {
             dynamic anon = new { };

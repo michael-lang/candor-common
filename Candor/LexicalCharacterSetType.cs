@@ -5,6 +5,9 @@
     /// </summary>
     public enum LexicalCharacterSetType
     {
+        /// <summary>
+        /// The default option.
+        /// </summary>
         None = 0,
         /// <summary>
         /// Numeric only characters 0-9.

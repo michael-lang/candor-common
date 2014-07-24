@@ -8,20 +8,40 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Candor.WindowsAzure.Storage.Table
 {
+    /// <summary>
+    /// A generic implementatin of TableEntity that can be used
+    /// to persist and retrieve your normal business layer class.
+    /// It removes the need to create your own data layer proxy classses.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class TableEntityProxy<T> : TableEntity
         where T : class, new()
     {
+        /// <summary>
+        /// The default constructor.
+        /// </summary>
         public TableEntityProxy()
         {
             Entity = new T();
         }
+        /// <summary>
+        /// Creates a new instance with a specific instance of the model class.
+        /// </summary>
+        /// <param name="entity"></param>
         public TableEntityProxy(T entity)
         {
             Entity = entity;
         }
 
+        /// <summary>
+        /// The entity wrapped by this proxy, retrieved from or persisted to storage.
+        /// </summary>
         public T Entity { get; set; }
 
+        /// <summary>
+        /// Deserializes this <see cref="T:Microsoft.WindowsAzure.Storage.Table.TableEntity"/> instance using the specified <see cref="T:System.Collections.Generic.Dictionary`2"/> of property names to <see cref="T:Microsoft.WindowsAzure.Storage.Table.EntityProperty"/> data typed values. 
+        /// </summary>
+        /// <param name="properties">The map of string property names to <see cref="T:Microsoft.WindowsAzure.Storage.Table.EntityProperty"/> data values to deserialize and store in this table entity instance.</param><param name="operationContext">An <see cref="T:Microsoft.WindowsAzure.Storage.OperationContext"/> object used to track the execution of the operation.</param>
         public override void ReadEntity(IDictionary<string, EntityProperty> properties,
             OperationContext operationContext)
         {
@@ -38,6 +58,16 @@ namespace Candor.WindowsAzure.Storage.Table
                 ReadEntityProperty(properties, operationContext, Entity, propertyInfo, null);
             }
         }
+        /// <summary>
+        /// During deserialization of the Entity, this reads one of the properties with support for
+        /// member expressions.
+        /// </summary>
+        /// <param name="properties"></param>
+        /// <param name="operationContext"></param>
+        /// <param name="propertyObject"></param>
+        /// <param name="propertyInfo"></param>
+        /// <param name="expressionChain"></param>
+        /// <exception cref="InvalidCastException"></exception>
         protected void ReadEntityProperty(IDictionary<string, EntityProperty> properties,
             OperationContext operationContext, object propertyObject,
             PropertyInfo propertyInfo, String expressionChain)
@@ -141,6 +171,14 @@ namespace Candor.WindowsAzure.Storage.Table
                     throw new InvalidCastException(String.Format("Cannot cast Azure table value into property '{0}'.", propertyInfo.Name));
             }
         }
+
+        /// <summary>
+        /// Serializes the <see cref="T:System.Collections.Generic.Dictionary`2"/> of property names mapped to <see cref="T:Microsoft.WindowsAzure.Storage.Table.EntityProperty"/> data values from this <see cref="T:Microsoft.WindowsAzure.Storage.Table.TableEntity"/> instance.
+        /// </summary>
+        /// <param name="operationContext">An <see cref="T:Microsoft.WindowsAzure.Storage.OperationContext"/> object used to track the execution of the operation.</param>
+        /// <returns>
+        /// A map of property names to <see cref="T:Microsoft.WindowsAzure.Storage.Table.EntityProperty"/> data typed values created by serializing this table entity instance.
+        /// </returns>
         public override IDictionary<string, EntityProperty> WriteEntity(OperationContext operationContext)
         {
             var dte = Entity as DynamicTableEntity;
@@ -156,6 +194,16 @@ namespace Candor.WindowsAzure.Storage.Table
             }
             return properties;
         }
+        /// <summary>
+        /// During serialization of the Entity, this gets one of the properties and adds it to the properties collection.
+        /// This will support deserializing an entire object graph below the specified property.
+        /// </summary>
+        /// <param name="properties"></param>
+        /// <param name="operationContext"></param>
+        /// <param name="propertyObject"></param>
+        /// <param name="propertyInfo"></param>
+        /// <param name="expressionChain"></param>
+        /// <exception cref="InvalidOperationException"></exception>
         protected void WriteEntityProperty(IDictionary<string, EntityProperty> properties,
             OperationContext operationContext, object propertyObject,
             PropertyInfo propertyInfo, String expressionChain)
@@ -221,7 +269,14 @@ namespace Candor.WindowsAzure.Storage.Table
                 properties.Add(columnName, propertyFromObject);
             }
         }
-
+        /// <summary>
+        /// During serialization this will take a single value and create an EntityProperty.
+        /// This supports more types than the base TableEntity class supports.
+        /// This also supports any type that has a TypeDescriptor that can convert to and from a string.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         private static EntityProperty CreateEntityPropertyFromObject(Type type, object value)
         {
             if (type == typeof(string))

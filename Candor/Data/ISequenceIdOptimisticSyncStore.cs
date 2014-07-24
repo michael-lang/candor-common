@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Candor.Data
 {
+    /// <summary>
+    /// An optimistic sync store for sequence Ids.
+    /// </summary>
     public interface ISequenceIdOptimisticSyncStore : IOptimisticSyncStore
     {
         /// <summary>
