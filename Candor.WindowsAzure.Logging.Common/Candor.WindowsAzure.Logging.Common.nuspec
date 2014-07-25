@@ -14,6 +14,8 @@
       This code is open source and can be found at http://github.com/michael-lang/candor-windowsazure.
       In depth articles can be found at http://candordeveloper.com/
       Changes:
+      1.1.1: Factory adapter needs a constructor using Common Loggings NameValueCollection instead of System.Collections.Specialized version.
+      1.1.0: Fix for upgrade to Common.Logging 2.2.  Factory adapter needs a default constructor.
       1.0.4: Update package dependency references (Still Azure libs 2.1.0.3)
       1.0.3: Update package dependency references (Still Azure libs 2.1.0.3)
       1.0.2: CloudBlobRules .GetValidBlobName now supports mixed case (upper case previously caused validation error)

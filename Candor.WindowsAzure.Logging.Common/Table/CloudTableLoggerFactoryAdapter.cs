@@ -1,6 +1,7 @@
-﻿using System.Collections.Specialized;
+﻿
 using Common.Logging;
 using Common.Logging.Factory;
+using Common.Logging.Configuration;
 
 namespace Candor.WindowsAzure.Logging.Common.Table
 {
@@ -8,6 +9,12 @@ namespace Candor.WindowsAzure.Logging.Common.Table
     {
         private readonly string _connectionName;
 
+        public CloudTableLoggerFactoryAdapter()
+        {   //I guess this is in case the configuration does not contain any args for the factory adapter?
+            //  so we'll use the most reasonable default for an app using Azure cloud tables.
+            _connectionName = "Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString";
+        }
+        
         public CloudTableLoggerFactoryAdapter(NameValueCollection properties)
         {
             _connectionName = properties["ConnectionName"];
