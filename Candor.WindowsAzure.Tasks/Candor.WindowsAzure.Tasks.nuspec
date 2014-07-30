@@ -11,6 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
+      2.3.3: CloudQueueWorkerRoleTask - failed messages now update in queue with visibility timeout
       2.3.1: Update package dependency references, updated documentation.
       2.3.0: * CloudQueueWorkerRoleTask implementations can now pass back a custom
       delay after each iteration

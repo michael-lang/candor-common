@@ -179,7 +179,11 @@ namespace Candor.WindowsAzure.Tasks
                     if (MessageFailedSkipSeconds > double.Epsilon
                         && !status.Success
                         && status.RunDateTime > DateTime.UtcNow.AddSeconds(-1*MessageFailedSkipSeconds))
-                        break; //skip this message temporarily and continue with the next.
+                    {   //do this here in case it was long running on error, so we dequeue it one extra time before hiding it.
+                        var hideDuration = (DateTime.UtcNow - status.RunDateTime.AddSeconds(MessageFailedSkipSeconds)).Duration();
+                        queue.UpdateMessage(message, hideDuration, MessageUpdateFields.Visibility);
+                        continue; //skip this message temporarily and continue with the next.
+                    }
 
                     //this lets us know the processing has started.
                     StatusLatestTableProxy.InsertOrUpdate(status);
