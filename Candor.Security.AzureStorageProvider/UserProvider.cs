@@ -262,7 +262,7 @@ namespace Candor.Security.AzureStorageProvider
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("name", "User name must be supplied.");
             var user =
-                (TableProxyUserByName.GetPartition(name.GetValidPartitionKey()) ?? new List<TableEntityProxy<User>>())
+                (TableProxyUserByName.GetPartition(name.ToLower().GetValidPartitionKey()) ?? new List<TableEntityProxy<User>>())
                     .Find(x => String.Equals(x.Entity.Name, name, StringComparison.InvariantCultureIgnoreCase));
             return user == null ? null : user.Entity;
         }
@@ -273,6 +273,7 @@ namespace Candor.Security.AzureStorageProvider
         /// <param name="user"></param>
         protected override void SaveUser(User user)
         {
+            user.Name = user.Name.ToLower();
             TableProxyUserByName.InsertOrUpdate(user);
             TableProxyUserById.InsertOrUpdate(user);
         }
@@ -331,7 +332,7 @@ namespace Candor.Security.AzureStorageProvider
                                                                   QueryComparisons.LessThanOrEqual, //smallest is latest
                                                                   rkCompare.ToString("d19"));
             var attempts =
-                TableProxyAuthenticationHistoryByUserName.QueryPartition(String.Format("UserName|{0}", name).GetValidPartitionKey(), 
+                TableProxyAuthenticationHistoryByUserName.QueryPartition(String.Format("UserName|{0}", name.ToLower()).GetValidPartitionKey(), 
                 rowKeyFilter, take: AllowedFailuresPerPeriod * 2);
             if (attempts == null || attempts.Count == 0)
                 return 0;

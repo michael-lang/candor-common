@@ -11,6 +11,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$  This code is open source.</description>
     <releaseNotes>
+      2.3.2: * user names are now case insensitive as intended (already the case with Sql version of UserProvider)
+        - this is done by storing user name in lower case.  A separate user profile should be used for a cased name.
       2.3.1: * Update package dependency references
       2.3.0: * Compiled to update referenced definition of User with new IsGuestUser property.
       2.1.1: * CloudBlobRules .GetValidBlobName now supports mixed case (upper case previously caused validation error)
