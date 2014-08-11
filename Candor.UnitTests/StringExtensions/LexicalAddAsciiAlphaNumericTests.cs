@@ -21,6 +21,14 @@ namespace Candor.StringExtensions
 
             Assert.AreEqual("Mik3", s2);
         }
+        [Test]
+        public void Add_NoCase_A_Z_1()
+        {
+            var s = "A-Z";
+            var s2 = s.LexicalAdd(LexicalCharacterSet.AsciiAlphaNumeric, true, true, 1);
+
+            Assert.AreEqual("A00", s2);
+        }
 
 
 

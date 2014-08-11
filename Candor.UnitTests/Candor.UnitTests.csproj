@@ -81,6 +81,9 @@
     <Compile Include="Reflection\AccountType.cs" />
     <Compile Include="Reflection\ReflectionExtensionsTests.cs" />
     <Compile Include="StringExtensions\ToCharacterSetAsciiAutoTests.cs" />
+    <Compile Include="StringExtensions\ReplaceNotIn.cs" />
+    <Compile Include="StringExtensions\TrimEndNotIn.cs" />
+    <Compile Include="StringExtensions\TrimStartNotIn.cs" />
     <Compile Include="WindowsAzure\CloudBlobRulesTests.cs" />
     <Compile Include="WindowsAzure\Contact.cs" />
     <Compile Include="WindowsAzure\ContactMessage.cs" />
