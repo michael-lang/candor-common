@@ -11,7 +11,8 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$  This code is open source.</description>
     <releaseNotes>
-      2.3.1 : * Update package dependency references
+      2.4.0: * Add tracking cookie for anonymous users to track their flow on the site.  Stored in the authentication context.
+      2.3.1: * Update package dependency references
       2.3.0: * UserProvider new configuration option for reset code expiration, also added User.IsGuestUser property
       2.2.1: * CandorAuthenticationModule - remove setting authentication token header values during EndResponse.  No value in doing so, and EndRequest is too late in the response cycle (caused error).
       2.2.0: * SHA2HashProvider GetSalt method now returns the requested length of a string.  Unit Tests added for GetSalt to ensure future correctness.

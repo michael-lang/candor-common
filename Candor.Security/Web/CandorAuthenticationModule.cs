@@ -11,7 +11,8 @@ namespace Candor.Security.Web
 	{
 		private static readonly string ImpersonationKey = typeof(CandorAuthenticationModule).FullName + "-ImpersonatedUser";
 		private const string AuthenticationTicketTokenKey = "AuthorizationTicketToken";
-		private const string RememberMeKey = "RememberMe";
+        private const string RememberMeKey = "RememberMe";
+        private const string SessionIdKey = "AnonSessionId";
 		private static readonly string[] IgnoreAuthExtensions = new[] { ".css", ".js", ".png", ".jpg", ".jpeg", ".gif" };
 
 		private static bool ImpersonationEnabled { get; set; }
@@ -82,7 +83,10 @@ namespace Candor.Security.Web
 			var ticketCookie = HttpContext.Current.Request.Cookies[AuthenticationTicketTokenKey];
             var ticketHeader = HttpContext.Current.Request.Headers["X-" + AuthenticationTicketTokenKey];
 			var rememberCookie = HttpContext.Current.Request.Cookies[RememberMeKey];
-		    var rememberHeader = HttpContext.Current.Request.Headers["X-" + RememberMeKey];
+            var rememberHeader = HttpContext.Current.Request.Headers["X-" + RememberMeKey];
+            var sessionCookie = HttpContext.Current.Request.Cookies[SessionIdKey];
+            var sessionHeader = HttpContext.Current.Request.Headers["X-" + SessionIdKey];
+
 			var rememberMe = false;
 			if (rememberCookie != null && !String.IsNullOrWhiteSpace(rememberCookie.Value))
 				Boolean.TryParse(rememberCookie.Value, out rememberMe);
@@ -92,8 +96,21 @@ namespace Candor.Security.Web
 
 			if ((ticketCookie == null || string.IsNullOrWhiteSpace(ticketCookie.Value))
                 && string.IsNullOrWhiteSpace(ticketHeader))
-			{
-				SecurityContextManager.CurrentUser = new UserPrincipal(); //anonymous
+            {
+                Guid anonSessionId;
+                if ((sessionCookie == null || string.IsNullOrWhiteSpace(sessionCookie.Value))
+                    && string.IsNullOrWhiteSpace(sessionHeader))
+                {
+                    anonSessionId = Guid.NewGuid();
+                }
+                else
+                {
+                    anonSessionId = Guid.Parse(sessionHeader ?? sessionCookie.Value);
+                }
+                var anon = new UserPrincipal(); //anonymous
+                anon.Identity.Ticket.UserSession.RenewalToken = anonSessionId;
+                anon.Identity.Ticket.IPAddress = ipAddress;
+                SecurityContextManager.CurrentUser = anon;
 				return;
 			}
 
@@ -156,21 +173,33 @@ namespace Candor.Security.Web
 				authCookie = new HttpCookie(AuthenticationTicketTokenKey) {Secure = true};
 				app.Context.Response.Cookies.Add(authCookie);
 			}
-			if (!SecurityContextManager.IsAnonymous)
-			{
-				authCookie.Expires = SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.ExpirationDate;
-				authCookie.Value = SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.RenewalToken.ToString();
+		    if (!SecurityContextManager.IsAnonymous)
+		    {
+		        authCookie.Expires = SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.ExpirationDate;
+		        authCookie.Value = SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.RenewalToken.ToString();
 
-				HttpCookie rememberCookie = app.Context.Response.Cookies[RememberMeKey];
-				if (rememberCookie == null)
-				{
-					rememberCookie = new HttpCookie(RememberMeKey) {Secure = true};
-					app.Context.Response.Cookies.Add(rememberCookie);
-				}
-				rememberCookie.Expires = authCookie.Expires;
-			    bool remember = ((authCookie.Expires - DateTime.UtcNow).TotalMinutes > 21);
-				rememberCookie.Value = remember.ToString();
-			}
+		        HttpCookie rememberCookie = app.Context.Response.Cookies[RememberMeKey];
+		        if (rememberCookie == null)
+		        {
+		            rememberCookie = new HttpCookie(RememberMeKey) {Secure = true};
+		            app.Context.Response.Cookies.Add(rememberCookie);
+		        }
+		        rememberCookie.Expires = authCookie.Expires;
+		        bool remember = ((authCookie.Expires - DateTime.UtcNow).TotalMinutes > 21);
+		        rememberCookie.Value = remember.ToString();
+		    }
+		    else
+		    {
+		        HttpCookie anonCookie = app.Context.Response.Cookies[SessionIdKey];
+		        if (anonCookie == null)
+		        {
+		            anonCookie = new HttpCookie(SessionIdKey) {Secure = true};
+                    app.Context.Response.Cookies.Add(anonCookie);
+		        }
+		        anonCookie.Expires = DateTime.UtcNow.AddDays(3);
+                //this renewal token is a session token when anonymous
+                anonCookie.Value = SecurityContextManager.CurrentUser.Identity.Ticket.UserSession.RenewalToken.ToString();
+		    }
 		}
 	}
 }
