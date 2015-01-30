@@ -14,6 +14,7 @@
       This code is open source and can be found at http://github.com/michael-lang/candor-common.
       In depth articles can be found at http://candordeveloper.com/
       Changes:
+      1.4.1: * RepeatingWorkerRoleTask - Added CheckIn method to reset the inactivity restart trigger
       1.3.0: * StringExtensions - LexicalAdd overload added, added TrimNotIn+, ReplaceNotIn
       1.2.1: * SequenceIdGenerator - Fix retry bug when calling NextId when cached ids are used up.
       Also now a syncronization failure to get a new Id range logs the problem as a warning (formerly error) since it will retry.

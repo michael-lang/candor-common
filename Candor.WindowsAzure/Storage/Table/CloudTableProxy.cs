@@ -336,7 +336,7 @@ namespace Candor.WindowsAzure.Storage.Table
             if (String.IsNullOrEmpty(wrap.PartitionKey))
                 throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
             if (String.IsNullOrEmpty(wrap.RowKey))
-                throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
+                throw new ArgumentNullException("RowKey", "The row key function resulted in a null row key.");
             var insertOperation = TableOperation.Insert(wrap);
             table.Execute(insertOperation);
             return wrap;
@@ -371,7 +371,7 @@ namespace Candor.WindowsAzure.Storage.Table
                 if (String.IsNullOrEmpty(wrap.PartitionKey))
                     throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
                 if (String.IsNullOrEmpty(wrap.RowKey))
-                    throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
+                    throw new ArgumentNullException("RowKey", "The row key function resulted in a null row key.");
                 wrappedItems.Add(wrap);
                 batchOperation.Insert(wrap);
                 batchSize++;
@@ -415,7 +415,7 @@ namespace Candor.WindowsAzure.Storage.Table
             if (String.IsNullOrEmpty(wrap.PartitionKey))
                 throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
             if (String.IsNullOrEmpty(wrap.RowKey))
-                throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
+                throw new ArgumentNullException("RowKey", "The row key function resulted in a null row key.");
             if (String.IsNullOrEmpty(updateEntity.ETag))
                 throw new ArgumentNullException("ETag", "An Etag is required on an entity to perform an update.");
             var updateOperation = TableOperation.Replace(wrap);
@@ -455,7 +455,7 @@ namespace Candor.WindowsAzure.Storage.Table
             if (String.IsNullOrEmpty(wrap.PartitionKey))
                 throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
             if (String.IsNullOrEmpty(wrap.RowKey))
-                throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
+                throw new ArgumentNullException("RowKey", "The row key function resulted in a null row key.");
 
             var retrieveOperation = TableOperation.Retrieve<TableEntityProxy<T>>(pKey, rKey);
             var retrievedResult = table.Execute(retrieveOperation);
@@ -492,7 +492,7 @@ namespace Candor.WindowsAzure.Storage.Table
             if (String.IsNullOrEmpty(pk))
                 throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
             if (String.IsNullOrEmpty(rk))
-                throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
+                throw new ArgumentNullException("RowKey", "The row key function resulted in a null row key.");
 
             var retrieveOperation = TableOperation.Retrieve<TableEntityProxy<T>>(
                 pk,
@@ -554,11 +554,11 @@ namespace Candor.WindowsAzure.Storage.Table
             return deleted;
         }
         /// <summary>
-        /// Update up to 100 items in a batch.  (Azure limit per batch).
+        /// Replace up to 100 items in a batch.  (Azure limit per batch).
         /// Batches of any larger size are broken into smaller batches.
         /// </summary>
         /// <param name="items"></param>
-        public void UpdateBatch(IEnumerable<TableEntityProxy<T>> items)
+        public void ReplaceBatch(IEnumerable<TableEntityProxy<T>> items)
         {
             var table = GetTable();
             if (!table.Exists())
@@ -580,8 +580,8 @@ namespace Candor.WindowsAzure.Storage.Table
                 if (String.IsNullOrEmpty(item.PartitionKey))
                     throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
                 if (String.IsNullOrEmpty(item.RowKey))
-                    throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
-                batchOperation.Insert(item);
+                    throw new ArgumentNullException("RowKey", "The row key function resulted in a null row key.");
+                batchOperation.Replace(item);
                 batchSize++;
             }
 
@@ -615,7 +615,7 @@ namespace Candor.WindowsAzure.Storage.Table
                 if (String.IsNullOrEmpty(item.PartitionKey))
                     throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
                 if (String.IsNullOrEmpty(item.RowKey))
-                    throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
+                    throw new ArgumentNullException("RowKey", "The row key function resulted in a null row key.");
                 batchOperation.InsertOrReplace(item);
                 batchSize++;
             }
@@ -650,7 +650,7 @@ namespace Candor.WindowsAzure.Storage.Table
                 if (String.IsNullOrEmpty(item.PartitionKey))
                     throw new ArgumentNullException("PartitionKey", "The partition key function resulted in a null partition key.");
                 if (String.IsNullOrEmpty(item.RowKey))
-                    throw new ArgumentNullException("RowKey", "The partition key function resulted in a null partition key.");
+                    throw new ArgumentNullException("RowKey", "The row key function resulted in a null row key.");
                 batchOperation.InsertOrMerge(item);
                 batchSize++;
             }

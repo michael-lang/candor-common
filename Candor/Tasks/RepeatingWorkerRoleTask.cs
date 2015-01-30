@@ -16,6 +16,7 @@ namespace Candor.Tasks
         private readonly object _timerLock = new object();
         private readonly object _iterationLock = new object();
         private DateTime _nextIterationTimestamp = DateTime.MinValue;
+        private DateTime _lastCheckIn = DateTime.MinValue;
         private bool _iterationRunning;
 
         /// <summary>
@@ -76,13 +77,14 @@ namespace Candor.Tasks
 
             try
             {
+                CheckIn();
                 if (WaitingPeriodSeconds < 1)
                 {
                     LogProvider.WarnFormat("'{0}' is configured to never run (WaitingPeriodSeconds must be at least 1)", Name);
                     return;
                 }
                 IsRunning = true;
-                _nextIterationTimestamp = DateTime.Now.AddSeconds(WaitingPeriodSeconds);
+                _nextIterationTimestamp = DateTime.UtcNow.AddSeconds(WaitingPeriodSeconds);
                 StartTimer();
                 LogProvider.InfoFormat("'{0}' has started.", Name);
             }
@@ -101,8 +103,10 @@ namespace Candor.Tasks
                 {
                     PauseTimer();
                     _iterationRunning = true;
+                    CheckIn();
                     result = OnWaitingPeriodElapsedAdvanced();
                     _iterationRunning = false;
+                    CheckIn();
                 }
                 catch (Exception ex)
                 {
@@ -144,15 +148,26 @@ namespace Candor.Tasks
             {
                 LogProvider.DebugFormat("Running iteration for '{1}' now, next due is {0:yyyy-MM-dd HH:mm:ss}", _nextIterationTimestamp, Name);
             }
-            if (_nextIterationTimestamp.AddSeconds(WaitingPeriodSeconds) < DateTime.Now)
+            if (_lastCheckIn.AddSeconds(Math.Min(30, WaitingPeriodSeconds * 2)) < DateTime.UtcNow
+                && _nextIterationTimestamp.AddSeconds(Math.Min(30, WaitingPeriodSeconds * 2)) < DateTime.UtcNow)
             {   //if behind by a normal iteration duration, then restart the timer
-                LogProvider.WarnFormat("Task timer is being restarted for '{1}' due to next iteration not firing on time, Due: {0:yyyy-MM-dd HH:mm:ss}. Now: {2:yyyy-MM-dd HH:mm:ss}", _nextIterationTimestamp, Name, DateTime.Now);
+                LogProvider.WarnFormat("Task timer is being restarted for '{1}' due to next iteration not firing on time, Last CheckIn: {0:yyyy-MM-dd HH:mm:ss}. Now: {2:yyyy-MM-dd HH:mm:ss}", _lastCheckIn, Name, DateTime.UtcNow);
                 ResetTimer();
             }
             else
                 LogProvider.DebugFormat("Next iteration for '{1}' due by {0:yyyy-MM-dd HH:mm:ss}", _nextIterationTimestamp, Name);
         }
-
+        /// <summary>
+        /// The derived class can mark that it has reached an activity checkpoint to verify that it is still active.
+        /// </summary>
+        /// <remarks>
+        /// If too much time passes before a check in or a release of a work period then the timer is restarted when
+        /// this task is pinged.
+        /// </remarks>
+        protected void CheckIn()
+        {
+            _lastCheckIn = DateTime.UtcNow;
+        }
         private void PauseTimer()
         {
             if (_disposed)
@@ -173,7 +188,8 @@ namespace Candor.Tasks
                     : Math.Max(1, WaitingPeriodSeconds);
                 var duration = TimeSpan.FromSeconds(waitSeconds);
                 _mainTimer.Change(duration, duration);
-                _nextIterationTimestamp = DateTime.Now.AddSeconds(waitSeconds);
+                _nextIterationTimestamp = DateTime.UtcNow.AddSeconds(waitSeconds);
+                CheckIn();
             }
         }
         private void ClearTimer()
@@ -205,7 +221,8 @@ namespace Candor.Tasks
                 {
                     TimeSpan duration = TimeSpan.FromSeconds(Math.Max(1, WaitingPeriodSeconds));
                     _mainTimer = new Timer(mainTimer__Elapsed, null, duration, duration);
-                    _nextIterationTimestamp = DateTime.Now.AddSeconds(Math.Max(1, WaitingPeriodSeconds));
+                    _nextIterationTimestamp = DateTime.UtcNow.AddSeconds(Math.Max(1, WaitingPeriodSeconds));
+                    CheckIn();
                 }
             }
             catch (Exception ex)

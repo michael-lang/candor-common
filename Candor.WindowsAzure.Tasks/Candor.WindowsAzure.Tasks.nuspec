@@ -11,6 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
+      2.4.0: CloudQueueWorkerRoleTask - take advantage of the new CheckIn method of RepeatingWorkerRoleTask
       2.3.3: CloudQueueWorkerRoleTask - failed messages now update in queue with visibility timeout
       2.3.1: Update package dependency references, updated documentation.
       2.3.0: * CloudQueueWorkerRoleTask implementations can now pass back a custom

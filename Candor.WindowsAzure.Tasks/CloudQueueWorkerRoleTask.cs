@@ -166,6 +166,7 @@ namespace Candor.WindowsAzure.Tasks
                 CloudQueueMessage message = null;
                 try
                 {
+                    CheckIn();
                     message = queue.GetMessage();
                     if (message == null)
                         return new IterationResult();
@@ -188,7 +189,9 @@ namespace Candor.WindowsAzure.Tasks
                     //this lets us know the processing has started.
                     StatusLatestTableProxy.InsertOrUpdate(status);
 
+                    CheckIn();
                     var result = ProcessMessageAdvanced(message, status);
+                    CheckIn();
                     status.Success = result.Success;
                     status.RunDateTime = DateTime.UtcNow;
                     if (status.Success)
