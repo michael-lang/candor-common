@@ -96,7 +96,6 @@ namespace Candor.WindowsAzure.Tasks
             var emailAddress = change.PartitionKey;
             try
             {
-
                 if (user == null)
                 {
                     msg.Subject = "Temporary Password - No Account found";

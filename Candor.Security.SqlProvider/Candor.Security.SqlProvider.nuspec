@@ -5,12 +5,13 @@
     <version>$version$</version>
     <authors>$author$</authors>
     <owners>Nexul Software LLC, $author$</owners>
-    <copyright>Copyright 2014 Michael Lang</copyright>
+    <copyright>Copyright 2015 Michael Lang</copyright>
     <projectUrl>https://github.com/michael-lang/candor-common</projectUrl>
     <licenseUrl>https://github.com/michael-lang/candor-common/blob/master/MIT-LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <releaseNotes>
+      2.5.0: * updated to use new Security library - new rule for IP address locking
       2.3.1: * Update package dependency references
       2.3.0: * Added storage/retrieval of User.IsGuest property (default false for backwards compat)
       2.1.0.1: * Added debug symbols and xml documentation

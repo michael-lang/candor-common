@@ -92,6 +92,12 @@ namespace Candor.Security
             get { return _passwordRegex ?? (_passwordRegex = new Regex(PasswordRegexExpression, RegexOptions.Compiled)); }
         }
         /// <summary>
+        /// When true, turns off the requirement that a session can only be used from the source IP address.
+        /// This is on by default (value of false).  Setting this to true is recommended for mobile app sessions
+        /// that need to survive the app moving between signal towers and wifi to network.
+        /// </summary>
+        public virtual bool DisableIpAddressSessionLock { get; set; }
+        /// <summary>
         /// An error message shown when the password does not match the required format.
         /// </summary>
         public virtual string PasswordErrorMessage { get; set; }
@@ -201,6 +207,7 @@ namespace Candor.Security
             PasswordRegexExpression = configValue.GetStringValue("passwordRegexExpression", "^([a-zA-Z0-9@*#]{6,128})$");
             PasswordErrorMessage = configValue.GetStringValue("passwordErrorMessage",
                                                               "The password must be between 6 and 32 characters long; and can only contain letters, numbers, and these special symbols(@, *, #)");
+            DisableIpAddressSessionLock = configValue.GetBooleanValue("DisableIpAddressSessionLock", DisableIpAddressSessionLock);
             BaseHashIterations = configValue.GetInt32Value("baseHashIterations", 5000);
             HashGroupMinimum = configValue.GetInt32Value("hashGroupMinimum", 1);
             HashGroupMaximum = configValue.GetInt32Value("hashGroupMaximum", 1000);
@@ -343,7 +350,7 @@ namespace Candor.Security
                 result.AppendError(errorMsg);
                 return new UserIdentity();
             }
-            if (history.IPAddress != ipAddress)
+            if (history.IPAddress != ipAddress && !DisableIpAddressSessionLock)
             {	//coming from a new IPAddress, token was stolen or user is coming from a new dynamic IP address (new internet connection?)
                 result.AppendError(errorMsg);
                 return new UserIdentity(); //force new login with password (essentially approves this new IP address)

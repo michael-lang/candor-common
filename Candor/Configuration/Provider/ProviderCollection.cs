@@ -115,7 +115,7 @@ namespace Candor.Configuration.Provider
                         String.IsNullOrWhiteSpace(_configSectionName) ? typeof(T).FullName : _configSectionName));
 
 				if (_provider == null)
-					throw new ProviderException(string.Format("The {0} provider to use was not specified.  Use the 'defaultProvider' attribute or set it via code.", typeof(T).FullName, _configSectionName));
+					throw new ProviderException(string.Format("The {0} provider to use was not specified.  Use the 'defaultProvider' attribute or set it via code.", typeof(T).FullName));
 			}
 			catch (Exception ex)
 			{

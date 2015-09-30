@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -29,7 +30,135 @@ namespace Candor
             }
             return newText.ToString();
         }
+        /// <summary>
+        /// Converts a sentence or _ separated word string into a no whitespace/underscore pascal case name.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string ToPascalCase(this string text)
+        {
+            text = text.Replace("_", " ").Trim();
+            if (string.IsNullOrEmpty(text))
+                return String.Empty;
+            var newText = new StringBuilder(text.Length * 2);
+            newText.Append(text[0].ToString(CultureInfo.InvariantCulture).ToUpper());
+            for (var i = 1; i < text.Length; i++)
+            {
+                if (char.IsWhiteSpace(text[i]))
+                    continue;
+                var prev = text[i - 1];
+                if (char.IsWhiteSpace(prev) || char.IsNumber(prev))
+                    newText.Append(text[i].ToString(CultureInfo.InvariantCulture).ToUpper());
+                else
+                    newText.Append(text[i]);
+            }
+            return newText.ToString();
+        }
+        /// <summary>
+        /// Converts a string to a format of a proper name.  Each word is capitalized.
+        /// underscores become spaces (word boundaries).  
+        /// Acronyms are assumed when the text is all letters in all caps, and then no change is made.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string ToProperNameCase(this string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return String.Empty;
+            text = text.Replace("_", " ");
+            var newText = new StringBuilder(text.Length * 2);
+            var prevTriggerCaseUpper = true;
+            var allLetters = true;
+            foreach (var curr in text)
+            {
+                if (prevTriggerCaseUpper && char.IsLetter(curr))
+                    newText.Append(char.ToUpper(curr));
+                else
+                    newText.Append(char.ToLower(curr));
 
+                allLetters = (allLetters && char.IsLetter(curr));
+                prevTriggerCaseUpper = (char.IsWhiteSpace(curr) || curr == '-' || curr == '_' || (char.IsNumber(curr) && prevTriggerCaseUpper));
+            }
+
+            if (allLetters && text.ToUpper() == text)
+                return text; //acronym 
+
+            return newText.ToString();
+        }
+        /// <summary>
+        /// Converts a string to a sentence, making word boundaries at capital letters following a lower case letter
+        /// and replacing underscores with a space.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string ToSentence(this string text)
+        {
+            text = text.Replace("_", " ");
+            if (string.IsNullOrEmpty(text))
+                return String.Empty;
+            var newText = new StringBuilder(text.Length * 2);
+            newText.Append(text[0]);
+            for (int i = 1; i < text.Length; i++)
+            {
+                char prev = newText[newText.Length - 1];
+                if (char.IsUpper(text[i]) && prev != ' ' && char.IsLower(prev) && !char.IsWhiteSpace(prev))
+                    newText.Append(' ');
+                newText.Append(text[i]);
+            }
+            return newText.ToString();
+        }
+        /// <summary>
+        /// Gets only the digits portion of a string.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static string ToDigitsOnly(this string input)
+        {
+            return new String(input.Where(char.IsDigit).ToArray());
+        }
+        /// <summary>
+        /// Generates a teaser phrase from any body of text.  If the text is shortened
+        /// from the specified max length, an ellipsis ("...") is added.
+        /// </summary>
+        /// <param name="text">The original body text.</param>
+        /// <param name="maxSentences">The max number of sentences from the original text.</param>
+        /// <param name="maxCharacters">The maximum total characters to return.</param>
+        /// <returns></returns>
+        public static string GenerateTeaser(this string text, Int32 maxSentences, Int32 maxCharacters)
+        {
+            var sentences = text.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
+                .Where(x => !string.IsNullOrWhiteSpace(x)).Take(maxSentences);
+            var combined = string.Join(". ", sentences);
+            return combined.Length <= maxCharacters
+                ? combined
+                : combined.Substring(0, maxCharacters - 3) + "...";
+        }
+        /// <summary>
+        /// Removes diacritics from a text body.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// a sign, such as an accent or cedilla, which when written above or below a letter indicates 
+        /// a difference in pronunciation from the same letter when unmarked or differently marked.
+        /// </remarks>
+        public static string RemoveDiacritics(this string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder(text.Length);
+
+            foreach (var c in normalizedString)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+        }
         /// <summary>
         /// Performs a lexicographical addition to a string by any amount.  See
         /// http://wikipedia.org/wiki/Lexicographical_order, and further
