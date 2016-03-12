@@ -5,12 +5,13 @@
     <version>$version$</version>
     <authors>$author$</authors>
     <owners>Nexul Software LLC, $author$</owners>
-    <copyright>Copyright 2015 Michael Lang</copyright>
+    <copyright>Copyright 2016 Michael Lang</copyright>
     <projectUrl>https://github.com/michael-lang/candor-common</projectUrl>
     <licenseUrl>https://github.com/michael-lang/candor-common/blob/master/MIT-LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$  This code is open source.</description>
     <releaseNotes>
+      2.6.0: * Added method to Invalidate a session token.
       2.5.0: * Authentication update - option added to allow user sessions to not be locked to the original IP address (default off for back compat)
       2.4.0: * Add tracking cookie for anonymous users to track their flow on the site.  Stored in the authentication context.
       2.3.1: * Update package dependency references
@@ -27,7 +28,7 @@
     </releaseNotes>
     <tags>Candor Security Authentication Hash</tags>
     <dependencies>
-      <dependency id="Candor.Core" version="0.10.11.30726" />
+      <dependency id="Candor.Core" version="1.5.0.0" />
     </dependencies>
   </metadata>
   <files>

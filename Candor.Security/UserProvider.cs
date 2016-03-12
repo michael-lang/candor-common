@@ -344,6 +344,12 @@ namespace Candor.Security
                 result.AppendError(errorMsg);
                 return new UserIdentity();
             }
+            if (session.ExpirationDate < DateTime.UtcNow)
+            {
+                result.AppendError(errorMsg);
+                return new UserIdentity();
+            }
+
             var history = GetSessionAuthenticationHistory(session);
             if (history == null)
             {
@@ -354,7 +360,7 @@ namespace Candor.Security
             {	//coming from a new IPAddress, token was stolen or user is coming from a new dynamic IP address (new internet connection?)
                 result.AppendError(errorMsg);
                 return new UserIdentity(); //force new login with password (essentially approves this new IP address)
-                //WARN: is this a valid check?  Can an imposter just fake the source IP?  Could a legitimate user hop IP Addresses during a single session?
+                //WARN: This is a weak valid check.  An imposter can fake the source IP, and a legitimate user could hop IP Addresses during a single session (mobile device)
             }
 
             if ((DateTime.UtcNow - session.RenewedDate).Duration() > TimeSpan.FromMinutes(1))
@@ -365,6 +371,33 @@ namespace Candor.Security
             }
             history.UserSession = session;
             return new UserIdentity(history, Name);
+        }
+
+        /// <summary>
+        /// Invalidates a session token so it can no longer be used.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="ipAddress"></param>
+        /// <param name="result"></param>
+        public virtual void InvalidateSession(string token, String ipAddress, ExecutionResults result)
+        {
+            const string errorMsg = "Authentication token invalid.";
+
+            Guid renewalToken;
+            if (!Guid.TryParse(token, out renewalToken))
+            {
+                result.AppendError(errorMsg);
+                return;
+            }
+
+            var session = GetUserSession(renewalToken);
+            if (session == null)
+                return; //sure is invalidated, doesn't exist.
+            if (session.ExpirationDate < DateTime.UtcNow)
+                return; //already invalidated.
+            
+            session.ExpirationDate = DateTime.UtcNow;
+            SaveUserSession(session);
         }
 
         /// <summary>

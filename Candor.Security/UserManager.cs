@@ -201,6 +201,16 @@ namespace Candor.Security
             return Provider.AuthenticateUser(token, duration, ipAddress, result);
         }
         /// <summary>
+        /// Invalidates a session token so it can no longer be used.
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="ipAddress"></param>
+        /// <param name="result"></param>
+        public static void InvalidateSession(string token, String ipAddress, ExecutionResults result)
+        {
+            Provider.InvalidateSession(token, ipAddress, result);
+        }
+        /// <summary>
         /// Registers a new user.  The PasswordHash property should be the actual password.
         /// </summary>
         /// <param name="user">A user with a raw password which is turned into a password hash as part of registration.</param>
