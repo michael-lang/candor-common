@@ -1,3 +1,13 @@
+This project is archived.
+
+There are some patterns in here still relevant today (May 2021), but many are out of date and replaced by new features of .Net Core.
+
+Of note, Dependency Injection is built-in to .Net Core and is preferred over Provider Model in this repo.
+
+The code related to sequence ID generation in a database that does not have it built in, is still relevant in 2021.
+
+Some of the password hashing concepts are still valid, but you may be better served by using the Identity libraries built-in to .Net Core.
+
 Purpose
 ------------
 Candor is a collection of shared libraries useful in web applications,
@@ -73,11 +83,11 @@ Visual F# 2013   06177-004-0444002-02275
 Microsoft Visual F# 2013
 
 Visual Studio 2013 Code Analysis Spell Checker   06177-004-0444002-02275
-Microsoft® Visual Studio® 2013 Code Analysis Spell Checker
+MicrosoftÂ® Visual StudioÂ® 2013 Code Analysis Spell Checker
 
-Portions of International CorrectSpell™ spelling correction system © 1993 by Lernout & Hauspie Speech Products N.V. All rights reserved.
+Portions of International CorrectSpellâ„¢ spelling correction system Â© 1993 by Lernout & Hauspie Speech Products N.V. All rights reserved.
 
-The American Heritage® Dictionary of the English Language, Third Edition Copyright © 1992 Houghton Mifflin Company. Electronic version licensed from Lernout & Hauspie Speech Products N.V. All rights reserved.
+The American HeritageÂ® Dictionary of the English Language, Third Edition Copyright Â© 1992 Houghton Mifflin Company. Electronic version licensed from Lernout & Hauspie Speech Products N.V. All rights reserved.
 
 Windows Phone SDK 8.0 - ENU   06177-004-0444002-02275
 Windows Phone SDK 8.0 - ENU
@@ -102,7 +112,7 @@ Common Azure Tools   1.0
 Provides common services for use by Azure Mobile Services and Windows Azure Tools.
 
 JetBrains ReSharper 8.0.2   C# Edition build 8.0.2000.2660 on 2013-09-27T14:18:12
-JetBrains ReSharper 8.0.2 package for Microsoft Visual Studio. For more information about ReSharper, visit http://www.jetbrains.com/resharper/. Copyright © 2003–2013 JetBrains, Inc.
+JetBrains ReSharper 8.0.2 package for Microsoft Visual Studio. For more information about ReSharper, visit http://www.jetbrains.com/resharper/. Copyright Â© 2003â€“2013 JetBrains, Inc.
 
 Microsoft Advertising SDK for Windows Phone   
 Microsoft Advertising SDK for Windows Phone
